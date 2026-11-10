@@ -130,13 +130,14 @@ def ground_radius(f, w, h):
     dz = d[..., 2]; tt = np.where(dz < -1e-4, -c[2] / np.minimum(dz, -1e-4), np.inf)
     gx = c[0] + d[..., 0] * tt; gy = c[1] + d[..., 1] * tt; R = np.hypot(gx, gy)
     elev = np.arctan2(dz, np.hypot(d[..., 0], d[..., 1]))
-    R = np.where(np.isfinite(R) & (R < 60), R, 60 + 40 * np.clip(elev, 0, None))          # sky: reached last, from the horizon up
+    Rg = np.where(R < 32, R, 40 - 8 * np.exp(-(np.where(np.isfinite(R), R, 1e6) - 32) / 20.0))          # far ground eases towards the horizon value
+    R = np.where(np.isfinite(R) & (dz < -1e-4), Rg, 40 + 220 * np.clip(elev, 0, None))                 # sky: from the horizon up, continuous
     return R.astype(np.float32)
 def ring_mix(lab, yard, f):
     h, w = lab.shape[:2]; u = (f - T0) / float(T1 - T0)
-    Rf = 0.6 + 95.0 * (u ** 2.1)                                     # slow start at the pergola, then sweeps out and up the sky
+    Rf = 0.6 + 112.0 * (u ** 2.1)                                     # slow start at the pergola, then sweeps out and up the sky
     R = ground_radius(f, w, h)
-    soft = 0.35 + 0.02 * Rf
+    soft = 0.6 + 0.08 * Rf
     m = np.clip((Rf - R) / soft + 0.5, 0, 1); m = m * m * (3 - 2 * m)
     band = np.exp(-((R - Rf) / (0.18 + 0.012 * Rf)) ** 2)
     out = lab * (1 - m[..., None]) + yard * m[..., None]
