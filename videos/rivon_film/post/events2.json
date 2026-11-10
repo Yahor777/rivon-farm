@@ -10,1848 +10,1757 @@
 {
 "kind": "STOPA",
 "id": "STOPA_C1",
-"f": 108.0,
+"f": 62.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "STOPA",
 "id": "STOPA_C2",
-"f": 108.0,
+"f": 62.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "STOPA",
 "id": "STOPA_C3",
-"f": 108.0,
+"f": 62.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "STOPA",
 "id": "STOPA_C4",
-"f": 108.0,
+"f": 62.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_000",
-"f": 116.0,
+"f": 68.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_016",
-"f": 116.0,
+"f": 68.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_032",
-"f": 116.0,
+"f": 68.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_048",
-"f": 116.0,
+"f": 68.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_001",
-"f": 118.0,
+"f": 69.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_017",
-"f": 118.0,
+"f": 69.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_033",
-"f": 118.0,
+"f": 69.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_049",
-"f": 118.0,
+"f": 69.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_002",
-"f": 120.0,
+"f": 70.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_018",
-"f": 120.0,
+"f": 70.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_034",
-"f": 120.0,
+"f": 70.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_050",
-"f": 120.0,
+"f": 70.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_003",
-"f": 122.0,
+"f": 71.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_019",
-"f": 122.0,
+"f": 71.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_035",
-"f": 122.0,
+"f": 71.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_051",
-"f": 122.0,
+"f": 71.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "POST",
 "id": "POST_C1",
-"f": 162.0,
+"f": 90.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "POST",
 "id": "POST_C2",
-"f": 162.0,
+"f": 90.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "POST",
 "id": "POST_C3",
-"f": 162.0,
+"f": 90.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "POST",
 "id": "POST_C4",
-"f": 162.0,
+"f": 90.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_004",
-"f": 172.0,
+"f": 96.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_020",
-"f": 172.0,
+"f": 96.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_036",
-"f": 172.0,
+"f": 96.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_052",
-"f": 172.0,
+"f": 96.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_005",
-"f": 174.0,
+"f": 97.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_021",
-"f": 174.0,
+"f": 97.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_037",
-"f": 174.0,
+"f": 97.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_053",
-"f": 174.0,
+"f": 97.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_006",
-"f": 176.0,
+"f": 98.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_022",
-"f": 176.0,
+"f": 98.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_038",
-"f": 176.0,
+"f": 98.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_054",
-"f": 176.0,
+"f": 98.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_007",
-"f": 178.0,
+"f": 99.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_023",
-"f": 178.0,
+"f": 99.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_039",
-"f": 178.0,
+"f": 99.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_STOPA",
 "id": "SCREW_055",
-"f": 178.0,
+"f": 99.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "TROJAK",
 "id": "TROJAK_C1",
-"f": 234.0,
+"f": 132.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "TROJAK",
 "id": "TROJAK_C4",
-"f": 234.0,
+"f": 132.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "TROJAK",
 "id": "TROJAK_C2",
-"f": 234.0,
+"f": 132.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "TROJAK",
 "id": "TROJAK_C3",
-"f": 234.0,
+"f": 132.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "BEAM",
 "id": "BEAM_END_A",
-"f": 258.0,
+"f": 148.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "BEAM",
 "id": "BEAM_END_B",
-"f": 258.0,
+"f": 148.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "JOIN",
 "id": "join",
-"f": 300.0,
+"f": 172.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "LOWER",
 "id": "lift",
-"f": 352.0,
+"f": 204.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_008",
-"f": 360.0,
+"f": 209.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_024",
-"f": 360.0,
+"f": 209.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_040",
-"f": 360.0,
+"f": 209.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_056",
-"f": 360.0,
+"f": 209.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_009",
-"f": 362.0,
+"f": 210.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_025",
-"f": 362.0,
+"f": 210.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_041",
-"f": 362.0,
+"f": 210.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_057",
-"f": 362.0,
+"f": 210.3,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_010",
-"f": 364.0,
+"f": 211.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_026",
-"f": 364.0,
+"f": 211.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_042",
-"f": 364.0,
+"f": 211.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_058",
-"f": 364.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_L_0",
-"f": 366.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_R_0",
-"f": 366.0,
+"f": 211.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_011",
-"f": 366.0,
+"f": 212.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_027",
-"f": 366.0,
+"f": 212.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_043",
-"f": 366.0,
+"f": 212.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_059",
-"f": 366.0,
+"f": 212.9,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_012",
-"f": 368.0,
+"f": 214.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_028",
-"f": 368.0,
+"f": 214.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_044",
-"f": 368.0,
+"f": 214.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_060",
-"f": 368.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_L_1",
-"f": 370.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_R_1",
-"f": 370.0,
+"f": 214.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_013",
-"f": 370.0,
+"f": 215.5,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_029",
-"f": 370.0,
+"f": 215.5,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_045",
-"f": 370.0,
+"f": 215.5,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_061",
-"f": 370.0,
+"f": 215.5,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_L_0",
+"f": 216.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_R_0",
+"f": 216.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_014",
-"f": 372.0,
+"f": 216.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_030",
-"f": 372.0,
+"f": 216.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_046",
-"f": 372.0,
+"f": 216.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_062",
-"f": 372.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_064",
-"f": 372.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_070",
-"f": 372.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_065",
-"f": 373.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_071",
-"f": 373.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_L_2",
-"f": 374.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "MOCOW",
-"id": "MOCOW_R_2",
-"f": 374.0,
+"f": 216.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_015",
-"f": 374.0,
+"f": 218.1,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_031",
-"f": 374.0,
+"f": 218.1,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_047",
-"f": 374.0,
+"f": 218.1,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_TROJAK",
 "id": "SCREW_063",
-"f": 374.0,
+"f": 218.1,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_L_1",
+"f": 218.4,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_R_1",
+"f": 218.4,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_064",
+"f": 220.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_070",
+"f": 220.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_L_2",
+"f": 220.8,
+"slow": false,
+"off": false
+},
+{
+"kind": "MOCOW",
+"id": "MOCOW_R_2",
+"f": 220.8,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_065",
+"f": 221.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_071",
+"f": 221.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_066",
-"f": 375.0,
+"f": 222.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_072",
-"f": 375.0,
+"f": 222.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_076",
-"f": 376.0,
+"f": 222.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_082",
-"f": 376.0,
+"f": 222.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_067",
-"f": 376.5,
+"f": 223.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_073",
-"f": 376.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_077",
-"f": 377.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_083",
-"f": 377.5,
+"f": 223.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_3",
-"f": 378.0,
+"f": 223.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_3",
-"f": 378.0,
+"f": 223.2,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_077",
+"f": 223.4,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_083",
+"f": 223.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_078",
-"f": 379.0,
+"f": 224.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_084",
-"f": 379.0,
+"f": 224.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_088",
-"f": 380.0,
+"f": 224.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_094",
-"f": 380.0,
+"f": 224.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_079",
-"f": 380.5,
+"f": 225.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_085",
-"f": 380.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_089",
-"f": 381.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_095",
-"f": 381.5,
+"f": 225.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_4",
-"f": 382.0,
+"f": 225.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_4",
-"f": 382.0,
+"f": 225.6,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_089",
+"f": 225.8,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_095",
+"f": 225.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_090",
-"f": 383.0,
+"f": 226.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_096",
-"f": 383.0,
+"f": 226.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_100",
-"f": 384.0,
+"f": 227.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_106",
-"f": 384.0,
+"f": 227.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_091",
-"f": 384.5,
+"f": 227.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_097",
-"f": 384.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_101",
-"f": 385.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_107",
-"f": 385.5,
+"f": 227.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_5",
-"f": 386.0,
+"f": 228.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_5",
-"f": 386.0,
+"f": 228.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_101",
+"f": 228.2,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_107",
+"f": 228.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_102",
-"f": 387.0,
+"f": 229.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_108",
-"f": 387.0,
+"f": 229.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_112",
-"f": 388.0,
+"f": 229.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_118",
-"f": 388.0,
+"f": 229.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_103",
-"f": 388.5,
+"f": 230.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_109",
-"f": 388.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_113",
-"f": 389.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_119",
-"f": 389.5,
+"f": 230.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_6",
-"f": 390.0,
+"f": 230.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_6",
-"f": 390.0,
+"f": 230.4,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_113",
+"f": 230.6,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_119",
+"f": 230.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_114",
-"f": 391.0,
+"f": 231.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_120",
-"f": 391.0,
+"f": 231.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_124",
-"f": 392.0,
+"f": 232.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_130",
-"f": 392.0,
+"f": 232.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_115",
-"f": 392.5,
+"f": 232.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_121",
-"f": 392.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_125",
-"f": 393.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_131",
-"f": 393.5,
+"f": 232.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_7",
-"f": 394.0,
+"f": 232.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_7",
-"f": 394.0,
+"f": 232.8,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_125",
+"f": 233.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_131",
+"f": 233.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_126",
-"f": 395.0,
+"f": 234.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_132",
-"f": 395.0,
+"f": 234.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_136",
-"f": 396.0,
+"f": 234.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_142",
-"f": 396.0,
+"f": 234.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_127",
-"f": 396.5,
+"f": 235.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_133",
-"f": 396.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_137",
-"f": 397.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_143",
-"f": 397.5,
+"f": 235.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_8",
-"f": 398.0,
+"f": 235.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_8",
-"f": 398.0,
+"f": 235.2,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_137",
+"f": 235.4,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_143",
+"f": 235.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_138",
-"f": 399.0,
+"f": 236.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_144",
-"f": 399.0,
+"f": 236.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_148",
-"f": 400.0,
+"f": 236.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_154",
-"f": 400.0,
+"f": 236.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_139",
-"f": 400.5,
+"f": 237.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_145",
-"f": 400.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_149",
-"f": 401.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_155",
-"f": 401.5,
+"f": 237.4,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_9",
-"f": 402.0,
+"f": 237.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_9",
-"f": 402.0,
+"f": 237.6,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_149",
+"f": 237.8,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_155",
+"f": 237.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_150",
-"f": 403.0,
+"f": 238.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_156",
-"f": 403.0,
+"f": 238.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_160",
-"f": 404.0,
+"f": 239.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_166",
-"f": 404.0,
+"f": 239.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_151",
-"f": 404.5,
+"f": 239.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_157",
-"f": 404.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_161",
-"f": 405.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "SCREW_MOCOW",
-"id": "SCREW_167",
-"f": 405.5,
+"f": 239.8,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_L_10",
-"f": 406.0,
+"f": 240.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "MOCOW",
 "id": "MOCOW_R_10",
-"f": 406.0,
+"f": 240.0,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_161",
+"f": 240.2,
+"slow": false,
+"off": false
+},
+{
+"kind": "SCREW_MOCOW",
+"id": "SCREW_167",
+"f": 240.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_162",
-"f": 407.0,
+"f": 241.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_168",
-"f": 407.0,
+"f": 241.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_172",
-"f": 408.0,
+"f": 241.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_178",
-"f": 408.0,
+"f": 241.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_163",
-"f": 408.5,
+"f": 242.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_169",
-"f": 408.5,
+"f": 242.2,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_173",
-"f": 409.5,
+"f": 242.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_179",
-"f": 409.5,
+"f": 242.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_174",
-"f": 411.0,
+"f": 243.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_180",
-"f": 411.0,
+"f": 243.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_184",
-"f": 412.0,
+"f": 244.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_190",
-"f": 412.0,
+"f": 244.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_175",
-"f": 412.5,
+"f": 244.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_181",
-"f": 412.5,
+"f": 244.6,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_185",
-"f": 413.5,
+"f": 245.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_191",
-"f": 413.5,
+"f": 245.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_186",
-"f": 415.0,
+"f": 246.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_192",
-"f": 415.0,
+"f": 246.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_187",
-"f": 416.5,
+"f": 247.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_193",
-"f": 416.5,
+"f": 247.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_0",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_1",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_2",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_3",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_4",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_5",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_6",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_7",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_8",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_9",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "RAFTER",
 "id": "RAFTER_10",
-"f": 456.0,
+"f": 258.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_068",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_074",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_080",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_086",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_092",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_098",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_104",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_110",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_116",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_122",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_128",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_134",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_140",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_146",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_152",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_158",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_164",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_170",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_176",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_182",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_188",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_194",
-"f": 468.0,
+"f": 266.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_069",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_075",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_081",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_087",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_093",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_099",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_105",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_111",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_117",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_123",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_129",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_135",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_141",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_147",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_153",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_159",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_165",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_171",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_177",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_183",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_189",
-"f": 469.5,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SCREW_MOCOW",
 "id": "SCREW_195",
-"f": 469.5,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_00",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_01",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_02",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_03",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_04",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_05",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_06",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_07",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_08",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_09",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_10",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_11",
-"f": 492.0,
-"slow": false,
-"off": false
-},
-{
-"kind": "WEDGE",
-"id": "WEDGE_12",
-"f": 492.0,
+"f": 267.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_0",
-"f": 506.0,
+"f": 272.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_1",
-"f": 513.0,
+"f": 277.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_2",
-"f": 520.0,
+"f": 282.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_3",
-"f": 527.0,
+"f": 287.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_4",
-"f": 534.0,
+"f": 292.0,
 "slow": false,
 "off": false
 },
 {
 "kind": "SHEET",
 "id": "SHEET_5",
-"f": 541.0,
+"f": 297.0,
 "slow": false,
 "off": false
 }
