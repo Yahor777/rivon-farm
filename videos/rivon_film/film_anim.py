@@ -50,7 +50,7 @@ RINGS = {
     "MOCOW":  dict(r=6.4, z=1.95, w=-0.0100, mode="face"),
     "SCREW":  dict(r=7.2, z=0.0,  w=+0.0070, mode="flock"),
 }
-WAVE_A, WAVE_NU, WAVE_K = 0.10, 0.045, 2          # travelling height wave: amplitude, speed, crests per ring
+WAVE_A, WAVE_NU, WAVE_K = 0.18, 0.045, 2          # travelling height wave: amplitude, speed, crests per ring
 
 
 def ring_of(pid):
@@ -232,15 +232,15 @@ def env_for_frame(f):
 
 
 # ----------------------------------------------------------------------------------------------- the orbit
-ORBIT_R, ORBIT_TURNS, ORBIT_A0 = 9.6, 1.0, math.radians(-62.0)
+ORBIT_R, ORBIT_TURNS, ORBIT_A0 = 10.8, 1.0, math.radians(-62.0)
 def camera_for_frame(f):
     f = f - YARD_OFFSET if f >= YARD_OFFSET else f
     t = f / (NF - 1)
     a = ORBIT_A0 + 2 * math.pi * ORBIT_TURNS * t                       # constant angular speed: one turn in 30 s
     r = ORBIT_R - 0.5 * math.sin(math.pi * t)                         # breathes in a little mid-film
-    h = 2.85 + 0.45 * math.sin(2 * math.pi * t - 0.6)                 # slow rise and fall
-    tz = 1.75 + 0.25 * math.sin(math.pi * t)
-    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 25.0, 5.6
+    h = 5.6 + 0.5 * math.sin(2 * math.pi * t - 0.6)                   # high 3/4 view: the rings read as circles around the pergola
+    tz = 1.3 + 0.3 * math.sin(math.pi * t)
+    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 27.0, 5.6
 
 
 def light_rig(f): return []

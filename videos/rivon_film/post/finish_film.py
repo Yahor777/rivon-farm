@@ -118,8 +118,8 @@ T0, T1, YOFF = 548, 628, 1000
 def _cam(f):                                   # must match film_anim.camera_for_frame
     import math
     t = f / 899.0; a0 = math.radians(-62.0); ang = a0 + 2 * math.pi * t
-    r = 9.6 - 0.5 * math.sin(math.pi * t); h = 2.85 + 0.45 * math.sin(2 * math.pi * t - 0.6); tz = 1.75 + 0.25 * math.sin(math.pi * t)
-    return np.array([r * math.cos(ang), r * math.sin(ang), h]), np.array([0.0, 0.0, tz]), 25.0
+    r = 10.8 - 0.5 * math.sin(math.pi * t); h = 5.6 + 0.5 * math.sin(2 * math.pi * t - 0.6); tz = 1.3 + 0.3 * math.sin(math.pi * t)
+    return np.array([r * math.cos(ang), r * math.sin(ang), h]), np.array([0.0, 0.0, tz]), 27.0
 def ground_radius(f, w, h):
     """per pixel: distance from the pergola centre of the point where the pixel's ray meets the floor (sky -> large, rising)."""
     c, t, lens = _cam(f); fwd = t - c; fwd /= np.linalg.norm(fwd)
