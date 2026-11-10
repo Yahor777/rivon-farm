@@ -73,6 +73,7 @@ def import_ram():
 
 def prepare(w, h, spp):
     sc = bpy.context.scene
+    sc.animation_data_clear()          # assets.blend carried a stale keyframed exposure (0.15) that overrode the per-scene exposure from the 2nd frame on
     # relink textures / HDRI to the repo copy
     for img in bpy.data.images:
         if img.filepath:
