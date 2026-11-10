@@ -1,0 +1,4029 @@
+{
+ "parts": [
+  {
+   "id": "STOPA_C1",
+   "cad": "Stopa",
+   "R": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "t_mm": [
+    -1750.0,
+    -3000.0,
+    2.0
+   ]
+  },
+  {
+   "id": "TROJAK_C1",
+   "cad": "Trojak 3D",
+   "R": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "t_mm": [
+    -1750.0,
+    -2900.0,
+    2500.0
+   ]
+  },
+  {
+   "id": "STOPA_C2",
+   "cad": "Stopa",
+   "R": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "t_mm": [
+    1650.0,
+    -3000.0,
+    2.0
+   ]
+  },
+  {
+   "id": "TROJAK_C2",
+   "cad": "Trojak 3D",
+   "R": [
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "t_mm": [
+    1650.0,
+    -3000.0,
+    2500.0
+   ]
+  },
+  {
+   "id": "STOPA_C3",
+   "cad": "Stopa",
+   "R": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "t_mm": [
+    1650.0,
+    2900.0,
+    2.0
+   ]
+  },
+  {
+   "id": "TROJAK_C3",
+   "cad": "Trojak 3D",
+   "R": [
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "t_mm": [
+    1750.0,
+    2900.0,
+    2500.0
+   ]
+  },
+  {
+   "id": "STOPA_C4",
+   "cad": "Stopa",
+   "R": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "t_mm": [
+    -1750.0,
+    2900.0,
+    2.0
+   ]
+  },
+  {
+   "id": "TROJAK_C4",
+   "cad": "Trojak 3D",
+   "R": [
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "t_mm": [
+    -1650.0,
+    3000.0,
+    2500.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_0",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -2455.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_0",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    -2345.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_1",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -1975.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_1",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    -1865.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_2",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -1495.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_2",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    -1385.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_3",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -1015.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_3",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    -905.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_4",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -535.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_4",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    -425.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_5",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    -55.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_5",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    55.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_6",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    425.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_6",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    535.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_7",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    905.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_7",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    1015.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_8",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    1385.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_8",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    1495.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_9",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    1865.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_9",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    1975.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_L_10",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    -1651.0,
+    2345.0,
+    2600.0
+   ]
+  },
+  {
+   "id": "MOCOW_R_10",
+   "cad": "Mocowanie belek 2",
+   "R": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "t_mm": [
+    1651.0,
+    2455.0,
+    2600.0
+   ]
+  }
+ ],
+ "timber": [
+  {
+   "id": "POST_C1",
+   "kind": "post",
+   "centre_mm": [
+    -1700.0,
+    -2950.0,
+    1250.75
+   ],
+   "size_mm": [
+    94.0,
+    94.0,
+    2497.5
+   ],
+   "long_axis": "z"
+  },
+  {
+   "id": "POST_C2",
+   "kind": "post",
+   "centre_mm": [
+    1700.0,
+    -2950.0,
+    1250.75
+   ],
+   "size_mm": [
+    94.0,
+    94.0,
+    2497.5
+   ],
+   "long_axis": "z"
+  },
+  {
+   "id": "POST_C3",
+   "kind": "post",
+   "centre_mm": [
+    1700.0,
+    2950.0,
+    1250.75
+   ],
+   "size_mm": [
+    94.0,
+    94.0,
+    2497.5
+   ],
+   "long_axis": "z"
+  },
+  {
+   "id": "POST_C4",
+   "kind": "post",
+   "centre_mm": [
+    -1700.0,
+    2950.0,
+    1250.75
+   ],
+   "size_mm": [
+    94.0,
+    94.0,
+    2497.5
+   ],
+   "long_axis": "z"
+  },
+  {
+   "id": "BEAM_LONG_L",
+   "kind": "beam",
+   "centre_mm": [
+    -1700.0,
+    0.0,
+    2550.0
+   ],
+   "size_mm": [
+    94.0,
+    5994.0,
+    94.0
+   ],
+   "long_axis": "y"
+  },
+  {
+   "id": "BEAM_LONG_R",
+   "kind": "beam",
+   "centre_mm": [
+    1700.0,
+    0.0,
+    2550.0
+   ],
+   "size_mm": [
+    94.0,
+    5994.0,
+    94.0
+   ],
+   "long_axis": "y"
+  },
+  {
+   "id": "BEAM_END_A",
+   "kind": "beam",
+   "centre_mm": [
+    0.0,
+    -2950.0,
+    2550.0
+   ],
+   "size_mm": [
+    3306.0,
+    94.0,
+    94.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "BEAM_END_B",
+   "kind": "beam",
+   "centre_mm": [
+    0.0,
+    2950.0,
+    2550.0
+   ],
+   "size_mm": [
+    3306.0,
+    94.0,
+    94.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_0",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    -2400.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_1",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    -1920.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_2",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    -1440.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_3",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    -960.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_4",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    -480.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_5",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    0.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_6",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    480.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_7",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    960.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_8",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    1440.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_9",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    1920.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  },
+  {
+   "id": "RAFTER_10",
+   "kind": "rafter",
+   "centre_mm": [
+    0.0,
+    2400.0,
+    2549.5
+   ],
+   "size_mm": [
+    3302.0,
+    45.0,
+    95.0
+   ],
+   "long_axis": "x"
+  }
+ ],
+ "fasteners": [
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1765.0,
+    -2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    -3015.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    -2885.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1635.0,
+    -2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1749.0,
+    -2975.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1749.0,
+    -2925.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    -2975.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    -2925.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    -2750.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1500.0,
+    -2950.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    -2901.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    -2901.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1550.0,
+    -2901.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    -2800.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    -2950.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    -2950.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1635.0,
+    -2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    -3015.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    -2885.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1765.0,
+    -2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    -2975.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    -2925.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1749.0,
+    -2975.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1749.0,
+    -2925.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1500.0,
+    -2950.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    -2750.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    -2950.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    -2950.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    -2800.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1550.0,
+    -2901.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    -2901.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    -2901.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1635.0,
+    2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    2885.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    3015.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1765.0,
+    2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    2925.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    2975.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1749.0,
+    2925.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1749.0,
+    2975.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    2750.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1500.0,
+    2950.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    2901.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1700.0,
+    2901.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1550.0,
+    2901.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    2800.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    2950.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1651.0,
+    2950.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1765.0,
+    2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    2885.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    3015.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1635.0,
+    2950.0,
+    1.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "kind": "anchor"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1749.0,
+    2925.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1749.0,
+    2975.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    2925.0,
+    122.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "STOPA_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    2975.0,
+    32.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1500.0,
+    2950.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    2750.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    2950.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    2950.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1651.0,
+    2800.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1550.0,
+    2901.0,
+    2550.25
+   ],
+   "axis_to_timber": [
+    -0.0,
+    1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    2901.0,
+    2475.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "TROJAK_C4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1700.0,
+    2901.0,
+    2425.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    1.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -2440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -2360.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -2440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -2360.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    -2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    -2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -2360.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -2440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -2360.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -2440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    -2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_0",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    -2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1960.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1880.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1960.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1880.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    -1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    -1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1880.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1960.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1880.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1960.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    -1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_1",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    -1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1480.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1400.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1480.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1400.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    -1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    -1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1400.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1480.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1400.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1480.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    -1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_2",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    -1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1000.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -920.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -1000.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -920.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    -960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    -960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -920.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1000.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -920.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -1000.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    -960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_3",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    -960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -520.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -520.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    -480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    -480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -520.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -520.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    -480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_4",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    -480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -40.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    40.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    -40.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    40.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    0.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    0.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    40.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -40.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    40.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    -40.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    0.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_5",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    0.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    520.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    520.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    520.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    520.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_6",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    480.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    920.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1000.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    920.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1000.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1000.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    920.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1000.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    920.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_7",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    960.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1400.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1480.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1400.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1480.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1480.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1400.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1480.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1400.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_8",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    1440.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1880.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1960.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1880.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    1960.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1960.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1880.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1960.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    1880.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_9",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    1920.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    2360.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    2440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    2360.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1652.0,
+    2440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1616.0,
+    2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_L_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    -1536.0,
+    2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    2440.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    2360.0,
+    2575.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    2440.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1652.0,
+    2360.0,
+    2525.0
+   ],
+   "axis_to_timber": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1616.0,
+    2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  },
+  {
+   "part": "MOCOW_R_10",
+   "hole_radius_mm": 5.0,
+   "pos_mm": [
+    1536.0,
+    2400.0,
+    2501.0
+   ],
+   "axis_to_timber": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "kind": "wood_screw"
+  }
+ ],
+ "summary": {
+  "parts": 30,
+  "timber": 19,
+  "fasteners": 196,
+  "long_beam_mm": 5690.0,
+  "end_beam_mm": 3190.0,
+  "rafter_mm": 3302.0,
+  "overall_footprint_mm": [
+   3500,
+   6000
+  ],
+  "top_of_rafters_mm": 2597.0
+ },
+ "notes": [
+  "Beams in Trojak 3D (owner rule): long beam runs to the corner wall (5994 mm, 1 mm short of the wall at |y|=2998), end beam butts against the long beam's inner face (3306 mm) - both fill the upper socket space, one goes deeper than the other."
+ ]
+}

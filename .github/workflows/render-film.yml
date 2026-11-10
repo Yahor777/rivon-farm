@@ -1,0 +1,75 @@
+name: render-film
+# RIVON film (ONE SYSTEM. ENDLESS POSSIBILITIES). Starts only when a branch named film/<name> containing run.json is pushed.
+# run.json (control frames): {"name":"c1","scene":"videos/rivon_film","parts":6,"w":810,"h":1440,"spp":64,"stills":true,"frames":"0,1,2,3,4,5"}
+# run.json (partial re-render): {"name":"p1","scene":"videos/rivon_film","parts":20,"w":540,"h":960,"spp":12,"flist":"210,211,...","chunk":4}
+# run.json (animation):     {"name":"v1","scene":"videos/rivon_film","parts":20,"w":1080,"h":1920,"spp":64,"frames":900,"chunk":12}
+on:
+  push:
+    branches: ['film/**']
+permissions:
+  contents: write
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      parts: ${{ steps.p.outputs.parts }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          N=$(jq -r '.parts' run.json)
+          echo "parts=$(python3 -c "import json;print(json.dumps(list(range($N))))")" >> $GITHUB_OUTPUT
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJson(needs.plan.outputs.parts) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Blender
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libxext6 >/dev/null
+          cd /tmp && curl -sL -f --retry 3 -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz && tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender
+          S=$GITHUB_WORKSPACE/$(jq -r .scene $GITHUB_WORKSPACE/run.json); cd $S && cat assets.blend.part* > assets.blend
+          git config --global user.name ci; git config --global user.email ci@example.com
+          nproc; free -g | head -2
+      - name: Render part, push every chunk
+        env:
+          PART: ${{ matrix.part }}
+        run: |
+          NAME=$(jq -r .name run.json); SCENE=$GITHUB_WORKSPACE/$(jq -r .scene run.json)
+          NP=$(jq -r '.parts' run.json); W=$(jq -r .w run.json); H=$(jq -r .h run.json); SPP=$(jq -r .spp run.json)
+          CH=$(jq -r '.chunk // 12' run.json); STILLS=$(jq -r '.stills // false' run.json)
+          B=frames/$NAME-$(printf %02d $PART)
+          mkdir -p $GITHUB_WORKSPACE/out
+          if git ls-remote --exit-code --heads origin $B >/dev/null 2>&1; then
+            git fetch -q origin $B && git archive FETCH_HEAD | tar -x -C $GITHUB_WORKSPACE/out
+          fi
+          FLIST=$(jq -r '.flist // empty' run.json)
+          if [ -n "$FLIST" ]; then
+            # timeline frames from an explicit list (partial re-render): part i takes every NP-th item, rendered in chunks
+            CHUNKS=(); while read -r L; do [ -n "$L" ] && CHUNKS+=("--frames $L"); done < <(echo "$FLIST" | python3 -c "import sys;l=sys.stdin.read().strip().split(',')[$PART::$NP];ch=$CH;print(chr(10).join(','.join(l[i:i+ch]) for i in range(0,len(l),ch)))")
+            [ ${#CHUNKS[@]} -gt 0 ] || exit 0
+          elif [ "$STILLS" = "true" ]; then
+            # control frames: part i renders every NP-th item of the list
+            LIST=$(jq -r .frames run.json | python3 -c "import sys;l=sys.stdin.read().strip().split(',');print(','.join(l[$PART::$NP]))")
+            [ -n "$LIST" ] || exit 0
+            CHUNKS=("--stills --frames $LIST")
+          else
+            FR=$(jq -r '.frames' run.json)
+            PER=$(( (FR + NP - 1) / NP )); S0=$((PART*PER)); E0=$((S0+PER-1)); [ $E0 -ge $FR ] && E0=$((FR-1))
+            [ $S0 -ge $FR ] && exit 0
+            CHUNKS=(); for cs in $(seq $S0 $CH $E0); do ce=$((cs+CH-1)); [ $ce -gt $E0 ] && ce=$E0; CHUNKS+=("--start $cs --end $ce"); done
+          fi
+          c=0
+          for ARGS in "${CHUNKS[@]}"; do
+            cd $SCENE
+            /tmp/blender/blender -b assets.blend -P render_film.py -- $ARGS --w $W --h $H --spp $SPP --out $GITHUB_WORKSPACE/out 2>&1 | grep -E "FRAME|rror|Traceback" | tail -25
+            cd $GITHUB_WORKSPACE
+            rm -rf /tmp/pushrepo && mkdir /tmp/pushrepo && cp out/*.png /tmp/pushrepo/
+            cd /tmp/pushrepo && git init -q -b $B && git add -A && git commit -q -m "$NAME part $PART chunk $c" && for t in 1 2 3 4 5 6; do git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" $B && break; echo "push retry $t"; sleep $((t*15)); done
+            cd $GITHUB_WORKSPACE; c=$((c+1))
+          done

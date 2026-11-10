@@ -1,0 +1,94 @@
+{
+ "_note": "All lengths in millimetres. Visualisation proposal, NOT an engineering specification.",
+ "fps": 30,
+ "frames": 900,
+ "preview_res": [
+  540,
+  960
+ ],
+ "final_res": [
+  1080,
+  1920
+ ],
+ "pergola": {
+  "post_centres_x": 1700,
+  "post_centres_y": 2950,
+  "z_junction": 2500,
+  "timber_clearance_each_side": 1.0,
+  "socket_inner": 96.0,
+  "post_section": 94.0,
+  "beam_section": 94.0,
+  "beam_insertion_depth": 145.0,
+  "rafter_width": 45.0,
+  "rafter_height": 95.0,
+  "rafter_pitch": 480.0,
+  "rafter_y": [
+   -2400,
+   -1920,
+   -1440,
+   -960,
+   -480,
+   0,
+   480,
+   960,
+   1440,
+   1920,
+   2400
+  ],
+  "stopa_plate_thickness": 2.0
+ },
+ "fasteners": {
+  "shank_diameter": 8.0,
+  "head_diameter": 16.0,
+  "head_height": 6.0,
+  "length": 80.0,
+  "used_hole_radius_mm": 5.0
+ },
+ "scene_times_s": {
+  "origin": [
+   0,
+   1
+  ],
+  "assembly": [
+   1,
+   5.5
+  ],
+  "reveal": [
+   5.5,
+   7
+  ],
+  "carport": [
+   7,
+   10.5
+  ],
+  "barbecue": [
+   10.5,
+   14
+  ],
+  "kitchen": [
+   14,
+   17.5
+  ],
+  "lounge": [
+   17.5,
+   21
+  ],
+  "commercial": [
+   21,
+   24.5
+  ],
+  "return_lab": [
+   24.5,
+   25.5
+  ],
+  "disassembly": [
+   25.5,
+   28
+  ],
+  "cta": [
+   28,
+   30
+  ]
+ },
+ "transition_duration_s": 0.55
+}

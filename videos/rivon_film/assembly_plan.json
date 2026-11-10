@@ -1,0 +1,848 @@
+{
+ "steps": [
+  {
+   "stage": "feet",
+   "group": [
+    "STOPA_C1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "feet",
+   "group": [
+    "STOPA_C2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "feet",
+   "group": [
+    "STOPA_C3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "feet",
+   "group": [
+    "STOPA_C4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "posts",
+   "group": [
+    "POST_C1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "posts",
+   "group": [
+    "POST_C2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "posts",
+   "group": [
+    "POST_C3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "posts",
+   "group": [
+    "POST_C4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frame",
+   "group": [
+    "BEAM_LONG_L"
+   ],
+   "insert": null,
+   "ok": true
+  },
+  {
+   "stage": "frame",
+   "group": [
+    "TROJAK_C1"
+   ],
+   "insert": [
+    0,
+    1,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frame",
+   "group": [
+    "TROJAK_C4"
+   ],
+   "insert": [
+    0,
+    -1,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frameR",
+   "group": [
+    "BEAM_LONG_R"
+   ],
+   "insert": null,
+   "ok": true
+  },
+  {
+   "stage": "frameR",
+   "group": [
+    "TROJAK_C2"
+   ],
+   "insert": [
+    0,
+    1,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frameR",
+   "group": [
+    "TROJAK_C3"
+   ],
+   "insert": [
+    0,
+    -1,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frameR",
+   "group": [
+    "BEAM_END_A"
+   ],
+   "insert": [
+    1,
+    0,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frameR",
+   "group": [
+    "BEAM_END_B"
+   ],
+   "insert": [
+    1,
+    0,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "frame",
+   "group": [
+    "BEAM_LONG_R",
+    "TROJAK_C2",
+    "TROJAK_C3",
+    "BEAM_END_A",
+    "BEAM_END_B"
+   ],
+   "insert": [
+    -1,
+    0,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "stage": "lower",
+   "group": [
+    "BEAM_LONG_L",
+    "TROJAK_C1",
+    "TROJAK_C4",
+    "BEAM_LONG_R",
+    "TROJAK_C2",
+    "TROJAK_C3",
+    "BEAM_END_A",
+    "BEAM_END_B"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_0"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_0"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_5"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_5"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_6"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_6"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_7"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_7"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_8"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_8"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_9"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_9"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_L_10"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "mocow",
+   "group": [
+    "MOCOW_R_10"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_0"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_5"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_6"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_7"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_8"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_9"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "rafter",
+   "group": [
+    "RAFTER_10"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_00"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_01"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_02"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_03"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_04"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_05"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_06"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_07"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_08"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_09"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_10"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_11"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "WEDGE_12"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_0"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_1"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_2"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_3"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_4"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  },
+  {
+   "stage": "roof",
+   "group": [
+    "SHEET_5"
+   ],
+   "insert": [
+    0,
+    0,
+    -1
+   ],
+   "ok": true
+  }
+ ],
+ "all_ok": true
+}
