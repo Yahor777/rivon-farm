@@ -239,10 +239,10 @@ def camera_for_frame(f):
     f = f - YARD_OFFSET if f >= YARD_OFFSET else f
     a = orbit_angle(f); t = f / (NF - 1)
     b = e_io(clamp01((f - T_WHIP) / 160.0))                              # after the whip: settle lower and closer, hero view of the carport
-    r = 10.8 - 0.4 * math.sin(math.pi * t) - 1.4 * b
-    h = 5.4 + 0.35 * math.sin(2 * math.pi * t - 0.6) - 2.2 * b
-    tz = 1.3 + 0.25 * b
-    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 27.0 + 3.0 * b, 5.6
+    r = 10.8 - 0.4 * math.sin(math.pi * t) - 0.5 * b
+    h = 5.4 + 0.35 * math.sin(2 * math.pi * t - 0.6) - 1.8 * b
+    tz = 1.3 + 0.15 * b
+    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 27.0 - 3.0 * b, 5.6
 
 
 def light_rig(f): return []
