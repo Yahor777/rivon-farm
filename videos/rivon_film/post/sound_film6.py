@@ -21,7 +21,7 @@ def load(path, start=0.0, dur=None):
 def rms(x): return float(np.sqrt((x ** 2).mean()) + 1e-12)
 def db(v): return 10 ** (v / 20.0)
 MIX = np.zeros((N, 2)); SEND = {"lab": np.zeros((N, 2)), "out": np.zeros((N, 2))}
-def in_lab(t): return t < 19.6
+def in_lab(t): return t < 11.2
 
 # ------------------------------------------------------------------------------------------------ one-shots (Kenney CC0)
 _cache = {}
@@ -75,8 +75,8 @@ def lab_tone(a, b, lvl):
     n = int((b - a) * SR); y = np.cumsum(rng.normal(size=(n, 2)), 0); y = hp(y, 25, 1); y = lp(y, 140, 4); y = y / rms(y) * db(lvl)
     w = np.clip(np.arange(n) / (0.5 * SR), 0, 1) * np.clip((n - np.arange(n)) / (0.5 * SR), 0, 1)
     MIX[int(a * SR):int(a * SR) + n] += y * w[:, None]
-lab_tone(0.0, 20.2, -38)
-Y0 = 548 / FPS                                                                   # ring transition starts
+Y0 = 336 / FPS                                                                   # whip transition (fastest frame)
+lab_tone(0.0, Y0 + 0.25, -38)
 bed("animals/birds.mp3", Y0 + 0.6, A.dur + 1, -32, 20.0, lowcut=600)
 bed("nature/wind-in-trees.mp3", Y0 + 0.3, A.dur + 1, -37, 8.0, highcut=3500)
 bed("urban/road.mp3", Y0 + 1.0, A.dur + 1, -40, 30.0, highcut=4000)
@@ -119,10 +119,11 @@ for w0, w1 in SLOW:
 
 # ------------------------------------------------------------------------------------------------ transitions: soft low air-whoosh + felt thump (no hiss)
 # ------------------------------------------------------------------------------------------------ ring transition + end card
-place(air(80 / FPS + 0.3, True), Y0 - 0.2, -17, 0.0, 1.0, 0.35, "out")           # rising air as the ring sweeps out (no hiss: <1.5 kHz)
-hit("thud", Y0, -13, 0.0, 0.0, 0.3)                                                 # soft low pulse as the ring is born
-place(air(1.4, False), 836 / FPS, -24, 0.0, 1.0, 0.3, "out")                       # fade to black
-hit("thud", 862 / FPS, -16, 0.0, 0.0, 0.3)                                          # CTA
+place(air(0.42, True), Y0 - 0.40, -13, -0.3, 1.0, 0.25, "out")                    # whip: air rushes past (low-passed, no hiss)
+place(air(0.55, False), Y0 - 0.02, -15, 0.3, 1.0, 0.3, "out")
+hit("thud", Y0, -14, 0.0, 0.0, 0.25)
+place(air(1.4, False), 652 / FPS, -24, 0.0, 1.0, 0.3, "out")                       # fade to black
+hit("thud", 678 / FPS, -16, 0.0, 0.0, 0.3)                                          # CTA
 
 # ------------------------------------------------------------------------------------------------ reverb (dark, natural), master
 def ir(rt, cut):

@@ -18,13 +18,14 @@ import bpy, mathutils
 from mathutils import Matrix, Vector, Quaternion
 from film_lib import load_json
 
-FPS, NF = 30, 900
+FPS, NF = 30, 720
 LAB1 = (0, 899); SCENES = []; SCENE_LEN = 0; LAB2 = (900, 900)
-F_ASM_END = 540
-T_SWITCH0, T_SWITCH1 = 548, 628        # transition window (both environments rendered)
-YARD_OFFSET = 1000                     # frame 1000+f = yard render of frame f
+F_ASM_END = 300
+T_WHIP = 336                           # lab -> yard on the fastest frame of a whip pan; frames 1000+f (f = T_WHIP-3..T_WHIP-1) = yard renders for the cross-blend
+T_SWITCH0, T_SWITCH1 = T_WHIP - 3, T_WHIP
+YARD_OFFSET = 1000
 LIFT, JOIN = 1.6, 2.0
-GROUP_T = {"join": (262.0, 300.0), "lift": (302.0, 352.0)}
+GROUP_T = {"join": (150.0, 172.0), "lift": (174.0, 204.0)}
 SLOWMO = []
 
 
@@ -43,14 +44,14 @@ def bearing(v): return math.atan2(v.y, v.x)
 # ----------------------------------------------------------------------------------------------- the dance: ordered rings
 # ring: radius, height, angular speed (rad/frame), orientation mode
 RINGS = {
-    "STOPA":  dict(r=4.3, z=0.45, w=+0.0105, mode="face"),
-    "POST":   dict(r=5.0, z=1.30, w=-0.0085, mode="face"),
-    "TROJAK": dict(r=5.7, z=3.05, w=+0.0095, mode="face"),
-    "BEAM":   dict(r=7.7, z=4.45, w=+0.0060, mode="tangent"),
-    "MOCOW":  dict(r=6.4, z=1.95, w=-0.0100, mode="face"),
-    "SCREW":  dict(r=7.2, z=0.0,  w=+0.0070, mode="flock"),
+    "STOPA":  dict(r=4.3, z=0.45, w=+0.0170, mode="face"),
+    "POST":   dict(r=5.0, z=1.30, w=-0.0135, mode="face"),
+    "TROJAK": dict(r=5.7, z=3.05, w=+0.0150, mode="face"),
+    "BEAM":   dict(r=7.7, z=4.45, w=+0.0095, mode="tangent"),
+    "MOCOW":  dict(r=6.4, z=1.95, w=-0.0160, mode="face"),
+    "SCREW":  dict(r=7.2, z=0.0,  w=+0.0110, mode="flock"),
 }
-WAVE_A, WAVE_NU, WAVE_K = 0.18, 0.045, 2          # travelling height wave: amplitude, speed, crests per ring
+WAVE_A, WAVE_NU, WAVE_K = 0.18, 0.07, 2          # travelling height wave: amplitude, speed, crests per ring
 
 
 def ring_of(pid):
@@ -65,20 +66,18 @@ def schedule():
     def put(pid, leave, app, seat, d, L, groups=()):
         S[pid] = dict(leave=leave, app=app, seat=seat, dir=None if d is None else Vector(d), L=L, groups=tuple(groups))
     D = (0, 0, -1)
-    for k in (1, 2, 3, 4): put(f"STOPA_C{k}", 58, 92, 108, D, 0.7)                 # the four feet together
-    for k in (1, 2, 3, 4): put(f"POST_C{k}", 100, 140, 162, D, 1.0)                # the four posts together
+    for k in (1, 2, 3, 4): put(f"STOPA_C{k}", 30, 52, 62, D, 0.7)                  # the four feet together
+    for k in (1, 2, 3, 4): put(f"POST_C{k}", 52, 78, 90, D, 1.0)                   # the four posts together
     F = ("lift",); R = ("lift", "join")
-    put("BEAM_LONG_L", 150, 200, 200, None, 0.0, F); put("BEAM_LONG_R", 150, 200, 200, None, 0.0, R)
-    put("TROJAK_C1", 176, 214, 234, (0, 1, 0), 0.6, F); put("TROJAK_C4", 176, 214, 234, (0, -1, 0), 0.6, F)
-    put("TROJAK_C2", 176, 214, 234, (0, 1, 0), 0.6, R); put("TROJAK_C3", 176, 214, 234, (0, -1, 0), 0.6, R)
-    put("BEAM_END_A", 200, 238, 258, (1, 0, 0), 0.9, R); put("BEAM_END_B", 200, 238, 258, (1, 0, 0), 0.9, R)
-    for i in range(11):                                                               # Mocowanie: symmetric L/R pairs, centre outwards
-        k = sorted(range(11), key=lambda j: abs(j - 5))[i] if False else i
+    put("BEAM_LONG_L", 82, 112, 112, None, 0.0, F); put("BEAM_LONG_R", 82, 112, 112, None, 0.0, R)
+    put("TROJAK_C1", 98, 120, 132, (0, 1, 0), 0.6, F); put("TROJAK_C4", 98, 120, 132, (0, -1, 0), 0.6, F)
+    put("TROJAK_C2", 98, 120, 132, (0, 1, 0), 0.6, R); put("TROJAK_C3", 98, 120, 132, (0, -1, 0), 0.6, R)
+    put("BEAM_END_A", 114, 136, 148, (1, 0, 0), 0.9, R); put("BEAM_END_B", 114, 136, 148, (1, 0, 0), 0.9, R)
+    for i in range(11):                                                               # Mocowanie in symmetric L/R pairs
         for s in ("L", "R"):
-            a = 352 + 4.0 * i; put(f"MOCOW_{s}_{i}", a - 34, a, a + 14, D, 0.5)
-    for i in range(11): put(f"RAFTER_{i}", 398, 438, 456, D, 0.9)                   # all rafters lowered together into their hangers
-    for j in range(13): put(f"WEDGE_{j:02d}", 446, 478, 492, D, 0.5)                # firring strips as one comb
-    for j in range(6): a = 494 + 7.0 * j; put(f"SHEET_{j}", a - 34, a, a + 12, D, 0.5)   # sheets one after another
+            a = 206 + 2.4 * i; put(f"MOCOW_{s}_{i}", a - 22, a, a + 10, D, 0.5)
+    for i in range(11): put(f"RAFTER_{i}", 222, 246, 258, D, 0.9)                   # all rafters lowered together into their hangers
+    for j in range(6): a = 262 + 5.0 * j; put(f"SHEET_{j}", a - 24, a, a + 10, D, 0.5)   # sheets one after another, flat on the frame
     return S
 
 
@@ -150,12 +149,12 @@ class Anim:
             part = fd["part"]; ax = Vector(fd["axis_to_timber"]).normalized(); self.screw_part[sid] = part
             j = cnt.get(part, 0); cnt[part] = j + 1
             if part.startswith("STOPA"):
-                seat = (mseat[part] + 8 if fd["kind"] == "anchor" else mseat["POST_" + part.split("_")[1]] + 10) + 2.0 * (j % 4)
-            elif part.startswith("TROJAK"): seat = GROUP_T["lift"][1] + 8 + 2.0 * j
-            elif abs(ax.z) < 0.5: seat = mseat[part] + 6 + 1.5 * j
+                seat = (mseat[part] + 6 if fd["kind"] == "anchor" else mseat["POST_" + part.split("_")[1]] + 6) + 1.3 * (j % 4)
+            elif part.startswith("TROJAK"): seat = GROUP_T["lift"][1] + 5 + 1.3 * j
+            elif abs(ax.z) < 0.5: seat = mseat[part] + 4 + 1.0 * j
             else:
-                ri = int(part.split("_")[-1]); seat = mseat[f"RAFTER_{ri}"] + 6 + 1.5 * j
-            app = seat - 8; self.S[sid] = dict(leave=app - 30, app=app, seat=seat, dir=ax, L=0.16, groups=(), spin=6 * math.pi)
+                ri = int(part.split("_")[-1]); seat = mseat[f"RAFTER_{ri}"] + 4 + 1.0 * j
+            app = seat - 6; self.S[sid] = dict(leave=app - 22, app=app, seat=seat, dir=ax, L=0.16, groups=(), spin=6 * math.pi)
         for pid, o in self.objs.items():
             o.rotation_mode = "QUATERNION"
             self.S[pid]["loc0"] = o.matrix_world.translation.copy(); self.S[pid]["q0"] = o.matrix_world.to_quaternion()
@@ -228,19 +227,22 @@ class Anim:
 
 def env_for_frame(f):
     if f >= YARD_OFFSET: return "yard"
-    return "lab" if f < T_SWITCH1 else "yard"
+    return "lab" if f < T_WHIP else "yard"
 
 
-# ----------------------------------------------------------------------------------------------- the orbit
-ORBIT_R, ORBIT_TURNS, ORBIT_A0 = 10.8, 1.0, math.radians(-62.0)
+# ----------------------------------------------------------------------------------------------- the orbit (with a whip pan)
+ORBIT_A0, ORBIT_TURNS, WHIP_EXTRA, WHIP_HALF = math.radians(-62.0), 1.15, math.radians(110.0), 10.0
+def orbit_angle(f):
+    base = ORBIT_A0 + 2 * math.pi * ORBIT_TURNS * f / (NF - 1)
+    return base + WHIP_EXTRA * e_io5(clamp01((f - (T_WHIP - WHIP_HALF)) / (2 * WHIP_HALF)))     # speed peaks exactly at T_WHIP
 def camera_for_frame(f):
     f = f - YARD_OFFSET if f >= YARD_OFFSET else f
-    t = f / (NF - 1)
-    a = ORBIT_A0 + 2 * math.pi * ORBIT_TURNS * t                       # constant angular speed: one turn in 30 s
-    r = ORBIT_R - 0.5 * math.sin(math.pi * t)                         # breathes in a little mid-film
-    h = 5.6 + 0.5 * math.sin(2 * math.pi * t - 0.6)                   # high 3/4 view: the rings read as circles around the pergola
-    tz = 1.3 + 0.3 * math.sin(math.pi * t)
-    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 27.0, 5.6
+    a = orbit_angle(f); t = f / (NF - 1)
+    b = e_io(clamp01((f - T_WHIP) / 160.0))                              # after the whip: settle lower and closer, hero view of the carport
+    r = 10.8 - 0.4 * math.sin(math.pi * t) - 1.4 * b
+    h = 5.4 + 0.35 * math.sin(2 * math.pi * t - 0.6) - 2.2 * b
+    tz = 1.3 + 0.25 * b
+    return (r * math.cos(a), r * math.sin(a), h), (0.0, 0.0, tz), 27.0 + 3.0 * b, 5.6
 
 
 def light_rig(f): return []

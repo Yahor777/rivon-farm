@@ -1,4 +1,5 @@
-"""Roof for the lab assembly (owner rules): profiled sheets with ALL grooves running one way - across the pergola, along the rafters
+"""Roof for the assembly (v6b: flat profiled sheets laid straight onto the frame, no firring strips).
+Original note: Roof for the lab assembly (owner rules): profiled sheets with ALL grooves running one way - across the pergola, along the rafters
 (turned 90 deg from the earlier video) - and one long side higher, so water and snow drain properly.  The slope comes from tapered
 pine firring strips (kliny) screwed on top of every rafter and of both end beams; the sheets lie on them.
 Every piece is a separate rigid object so the animation can bring it in; nothing touches the RIVON connectors."""
@@ -8,8 +9,8 @@ import bpy, mathutils
 
 TOP = 2.6006                         # strips sit on the steel tops (Trojak / Mocowanie top = 2.600; timber top = 2.597)
 X0, X1 = -1.747, 1.747              # outer faces of the long beams
-SLOPE = math.radians(3.0)           # high side = x0 (left), low side = x1 (right)
-H_LO = 0.020
+SLOPE = 0.0                         # owner: no extra boards on top -> sheets lie flat directly on the frame (no slope)
+H_LO = 0.0                          # sheets rest on the steel tops of the Trojaks / Mocowanie (3 mm above the timber)
 OVER_X, Y_HALF = 0.16, 3.15
 SHEET_W, GAP, N_SHEETS = 1.048, 0.002, 6
 RIB_PITCH, RIB_H, RIB_TOP, RIB_BOT = 0.1747, 0.022, 0.040, 0.075
@@ -88,8 +89,7 @@ def _sheet(name, yc, mat, coll):
 
 def build_roof(coll, pine):
     ids = []
-    for i, y in enumerate(WEDGE_YS):
-        nm = f"WEDGE_{i:02d}"; _wedge(nm, y, 0.045, pine, coll); ids.append(nm)
+    # (firring strips removed on the owner's request - no extra boards on the beams)
     mat = _mat_sheet(); y0 = -Y_HALF
     for k in range(N_SHEETS):
         yc = y0 + k * (SHEET_W + GAP) + SHEET_W / 2; nm = f"SHEET_{k}"; _sheet(nm, yc, mat, coll); ids.append(nm)

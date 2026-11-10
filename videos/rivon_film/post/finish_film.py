@@ -13,11 +13,11 @@ HERE = os.path.dirname(os.path.abspath(__file__)); FD = os.path.join(HERE, "font
 CUTS = ()                     # lab-only film: one continuous take, no cuts
 TN = 8                                                              # frames on each side of a cut used by the push-through transition
 CTA_LINES = ("Jedno rozwiązanie.", "Wiele możliwości.")           # exact copy: "Jedno rozwiązanie. Wiele możliwości."
-D0, D1 = 836, 852            # darkening (fade to black)
-G0, G1 = 846, 860            # icon fades in
+D0, D1 = 652, 668            # darkening (fade to black)
+G0, G1 = 662, 676            # icon fades in
 M0, M1 = 0, 1                # (no glide in v6: the icon appears in place)
-W0, W1 = 856, 868            # wordmark
-C0 = 862                     # CTA lines (second one 6 frames later, 12-frame fades)
+W0, W1 = 672, 684            # wordmark
+C0 = 678                     # CTA lines (second one 6 frames later, 12-frame fades)
 ICON_FINAL = (0.5, 0.42, 0.25)          # centre x, centre y (fraction of frame), width (fraction of frame width)
 WORD_Y, WORD_W = 0.525, 0.44
 CTA_Y = 0.65
@@ -113,48 +113,38 @@ def endcard(a, f):
     return np.asarray(Image.alpha_composite(img, lay).convert("RGB"), np.float32) / 255.0
 
 
-# ---------------------------------------------------------------------------------------------- v6 lab -> yard ring transition
-T0, T1, YOFF = 548, 628, 1000
-def _cam(f):                                   # must match film_anim.camera_for_frame
-    import math
-    t = f / 899.0; a0 = math.radians(-62.0); ang = a0 + 2 * math.pi * t
-    r = 10.8 - 0.5 * math.sin(math.pi * t); h = 5.6 + 0.5 * math.sin(2 * math.pi * t - 0.6); tz = 1.3 + 0.3 * math.sin(math.pi * t)
-    return np.array([r * math.cos(ang), r * math.sin(ang), h]), np.array([0.0, 0.0, tz]), 27.0
-def ground_radius(f, w, h):
-    """per pixel: distance from the pergola centre of the point where the pixel's ray meets the floor (sky -> large, rising)."""
-    c, t, lens = _cam(f); fwd = t - c; fwd /= np.linalg.norm(fwd)
-    right = np.cross(fwd, [0, 0, 1.0]); right /= np.linalg.norm(right); up = np.cross(right, fwd)
-    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
-    sx = (xx + 0.5 - w / 2) / h * 36.0 / lens; sy = -(yy + 0.5 - h / 2) / h * 36.0 / lens
-    d = fwd[None, None, :] + sx[..., None] * right[None, None, :] + sy[..., None] * up[None, None, :]
-    dz = d[..., 2]; tt = np.where(dz < -1e-4, -c[2] / np.minimum(dz, -1e-4), np.inf)
-    gx = c[0] + d[..., 0] * tt; gy = c[1] + d[..., 1] * tt; R = np.hypot(gx, gy)
-    elev = np.arctan2(dz, np.hypot(d[..., 0], d[..., 1]))
-    Rg = np.where(R < 32, R, 40 - 8 * np.exp(-(np.where(np.isfinite(R), R, 1e6) - 32) / 20.0))          # far ground eases towards the horizon value
-    R = np.where(np.isfinite(R) & (dz < -1e-4), Rg, 40 + 220 * np.clip(elev, 0, None))                 # sky: from the horizon up, continuous
-    return R.astype(np.float32)
-def ring_mix(lab, yard, f):
-    h, w = lab.shape[:2]; u = (f - T0) / float(T1 - T0)
-    Rf = 0.6 + 112.0 * (u ** 2.1)                                     # slow start at the pergola, then sweeps out and up the sky
-    R = ground_radius(f, w, h)
-    soft = 0.6 + 0.08 * Rf
-    m = np.clip((Rf - R) / soft + 0.5, 0, 1); m = m * m * (3 - 2 * m)
-    band = np.exp(-((R - Rf) / (0.18 + 0.012 * Rf)) ** 2)
-    out = lab * (1 - m[..., None]) + yard * m[..., None]
-    glow = band[..., None] * np.array([0.80, 0.92, 1.0], np.float32) * (0.9 * (1 - u) + 0.35)
-    from scipy.ndimage import gaussian_filter
-    bloom = np.stack([gaussian_filter(glow[..., k], 6 * max(1, w / 540)) for k in range(3)], 2)
-    return np.clip(out + glow * 0.9 + bloom * 1.6, 0, 1)
+# ---------------------------------------------------------------------------------------------- v6b lab -> yard WHIP transition
+# The orbit camera whips ~110 deg in 20 frames (speed peaks at T_WHIP); the picture gets a horizontal motion blur that follows the
+# real angular speed, the two worlds cross-blend inside the blur (lab frames T-3..T-1 mixed with their yard renders f1000+), plus a
+# soft light streak.  Pergola stays centred, so it reads as one continuous move.
+T_WHIP, YOFF, WHIP_HALF = 336, 1000, 10.0
+def _e5(u): u = min(max(u, 0.0), 1.0); return u * u * u * (u * (6 * u - 15) + 10)
+def whip_speed(f):                     # extra degrees per frame from the whip at frame f
+    return 110.0 * (_e5((f + 0.5 - (T_WHIP - WHIP_HALF)) / (2 * WHIP_HALF)) - _e5((f - 0.5 - (T_WHIP - WHIP_HALF)) / (2 * WHIP_HALF)))
+def hblur(a, px):
+    """horizontal motion blur of px pixels (box kernel, done with cv2.blur on each channel)."""
+    k = int(max(1, round(px)))
+    if k <= 1: return a
+    return cv2.blur(a, (k, 1), borderType=cv2.BORDER_REFLECT)
+def whip(a, f):
+    h, w = a.shape[:2]; sp = whip_speed(f)
+    if sp < 0.4: return a
+    deg_per_px = (2 * np.degrees(np.arctan(18.0 / 27.0 * w / h))) / w        # horizontal FOV / width (lens ~27-30)
+    px = sp / deg_per_px * 0.9
+    out = hblur(a, px)
+    k = min(1.0, sp / 10.0)
+    streak = hblur(np.clip(a - 0.6, 0, 1), px * 1.6) * 0.9 * k                 # highlights smear into light streaks
+    return np.clip(out * (1 + 0.08 * k) + streak, 0, 1)
 
 
 def process(path, f):
-    if T0 <= f < T1:
+    a = grade(np.asarray(Image.open(path).convert("RGB"), np.float32) / 255.0)
+    if T_WHIP - 3 <= f < T_WHIP:                                     # cross-blend inside the blur
         yp = os.path.join(os.path.dirname(path), f"f{f + YOFF:04d}.png")
-        lab = grade(np.asarray(Image.open(path).convert("RGB"), np.float32) / 255.0)
         yard = grade(np.asarray(Image.open(yp).convert("RGB"), np.float32) / 255.0)
-        a = ring_mix(lab, yard, f); a = endcard(a, f)
-        return Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
-    return process_one(path, f)
+        m = (f - (T_WHIP - 3) + 1) / 4.0; a = a * (1 - m) + yard * m
+    a = whip(a, f); a = endcard(a, f)
+    return Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
 
 
 def process_one(path, f):

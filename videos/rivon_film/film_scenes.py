@@ -206,7 +206,7 @@ def set_yard(coll):
     P.potted(g, -12.5, -1.0, 0.7, 0.45, "tall", 5); P.potted(g, -12.5, 0.0, 0.7, 0.45, "tall", 6)
     g.flush()
     cyl("lamp_pole", 0.07, 6.0, (-12, -21.4, 3.0), mat_matte("pole", (0.1, 0.1, 0.11, 1), 0.4), coll, 12)
-    return dict(world=sky_world(1.6, 0.45, 1.0), exp=0.35, car=True, sun=(44, -28, 7.6, SUN_WARM))
+    return dict(world=sky_world(2.4, 0.35, 1.0), exp=0.6, car=True, sun=(50, -38, 9.5, (1.0, 0.9, 0.76)))   # bright sunny noon, sun on the camera side for most of the orbit
 
 
 

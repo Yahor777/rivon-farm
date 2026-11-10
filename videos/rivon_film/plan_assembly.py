@@ -87,7 +87,7 @@ STEPS_A = (
      ("lower", FRAME, "-z")] +
     [("mocow", [f"MOCOW_{s}_{i}"], "-z") for i in range(11) for s in ("L", "R")] +
     [("rafter", [f"RAFTER_{i}"], "-z") for i in range(11)] +
-    [("roof", [f"WEDGE_{j:02d}"], "-z") for j in range(13)] + [("roof", [f"SHEET_{j}"], "-z") for j in range(6)])
+    [("roof", [f"SHEET_{j}"], "-z") for j in range(6)])
 VEC = {"+z": (0, 0, 1), "-z": (0, 0, -1), "+x": (1, 0, 0), "-x": (-1, 0, 0), "+y": (0, 1, 0), "-y": (0, -1, 0)}
 placed = []; report = []; ok_all = True
 for stage, grp, dn in STEPS_A:
