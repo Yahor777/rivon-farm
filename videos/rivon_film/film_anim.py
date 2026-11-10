@@ -186,7 +186,7 @@ class Anim:
             if a >= S["app"]:
                 u = (a - S["app"]) / (S["seat"] - S["app"]); return c0 + Vector((0, 0, S["L"] * (1 - e_seat(u)))), q0, 1.0
             u = clamp01((a - S["leave"]) / (S["app"] - S["leave"]))
-            park = {"WEDGE": 12.0, "RAFTER": 9.0, "SHEET": 11.0}[pid.split("_")[0]]
+            park = {"WEDGE": 12.0, "RAFTER": 9.0, "SHEET": 16.0}[pid.split("_")[0]]          # sheets wait above the strip comb
             return c0 + Vector((0, 0, S["L"] + park * (1 - e_io5(u)))), q0, 1.0
         base = c0 + group_offset(S["groups"], a); d = S["dir"]; L = S["L"]
         if a >= S["seat"]: return base, q0, 0.0
