@@ -139,10 +139,10 @@ def whip(a, f):
 
 def process(path, f):
     a = grade(np.asarray(Image.open(path).convert("RGB"), np.float32) / 255.0)
-    if T_WHIP - 3 <= f < T_WHIP:                                     # cross-blend inside the blur
-        yp = os.path.join(os.path.dirname(path), f"f{f + YOFF:04d}.png")
-        yard = grade(np.asarray(Image.open(yp).convert("RGB"), np.float32) / 255.0)
-        m = (f - (T_WHIP - 3) + 1) / 4.0; a = a * (1 - m) + yard * m
+    if T_WHIP <= f < T_WHIP + 3:                                     # cross-blend inside the blur (lab renders of these frames are f2000+)
+        lp = os.path.join(os.path.dirname(path), f"f{f + 2000:04d}.png")
+        lab = grade(np.asarray(Image.open(lp).convert("RGB"), np.float32) / 255.0)
+        m = (f - T_WHIP + 1) / 4.0; a = lab * (1 - m) + a * m
     a = whip(a, f); a = endcard(a, f)
     return Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
 

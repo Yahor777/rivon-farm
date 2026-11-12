@@ -21,9 +21,9 @@ from film_lib import load_json
 FPS, NF = 30, 720
 LAB1 = (0, 899); SCENES = []; SCENE_LEN = 0; LAB2 = (900, 900)
 F_ASM_END = 300
-T_WHIP = 336                           # lab -> yard on the fastest frame of a whip pan; frames 1000+f (f = T_WHIP-3..T_WHIP-1) = yard renders for the cross-blend
-T_SWITCH0, T_SWITCH1 = T_WHIP - 3, T_WHIP
-YARD_OFFSET = 1000
+T_WHIP = 336                           # lab -> yard on the fastest frame of a whip pan; frames 2000+f (f = T_WHIP..T_WHIP+2) = LAB renders for the cross-blend
+T_SWITCH0, T_SWITCH1 = T_WHIP, T_WHIP + 3
+YARD_OFFSET = 1000; LAB_OFFSET = 2000
 LIFT, JOIN = 1.6, 2.0
 GROUP_T = {"join": (150.0, 172.0), "lift": (174.0, 204.0)}
 SLOWMO = []
@@ -221,22 +221,23 @@ class Anim:
             P, Q, k = self.pose(pid, a, s); self.place(pid, P, Q, k if self.S[pid].get("spin") else 0.0)
 
     def apply(self, f):
-        f = f - YARD_OFFSET if f >= YARD_OFFSET else f
+        f = f % 1000
         self.set_clock(float(min(f, F_ASM_END)))
 
 
 def env_for_frame(f):
+    if f >= LAB_OFFSET: return "lab"
     if f >= YARD_OFFSET: return "yard"
     return "lab" if f < T_WHIP else "yard"
 
 
 # ----------------------------------------------------------------------------------------------- the orbit (with a whip pan)
-ORBIT_A0, ORBIT_TURNS, WHIP_EXTRA, WHIP_HALF = math.radians(-62.0), 1.15, math.radians(110.0), 10.0
+ORBIT_A0, ORBIT_TURNS, WHIP_EXTRA, WHIP_HALF = math.radians(-1.0), 1.0166, math.radians(110.0), 10.0   # yard frames sweep -135..115 deg; the house stands in the free west sector
 def orbit_angle(f):
     base = ORBIT_A0 + 2 * math.pi * ORBIT_TURNS * f / (NF - 1)
     return base + WHIP_EXTRA * e_io5(clamp01((f - (T_WHIP - WHIP_HALF)) / (2 * WHIP_HALF)))     # speed peaks exactly at T_WHIP
 def camera_for_frame(f):
-    f = f - YARD_OFFSET if f >= YARD_OFFSET else f
+    f = f % 1000
     a = orbit_angle(f); t = f / (NF - 1)
     b = e_io(clamp01((f - T_WHIP) / 160.0))                              # after the whip: settle lower and closer, hero view of the carport
     r = 10.8 - 0.4 * math.sin(math.pi * t) - 0.5 * b

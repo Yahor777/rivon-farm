@@ -180,34 +180,61 @@ def set_carport(coll):
 
 
 def set_yard(coll):
-    """carport yard laid out for a 360-degree orbit (camera radius ~9.5 m): nothing taller than 1.2 m inside r = 10.5 m.
-    The pergola keeps its own assembled roof (profiled sheets) - no extra roof here."""
-    excl = [(-3.2, 3.2, -25, 3.8), (-12.6, -3.2, -1.3, 0.3), (-22.5, -12.6, -6, 10)]
-    base_ground(coll, blades=(-2, 2, 9.5, 10.5, 150000, 11), excl=excl)
+    """Polish family plot (działka) with the RIVON pergola as a CARPORT right next to the house: a narrow driveway runs from the street
+    gate straight under the pergola; a short paved path leads from the carport to the front door (4 m away), so the carport makes
+    sense.  Full garden around it.  Layout keeps the orbit clear: in the yard the camera sweeps bearings -110..115 deg at r ~10 m,
+    the house sits in the free west sector; nothing taller than ~1.2 m inside r = 9 m except the pergola itself."""
+    excl = [(-1.7, 1.7, -15.0, 3.2), (-16.0, -5.0, -5.4, 7.6), (-6.0, -1.6, 0.5, 1.9), (-40, 40, -22.0, -14.6)]
+    base_ground(coll, blades=(0, -1, 12.5, 12.5, 170000, 11), excl=excl)
     _horizon(coll, 11)
+    # --- hard surfaces: narrow driveway (3.2 m, only as wide as the carport bay), kerbs, door path, street, pavement
     drive = FS.paving((0.5, 0.5, 0.52), 0.55, "drive")
-    _pad(coll, "driveway", (6.4, 28.0), (0, -10.2), drive, 0.0)
-    _pad(coll, "path", (9.4, 1.5), (-7.9, -0.5), FS.paving((0.55, 0.53, 0.5), 0.6, "pathst"), 0.0)
-    box("kerb_l", (0.14, 28.0, 0.1), (-3.27, -10.2, 0.05), mat_matte("kerb", (0.6, 0.6, 0.6, 1), 0.8), coll, 0, 0.01); box("kerb_r", (0.14, 28.0, 0.1), (3.27, -10.2, 0.05), mat_matte("kerb", (0.6, 0.6, 0.6, 1), 0.8), coll, 0, 0.01)
-    _pad(coll, "road", (240, 9.0), (0, -28.5), FS.asphalt(), -0.05); _pad(coll, "pavement", (240, 2.4), (0, -22.6), FS.paving((0.62, 0.6, 0.57), 0.6, "pave"), 0.0)
-    FS.house_modern(coll, (-17.5, 1.5), 90, "villa", cladding=(0.5, 0.36, 0.25), plaster_col=(0.92, 0.91, 0.88), garage=False)
-    shrubs(coll, [(-12.2, y) for y in (-3.4, -2.3, 1.8, 2.9, 4.0, 5.1)], 1, 0.75, 0.45, "pink")
-    shrubs(coll, [(-12.2, y) for y in (-1.6, 0.6)], 2, 0.5, 0.35, "yellow")
-    FS.slat_fence(coll, (14.0, -22), (14.0, 13), 1.8, (0.58, 0.42, 0.28), "fenceR"); FS.hedge(coll, (-12.0, 13.0), (14.0, 13.0), 2.0, 1.1)
-    FS.slat_fence(coll, (-12.0, -22), (-12.0, -9), 1.6, (0.58, 0.42, 0.28), "fenceL")
+    _pad(coll, "driveway", (3.2, 18.4), (0, -5.9), drive, 0.0)
+    kerb = mat_matte("kerb", (0.62, 0.62, 0.61, 1), 0.8)
+    box("kerb_l", (0.12, 18.4, 0.08), (-1.66, -5.9, 0.04), kerb, coll, 0, 0.01); box("kerb_r", (0.12, 18.4, 0.08), (1.66, -5.9, 0.04), kerb, coll, 0, 0.01)
+    _pad(coll, "door_path", (4.4, 1.3), (-3.9, 1.2), FS.paving((0.6, 0.57, 0.52), 0.6, "pathst"), 0.0)
+    _pad(coll, "house_band", (1.2, 12.0), (-5.8, 1.2), FS.paving((0.6, 0.57, 0.52), 0.6, "pathst"), -0.001)
+    _pad(coll, "pavement", (240, 2.6), (0, -16.0), FS.paving((0.62, 0.6, 0.57), 0.6, "pave"), 0.0)
+    _pad(coll, "road", (240, 7.0), (0, -20.8), FS.asphalt(), -0.03)
+    # --- the house: classic Polish two-storey with a tiled roof, front door facing the carport
+    FS.house_traditional(coll, (-10.6, 1.2), 90, (0.94, 0.92, 0.87), (0.22, 0.21, 0.22), 10.5, 8.4, 2, 38, key="dom")
+    # --- boundary: street fence with a gate opening at the driveway, hedges at the side and back
+    FS.slat_fence(coll, (-16.0, -14.6), (-1.9, -14.6), 1.4, (0.27, 0.27, 0.28), "fenceS1"); FS.slat_fence(coll, (1.9, -14.6), (16.0, -14.6), 1.4, (0.27, 0.27, 0.28), "fenceS2")
+    for x in (-1.9, 1.9): box(f"gatepost{x}", (0.22, 0.22, 1.6), (x, -14.6, 0.8), mat_matte("gatepost", (0.32, 0.31, 0.3, 1), 0.7), coll, 0, 0.01)
+    FS.hedge(coll, (13.5, -14.0), (13.5, 13.5), 2.0, 1.0); FS.hedge(coll, (-16.0, 13.5), (13.5, 13.5), 2.0, 1.0)
+    FS.hedge(coll, (-16.0, -14.0), (-16.0, -7.0), 1.8, 0.9, key="hedgeW")
+    # --- neighbours and trees (all outside the camera ring)
+    FS.house_traditional(coll, (25.0, 0.0), -90, (0.9, 0.88, 0.8), (0.32, 0.14, 0.09), 10.0, 8.0, 2, 40, key="sasiad1")
+    FS.house_traditional(coll, (-6.0, -33.0), 180, (0.85, 0.86, 0.84), (0.2, 0.2, 0.22), 10.5, 8.2, 1, 42, key="sasiad2")
+    FS.house_traditional(coll, (14.0, -33.0), 180, (0.93, 0.88, 0.8), (0.35, 0.15, 0.1), 9.5, 8.0, 2, 38, key="sasiad3")
     bases = FS.tree_meshes(coll, 21, "broad", 2)
-    for p, s in (((-10.5, 15.5), 1.0), ((16.5, 5.0), 0.95), ((19.0, -12.0), 0.9), ((-3.0, 18.5), 1.1), ((17, 15), 1.2), ((-20, -10), 1.2), ((4.5, 16.5), 0.9)): FS.place_tree(coll, bases, (p[0], p[1], 0), p[0], s)
-    for p in ((-8, -26.0), (19, -19.5)): FS.place_tree(coll, bases, (p[0], p[1], 0), 1.0, 0.7)
-    shrubs(coll, [(5.6, -2.6), (5.9, -3.6)], 7, 0.45, 0.4, "violet")
-    g = P.G(coll, "carport_props", bevel=0.01)
-    for y in (-4.0, -8.0, -12.0, -16.0):       # driveway bollard lights
-        for x in (-3.0, 3.0): g.cyl((x, y, 0.3), 0.04, 0.6, "blacksteel", 10); g.cyl((x, y, 0.62), 0.05, 0.06, "lantern", 10)
-    g.box((5.6, 6.0, 0.55), (0.62, 0.62, 1.1), "graphite"); g.box((5.6, 6.0, 1.12), (0.66, 0.66, 0.05), "charcoal")      # wheelie bin
-    P.potted(g, -12.5, -1.0, 0.7, 0.45, "tall", 5); P.potted(g, -12.5, 0.0, 0.7, 0.45, "tall", 6)
+    for p_, sc_ in (((16.5, -8.0), 0.95), ((17.0, 7.0), 1.05), ((-3.0, 17.5), 1.1), ((9.0, 17.0), 0.95), ((-17.5, -11.0), 1.0), ((20.0, -18.0), 0.8), ((-20.0, 12.0), 1.15)):
+        FS.place_tree(coll, bases, (p_[0], p_[1], 0), p_[0], sc_)
+    # --- garden (low, inside the ring): flower beds along the drive, beds at the house, lawn furniture, play corner, veg beds
+    shrubs(coll, [(2.45, y) for y in (-12.5, -10.6, -8.7, -6.8, -4.9)], 3, 0.55, 0.42, "pink")
+    shrubs(coll, [(2.45, y) for y in (-11.55, -9.65, -7.75, -5.85)], 4, 0.45, 0.35, "yellow")
+    shrubs(coll, [(-2.45, y) for y in (-12.5, -10.0, -7.5, -5.0)], 5, 0.6, 0.45, "violet")
+    shrubs(coll, [(-5.7, y) for y in (-3.9, -2.7, 4.6, 5.8)], 1, 0.75, 0.45, "pink")
+    shrubs(coll, [(10.8, y) for y in (-11.0, -9.0, 9.5, 11.0)], 6, 0.9, 0.6, None)
+    g = P.G(coll, "yard_props", bevel=0.01)
+    for y in (-4.0, -7.5, -11.0):                                                   # low bollard lights along the drive
+        for x in (-2.0, 2.0): g.cyl((x, y, 0.3), 0.04, 0.6, "blacksteel", 10); g.cyl((x, y, 0.62), 0.05, 0.06, "lantern", 10)
+    for k, x in enumerate((-3.3, -4.0)):                                              # wheelie bins by the gate
+        g.box((x, -13.6, 0.55), (0.6, 0.6, 1.1), "graphite"); g.box((x, -13.6, 1.12), (0.64, 0.64, 0.05), "charcoal" if k else "green")
+    g.box((2.45, -14.2, 0.55), (0.1, 0.1, 1.1), "blacksteel"); g.box((2.45, -14.2, 1.2), (0.38, 0.22, 0.3), "graphite")    # letterbox
+    P.round_table(g, 7.6, 5.4, 0.45, 0.74, "teak")                                    # garden table set on the lawn
+    for ang in (0, 120, 240):
+        r_ = math.radians(ang); P.bistro_chair(g, 7.6 + 0.85 * math.cos(r_), 5.4 + 0.85 * math.sin(r_), ang + 180)
+    P.parasol(g, 7.6, 5.4, 2.4, 1.3, "cream")
+    P.trampoline(g, 8.2, -6.2, 1.5)
+    for k, y in enumerate((-1.8, 0.4)):                                               # raised vegetable beds
+        g.box((9.6, y, 0.2), (1.2, 1.8, 0.4), "teak"); g.box((9.6, y, 0.41), (1.05, 1.65, 0.04), "soil")
+        for j in range(4): g.blob((9.6 + (j % 2 - 0.5) * 0.45, y + (j // 2 - 0.5) * 0.7, 0.5), 0.18, "leaf", 40 + 4 * k + j, (1, 1, 0.8), 0.25)
+    P.potted(g, -5.3, 0.1, 0.8, 0.45, "tall", 5); P.potted(g, -5.3, 2.3, 0.8, 0.45, "tall", 6)
+    P.bench(g, -5.6, -1.6, 1.4, "y")
     g.flush()
-    cyl("lamp_pole", 0.07, 6.0, (-12, -21.4, 3.0), mat_matte("pole", (0.1, 0.1, 0.11, 1), 0.4), coll, 12)
-    return dict(world=sky_world(2.4, 0.35, 1.0), exp=0.6, car=True, sun=(50, -38, 9.5, (1.0, 0.9, 0.76)))   # bright sunny noon, sun on the camera side for most of the orbit
-
+    cyl("lamp_pole", 0.07, 6.0, (6.0, -16.4, 3.0), mat_matte("pole", (0.1, 0.1, 0.11, 1), 0.4), coll, 12)
+    return dict(world=sky_world(2.4, 0.35, 1.0), exp=0.6, car=True, sun=(50, -30, 9.5, (1.0, 0.9, 0.76)))   # bright sunny day, sun on the camera side
 
 
 # ================================================================================================ 2 BARBECUE (garden party: dining table, small kitchen, mangal, fire pit)
