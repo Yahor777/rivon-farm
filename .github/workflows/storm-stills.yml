@@ -32,11 +32,11 @@ jobs:
       - name: Free disk
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; df -h / | tail -1
-          sudo swapoff -a || true; sudo fallocate -l 24G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2; free -g
+          sudo swapoff -a || true; sudo fallocate -l 40G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2; free -g
       - name: Blender + assets
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libxext6 >/dev/null
-          cd /tmp && curl -sL -f --retry 3 -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz && tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender
+          cd /tmp && curl -sL -f --retry 6 --retry-all-errors --retry-delay 10 -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz && tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender
           L=$GITHUB_WORKSPACE/videos/storm/lib/polyhaven; mkdir -p $L
           for TAG in lib-set1 lib-set2 lib-set3 lib-set4; do
             gh release download $TAG -R ${{ github.repository }} -p 'polyhaven__*' -D /tmp/rel_$TAG
