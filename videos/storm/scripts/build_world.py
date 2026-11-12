@@ -316,19 +316,20 @@ def build_chairs(c, oak, steel):
     k = 0
     for sx in (-1, 1):
         for y in ((-0.72, 0.0, 0.72) if sx < 0 else (-0.78, 0.78)):
-            pull = 0.86 + float(S.RNG.uniform(0.0, 0.1))
-            chair(f"chair_{k}", c, oak, steel, (sx * pull, y + float(S.RNG.normal(0, 0.03)), 0.0),
-                  (math.pi if sx > 0 else 0.0) + float(S.RNG.normal(0, 0.06)))
+            pull = 0.86 + float(S.RNG.uniform(0.0, 0.1)); dy = float(S.RNG.normal(0, 0.03)); rz = float(S.RNG.normal(0, 0.06))
+            if sx < 0 and y == 0.0:          # the chair opposite the hero glass was just pushed back by someone getting up:
+                pull, dy, rz = 1.22, -0.3, 0.45 # keeps its back slats out of the glass reflection (were dark arcs in the wine)
+            chair(f"chair_{k}", c, oak, steel, (sx * pull, y + dy, 0.0), (math.pi if sx > 0 else 0.0) + rz)
             k += 1
 
 
 def build_tableware(c, ht):
     glass = S.mat_glass("wine_glass", (1, 1, 1, 1))
     wine = bpy.data.materials.new("red_wine"); wine.use_nodes = True; wb = S.principled(wine)
-    wb.inputs["Base Color"].default_value = (1.0, 0.92, 0.92, 1); wb.inputs["Transmission Weight"].default_value = 1.0
+    wb.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1); wb.inputs["Transmission Weight"].default_value = 1.0
     wb.inputs["IOR"].default_value = 1.35; wb.inputs["Roughness"].default_value = 0.0
-    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.74, 0.0, 0.07, 1)
-    vol.inputs["Density"].default_value = 900     # young red: near-opaque at 7 cm, ruby at the thin edge
+    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.885, 0.0, 0.38, 1)
+    vol.inputs["Density"].default_value = 700     # young red: near-opaque at 7 cm, ruby at the thin edge
     wine.node_tree.links.new(vol.outputs[0], wine.node_tree.nodes["Material Output"].inputs["Volume"])
     porcelain = S.mat_simple("porcelain", (0.86, 0.85, 0.82), rough=0.12, spec=0.5)
     pbz = S.principled(porcelain); pbz.inputs["Subsurface Weight"].default_value = 0.15
@@ -340,24 +341,37 @@ def build_tableware(c, ht):
     out = [(0.0001, 0), (0.0375, 0.0), (0.038, 0.002), (0.012, 0.004), (0.004, 0.012), (0.0032, 0.03), (0.0032, 0.09), (0.006, 0.1)]
     out += [(bowl_r(t), 0.1 + 0.125 * t) for t in np.linspace(0.02, 1.0, 34)]
     TW = 0.34                                                       # pour level (fraction of the bowl height)
-    ts_in = [t for t in np.linspace(1.0, 0.04, 34) if t > TW] + [TW]
-    # glass = outer skin + rim + inner skin only ABOVE the wine; below the line the wine object owns the interface
-    prof_wet = out + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in ts_in]
-    # dry glass (second glass, empty) keeps a full inner skin down to the bottom
-    prof_dry = out + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in np.linspace(1.0, 0.04, 34)] + [(0.0001, 0.104)]
-    ts_w = [t for t in np.linspace(0.04, 0.34, 14)]
-    wine_prof = [(0.0, 0.104)] + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in ts_w] + [(0.0, 0.1 + 0.125 * TW)]
+    MEN = 0.0018                                                    # meniscus: wine climbs 1.8 mm up the wetted glass wall
+    t_m = TW + MEN / 0.125
+    rin = lambda t: bowl_r(t) - 0.0011
+    ts_in = [t for t in np.linspace(1.0, 0.04, 40) if t > t_m] + [t_m]
+    # rounded rim (fire-polished), then inner skin only ABOVE the meniscus line; below it the wine object owns the interface
+    rim = [(bowl_r(1.0) - 0.00055 + 0.00045 * math.cos(a), 0.225 + 0.00045 * math.sin(a)) for a in np.linspace(0.0, math.pi, 7)[1:-1]]
+    prof_wet = out + rim + [(rin(t), 0.1 + 0.125 * t) for t in ts_in]
+    prof_dry = out + rim + [(rin(t), 0.1 + 0.125 * t) for t in np.linspace(1.0, 0.04, 40)] + [(0.0001, 0.104)]
+    z_top = 0.1 + 0.125 * TW
+    ts_w = list(np.linspace(0.04, t_m, 18))
+    side = [(0.0, 0.104)] + [(rin(t), 0.1 + 0.125 * t) for t in ts_w]
+    r_w = rin(t_m)
+    # meniscus profile: concave rise over ~3.5 mm (capillary length of wine ~2.7 mm)
+    men = [(r_w - d, z_top + MEN * math.exp(-d / 0.0011)) for d in (0.00015, 0.0004, 0.0008, 0.0014, 0.0022, 0.0035, 0.0055)]
+    wine_prof = side + men + [(0.0, z_top)]
+    n_side = len(side) - 1                                          # profile segments that touch glass (interface material)
     # glass->wine boundary: relative IOR 1.333/1.52 (no air film -> no false mirror); wine->air top: 1.333
     wine_side = wine.copy(); wine_side.name = "red_wine_glass_interface"
     S.principled(wine_side).inputs["IOR"].default_value = 1.333 / 1.52
     S.principled(wine).inputs["IOR"].default_value = 1.333
-    place = [(0.18, -0.18), (-0.22, 0.38)]   # glass 0 = hero glass near the sea-side edge
-    for k, (gx, gy) in enumerate(place):
-        g = S.lathe(f"wine_glass_{k}", prof_wet, c, glass); g.location = (gx + 0.12, gy + 0.2, ht)
+    place = [(0.18, -0.30), (-0.22, 0.38)]   # glass 0 = hero glass near the sea-side edge
+    goff = [(0.12, 0.32), (0.12, 0.2)]       # hero setting 12 cm further from its glass: plate rim + knife were refracting
+    for k, (gx, gy) in enumerate(place):     # through the wine as dark arcs in the macro
+        g = S.lathe(f"wine_glass_{k}", prof_wet, c, glass); g.location = (gx + goff[k][0], gy + goff[k][1], ht)
         w = S.lathe(f"wine_{k}", wine_prof, c, wine); w.location = g.location
         w.data.materials.append(wine_side)
-        for pl in w.data.polygons:                                  # side + bottom -> interface material, top disc -> air
-            pl.material_index = 0 if pl.normal.z > 0.99 else 1
+        nseg = len(wine_prof) - 1
+        for pl in w.data.polygons:                                  # faces are emitted segment-major per ring
+            k = pl.index % nseg
+            pl.material_index = 1 if k < n_side else 0
+        w.data.update()
         # dinner plate 27 cm with rim + side plate
         pl = S.lathe(f"plate_{k}", [(0.0001, 0.0), (0.06, 0.0), (0.062, 0.006), (0.105, 0.008), (0.135, 0.02), (0.1355, 0.022),
                                     (0.1325, 0.022), (0.104, 0.0115), (0.06, 0.0095), (0.0001, 0.0095)], c, porcelain)
@@ -381,10 +395,10 @@ def build_tableware(c, ht):
 def build_napkin(c, ht):
     """Linen napkin 45x45 cm, 1.2 mm, folded once; subdivided for cloth simulation (simulated in weather pass)."""
     lin = S.ph_material("rough_linen", "napkin_linen")
-    bpy.ops.mesh.primitive_grid_add(x_subdivisions=64, y_subdivisions=64, size=0.45, location=(0.25, -0.15, ht + 0.0025))
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=48, y_subdivisions=48, size=0.23, location=(0.17, -0.58, ht + 0.0025))   # folded in four, left of the hero plate (was under the hero glass: refracted as dark arcs)
     n = bpy.context.object; n.name = "napkin"; S.link(n, c); n.data.materials.append(lin)
     n.rotation_euler.z = math.radians(17)
-    so = n.modifiers.new("thick", "SOLIDIFY"); so.thickness = 0.0012
+    so = n.modifiers.new("thick", "SOLIDIFY"); so.thickness = 0.0045      # 4 layers of linen
     return n
 
 

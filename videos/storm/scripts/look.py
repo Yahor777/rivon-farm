@@ -38,11 +38,11 @@ def setup_render(w=540, h=960, spp=64, final=False, device="CPU"):
     sc.cycles.adaptive_threshold = 0.004 if final else 0.02
     sc.cycles.use_denoising = True; sc.cycles.denoiser = "OPENIMAGEDENOISE"
     sc.cycles.denoising_input_passes = "RGB_ALBEDO_NORMAL"
-    sc.cycles.max_bounces = 12; sc.cycles.diffuse_bounces = 4; sc.cycles.glossy_bounces = 6
-    sc.cycles.transmission_bounces = 12; sc.cycles.transparent_max_bounces = 16
+    sc.cycles.max_bounces = 24; sc.cycles.diffuse_bounces = 6; sc.cycles.glossy_bounces = 8
+    sc.cycles.transmission_bounces = 24; sc.cycles.transparent_max_bounces = 24   # glass+wine: up to 8 interfaces per path
     sc.cycles.caustics_reflective = False; sc.cycles.caustics_refractive = False
-    sc.cycles.blur_glossy = 0.5
-    sc.cycles.sample_clamp_indirect = 8.0
+    sc.cycles.blur_glossy = 0.2
+    sc.cycles.sample_clamp_indirect = 25.0      # 8 was dulling real sun glints on glass/water
     sc.view_settings.view_transform = "AgX"; sc.view_settings.look = "AgX - Base Contrast"
     sc.render.film_transparent = False
     sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.5     # 180-degree shutter
@@ -114,3 +114,34 @@ def build_clouds(kind="fair", seed=3):
         o.visible_shadow = True
     sc = bpy.context.scene; sc.cycles.volume_step_rate = 4.0 if S.PREVIEW else 1.0; sc.cycles.volume_max_steps = 256
     return c
+
+
+def render_haze_pass(path, visibility_km=20.0):
+    """Aerial-perspective factor per pixel, rendered as a cheap 2-spp pass with a material override:
+    f = 1 - exp(-d / L), L = visibility / 3 (Koschmieder). Sky pixels get 0 (the physical sky already contains the atmosphere).
+    The post step blends each pixel towards the horizon haze colour by f -> distant trees, houses and the pier lose
+    contrast and saturation exactly as much as their distance implies."""
+    sc = bpy.context.scene; vl = bpy.context.view_layer
+    m = bpy.data.materials.get("_haze_override")
+    if m is None:
+        m = bpy.data.materials.new("_haze_override"); m.use_nodes = True; N, L = m.node_tree.nodes, m.node_tree.links; N.clear()
+        out = N.new("ShaderNodeOutputMaterial"); em = N.new("ShaderNodeEmission"); cd = N.new("ShaderNodeCameraData")
+        div = N.new("ShaderNodeMath"); div.operation = "DIVIDE"; div.inputs[1].default_value = -visibility_km * 1000 / 3.0
+        ex = N.new("ShaderNodeMath"); ex.operation = "EXPONENT"
+        one = N.new("ShaderNodeMath"); one.operation = "SUBTRACT"; one.inputs[0].default_value = 1.0
+        L.new(cd.outputs["View Distance"], div.inputs[0]); L.new(div.outputs[0], ex.inputs[0]); L.new(ex.outputs[0], one.inputs[1])
+        L.new(one.outputs[0], em.inputs["Strength"]); L.new(em.outputs[0], out.inputs["Surface"])
+    saved = dict(vt=sc.view_settings.view_transform, look=sc.view_settings.look, ex=sc.view_settings.exposure,
+                 spp=sc.cycles.samples, dn=sc.cycles.use_denoising, world=sc.world, mb=sc.render.use_motion_blur,
+                 fp=sc.render.filepath, cd=sc.render.image_settings.color_depth, dof=sc.camera.data.dof.use_dof)
+    wd = bpy.data.worlds.get("_haze_world") or bpy.data.worlds.new("_haze_world"); wd.use_nodes = True
+    wd.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.0
+    vl.material_override = m; sc.world = wd
+    sc.view_settings.view_transform = "Standard"; sc.view_settings.look = "None"; sc.view_settings.exposure = 0.0
+    sc.cycles.samples = 2; sc.cycles.use_denoising = False; sc.render.use_motion_blur = False; sc.camera.data.dof.use_dof = False
+    sc.render.image_settings.color_depth = "16"; sc.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    vl.material_override = None; sc.world = saved["world"]
+    sc.view_settings.view_transform = saved["vt"]; sc.view_settings.look = saved["look"]; sc.view_settings.exposure = saved["ex"]
+    sc.cycles.samples = saved["spp"]; sc.cycles.use_denoising = saved["dn"]; sc.render.use_motion_blur = saved["mb"]
+    sc.render.filepath = saved["fp"]; sc.render.image_settings.color_depth = saved["cd"]; sc.camera.data.dof.use_dof = saved["dof"]

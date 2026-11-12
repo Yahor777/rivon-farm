@@ -12,8 +12,12 @@ import design as D
 bad = D.build_all_v2(with_pergola=shot not in ("s01", "wide", "glass", "glassbg"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
 D.realism_pass()
+import refine as RF
+for line in RF.apply_all():
+    pass
 LK.setup_sky(elev_deg=float(__import__("os").environ.get("SUN_EL", 32)), rot_deg=float(__import__("os").environ.get("SUN_ROT", 135)))
 LK.setup_render(w, h, spp)
+RF.render_v2()
 if __import__("os").environ.get("CLOUDS", "0") == "1":
     LK.build_clouds("fair")
 if shot == "s01":
@@ -31,13 +35,14 @@ elif shot == "glass":
     d.data.shade_smooth()
     import math as _m
     focus_far = len(sys.argv) > 6 and sys.argv[6] == "far"
-    dist = 0.30; cz = drop_z + 0.006                 # eye just above the wine: surface reads as a thin ellipse, drop above it
+    dist = 0.30; cz = drop_z + 0.024                 # eye 2.4 cm above the drop: at 6 mm the underside of the wine surface
+                                                     # (total internal reflection) mirrored the bowl as dark arcs
     if len(sys.argv) > 6 and sys.argv[6] == "tight":     # end of the push-in: the frozen drop fills the frame
         dz = drop_z + 0.0022
         LK.camera("CAM", (gx - 0.13, gy - 0.003, dz), (gx + 1.0, gy + 0.008, dz - 1.13 * _m.tan(_m.radians(2.0))),
                   lens=100, fstop=8.0, focus=0.132)
     else:
-        LK.camera("CAM", (gx - dist, gy - 0.004, cz), (gx + 1.0, gy + 0.115, cz - (1.0 + dist) * _m.tan(_m.radians(1.0))),
+        LK.camera("CAM", (gx - dist, gy - 0.004, cz), (gx + 1.0, gy + 0.115, cz - (1.0 + dist) * _m.tan(_m.radians(2.3))),
                   lens=50, fstop=11.0 if focus_far else 7.1, focus=60.0 if focus_far else dist)
 elif shot == "glassbg":
     g = bpy.data.objects["wine_glass_0"]; gx, gy, gz = g.location; wine_top = gz + 0.1 + 0.125 * 0.34
@@ -49,6 +54,8 @@ elif shot == "macro":
     LK.camera("CAM", (-1.05, -2.25, 2.25), (-1.72, -2.95, 2.47), lens=85, fstop=4.0)
 bpy.context.scene.render.filepath = out
 bpy.ops.render.render(write_still=True)
+if __import__("os").environ.get("AERIAL", "1") == "1":
+    LK.render_haze_pass(out.replace(".png", "_haze.png"))
 import numpy as np
 im = bpy.data.images.load(out); a = np.array(im.pixels[:]).reshape(-1, 4)[:, :3]
 print("MEAN", a.mean(0).round(3), "P99", np.percentile(a.mean(1), 99).round(3))

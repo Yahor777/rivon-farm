@@ -157,9 +157,10 @@ def build_planters():
                               ("c", (0.06, w - 0.12, h), (x - w / 2 + 0.03, y, h / 2)), ("d", (0.06, w - 0.12, h), (x + w / 2 - 0.03, y, h / 2))]:
             o = S.box(f"planter{k}_{nm}", size, loc, c, conc, bevel=0.004); S.uv_box(o, 2.0)
         sl = S.box(f"planter{k}_soil", (w - 0.12, w - 0.12, 0.02), (x, y, h - 0.06), c, soil); S.uv_box(sl, 2.0)
-        if s > 1:
-            for me in tree:
-                S.place(me, f"planter{k}_tree_{me.name}", (x, y, h - 0.06), c, 1.3 * k + 0.4, 0.46)
+        if s > 1:                                    # multi-stem specimen: two stems of the scan, rotated, slightly different size
+            for q, (rz, sc_, off) in enumerate(((1.3 * k + 0.4, 0.46, (0.0, 0.0)), (1.3 * k + 2.6, 0.40, (0.12, -0.1)))):
+                for me in tree:
+                    S.place(me, f"planter{k}_tree{q}_{me.name}", (x + off[0], y + off[1], h - 0.06), c, rz, sc_, tilt=0.04)
         for j in range(5 if s > 1 else 7):
             S.place(grass[rnd.integers(len(grass))], f"planter{k}_grass{j}",
                     (x + rnd.uniform(-w / 2.8, w / 2.8), y + rnd.uniform(-w / 2.8, w / 2.8), h - 0.06), c, rnd.uniform(0, 6.28),
@@ -176,7 +177,7 @@ def build_planters():
     for side in (-1, 1):
         b = S.box(f"band_bed{side}", (1.3, 6.4, 0.03), (DECK["x1"] + STEP_W + 0.8, side * 4.4, BW.ground_z(DECK["x1"] + 1.2) + 0.01), c, mulch)
         S.uv_box(b, 2.0)
-    for j, (x, y, s) in enumerate([(DECK["x1"] + 1.4, -2.2, 0.12), (DECK["x1"] + 1.0, 3.1, 0.09), (DECK["x1"] + 1.7, 5.6, 0.14)]):
+    for j, (x, y, s) in enumerate([]):          # boulders removed: at this scale they read as black lumps
         if rocks:
             S.place(rocks[0], f"band_rock{j}", (x, y, BW.ground_z(x, y) - 0.05), c, rnd.uniform(0, 6.28), s)
     # potted olive-like plants by the glazing (outside the pergola footprint)
