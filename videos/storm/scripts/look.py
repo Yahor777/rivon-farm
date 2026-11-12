@@ -138,7 +138,7 @@ def render_haze_pass(path, visibility_km=20.0):
     wd.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.0
     vl.material_override = m; sc.world = wd
     sc.view_settings.view_transform = "Standard"; sc.view_settings.look = "None"; sc.view_settings.exposure = 0.0
-    sc.cycles.samples = 2; sc.cycles.use_denoising = False; sc.render.use_motion_blur = False; sc.camera.data.dof.use_dof = False
+    sc.cycles.samples = 24; sc.cycles.use_denoising = True; sc.render.use_motion_blur = False   # keep DOF: the haze mask must be defocused exactly like the beauty, else sharp edges print onto a blurred background
     sc.render.image_settings.color_depth = "16"; sc.render.filepath = path
     bpy.ops.render.render(write_still=True)
     vl.material_override = None; sc.world = saved["world"]
