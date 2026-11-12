@@ -1,63 +1,63 @@
 {
- "name": "set2",
+ "name": "set3",
  "polyhaven": [
   {
-   "id": "coated_pine",
+   "id": "wood_floor_deck",
    "res": "4k",
    "fmt": "blend"
   },
   {
-   "id": "coated_pine_02",
+   "id": "concrete_panels",
    "res": "4k",
    "fmt": "blend"
   },
   {
-   "id": "stained_pine",
+   "id": "precast_concrete_wall",
    "res": "4k",
    "fmt": "blend"
   },
   {
-   "id": "fine_grained_wood",
+   "id": "smooth_concrete_floor",
    "res": "4k",
    "fmt": "blend"
   },
   {
-   "id": "white_oak_veneer",
-   "res": "4k",
-   "fmt": "blend"
-  },
-  {
-   "id": "mid_century_lounge_chair",
+   "id": "sofa_02",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "throw_pillows_01",
+   "id": "modern_coffee_table_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "potted_plant_04",
+   "id": "potted_plant_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "brass_candleholders",
+   "id": "planter_box_03",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "wooden_bowl_02",
+   "id": "modern_arm_chair_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "lemon",
+   "id": "side_table_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "planter_box_02",
+   "id": "wooden_lantern_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "planter_pot_clay",
    "res": "2k",
    "fmt": "blend"
   }
