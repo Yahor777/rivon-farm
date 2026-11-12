@@ -216,19 +216,25 @@ def set_yard(coll):
     shrubs(coll, [(-2.45, y) for y in (-12.5, -10.0, -7.5, -5.0)], 5, 0.6, 0.45, "violet")
     shrubs(coll, [(-5.7, y) for y in (-3.9, -2.7, 4.6, 5.8)], 1, 0.75, 0.45, "pink")
     shrubs(coll, [(10.8, y) for y in (-11.0, -9.0, 9.5, 11.0)], 6, 0.9, 0.6, None)
+    shrubs(coll, [(3.2, 9.4), (4.4, 9.8), (5.6, 9.2), (2.2, 8.6)], 8, 0.5, 0.4, "violet")          # flower bed north lawn
+    shrubs(coll, [(6.8, -2.8), (7.4, -1.9), (6.6, -1.0)], 9, 0.55, 0.4, "pink")                   # flower bed east lawn
+    shrubs(coll, [(4.2, -7.6), (4.9, -8.3)], 10, 0.5, 0.38, "yellow")
     g = P.G(coll, "yard_props", bevel=0.01)
     for y in (-4.0, -7.5, -11.0):                                                   # low bollard lights along the drive
         for x in (-2.0, 2.0): g.cyl((x, y, 0.3), 0.04, 0.6, "blacksteel", 10); g.cyl((x, y, 0.62), 0.05, 0.06, "lantern", 10)
     for k, x in enumerate((-3.3, -4.0)):                                              # wheelie bins by the gate
-        g.box((x, -13.6, 0.55), (0.6, 0.6, 1.1), "graphite"); g.box((x, -13.6, 1.12), (0.64, 0.64, 0.05), "charcoal" if k else "green")
+        g.box((x, -13.6, 0.55), (0.6, 0.6, 1.1), "graphite"); g.box((x, -13.6, 1.12), (0.64, 0.64, 0.05), "charcoal" if k else "olive")
     g.box((2.45, -14.2, 0.55), (0.1, 0.1, 1.1), "blacksteel"); g.box((2.45, -14.2, 1.2), (0.38, 0.22, 0.3), "graphite")    # letterbox
-    P.round_table(g, 7.6, 5.4, 0.45, 0.74, "teak")                                    # garden table set on the lawn
+    P.round_table(g, 3.3, 4.5, 0.45, 0.74, "teak")                                    # garden table set on the lawn (no parasol: it would block the orbit)
     for ang in (0, 120, 240):
-        r_ = math.radians(ang); P.bistro_chair(g, 7.6 + 0.85 * math.cos(r_), 5.4 + 0.85 * math.sin(r_), ang + 180)
-    P.parasol(g, 7.6, 5.4, 2.4, 1.3, "cream")
+        r_ = math.radians(ang); P.bistro_chair(g, 3.3 + 0.85 * math.cos(r_), 4.5 + 0.85 * math.sin(r_), ang + 180)
+    for k in range(4):                                                                # stepping stones: carport -> table
+        g.cyl((2.2 + k * 0.2, 1.4 + k * 0.6, 0.012), 0.2, 0.025, "stone_dark", 16)
+    g.box((6.4, -9.6, 0.25), (0.55, 0.42, 0.26), "red"); g.box((6.4, -10.05, 0.62), (0.04, 0.5, 0.8), "blacksteel")   # lawn mower
+    for (x, y) in ((6.9, -9.85), (6.9, -9.35), (5.9, -9.85), (5.9, -9.35)): g.cyl((x, y, 0.1), 0.1, 0.05, "rubber", 14, axis="x") if False else g.cyl((x, y, 0.1), 0.1, 0.05, "rubber", 14)
     P.trampoline(g, 8.2, -6.2, 1.5)
     for k, y in enumerate((-1.8, 0.4)):                                               # raised vegetable beds
-        g.box((9.6, y, 0.2), (1.2, 1.8, 0.4), "teak"); g.box((9.6, y, 0.41), (1.05, 1.65, 0.04), "soil")
+        g.box((9.6, y, 0.2), (1.2, 1.8, 0.4), "teak"); g.box((9.6, y, 0.41), (1.05, 1.65, 0.04), "coal")
         for j in range(4): g.blob((9.6 + (j % 2 - 0.5) * 0.45, y + (j // 2 - 0.5) * 0.7, 0.5), 0.18, "leaf", 40 + 4 * k + j, (1, 1, 0.8), 0.25)
     P.potted(g, -5.3, 0.1, 0.8, 0.45, "tall", 5); P.potted(g, -5.3, 2.3, 0.8, 0.45, "tall", 6)
     P.bench(g, -5.6, -1.6, 1.4, "y")
