@@ -1,63 +1,33 @@
 {
- "name": "set3",
+ "name": "set4",
  "polyhaven": [
   {
-   "id": "wood_floor_deck",
+   "id": "rosewood_veneer1",
    "res": "4k",
    "fmt": "blend"
   },
   {
-   "id": "concrete_panels",
-   "res": "4k",
-   "fmt": "blend"
-  },
-  {
-   "id": "precast_concrete_wall",
-   "res": "4k",
-   "fmt": "blend"
-  },
-  {
-   "id": "smooth_concrete_floor",
-   "res": "4k",
-   "fmt": "blend"
-  },
-  {
-   "id": "sofa_02",
+   "id": "island_tree_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "modern_coffee_table_01",
+   "id": "island_tree_02",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "potted_plant_01",
+   "id": "grass_bermuda_01",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "planter_box_03",
+   "id": "pine_sapling_medium",
    "res": "2k",
    "fmt": "blend"
   },
   {
-   "id": "modern_arm_chair_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "side_table_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "wooden_lantern_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "planter_pot_clay",
+   "id": "moss_01",
    "res": "2k",
    "fmt": "blend"
   }
