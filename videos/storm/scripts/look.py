@@ -47,6 +47,9 @@ def setup_render(w=540, h=960, spp=64, final=False, device="CPU"):
     sc.render.film_transparent = False
     sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.5     # 180-degree shutter
     sc.render.image_settings.file_format = "PNG"
+    import storm_lib as S
+    if S.PREVIEW:                     # low-RAM look-dev box: cap texture size (4k float EXR maps are ~270 MB each in RAM)
+        sc.render.use_simplify = True; sc.cycles.texture_limit_render = "1024"
     return sc
 
 

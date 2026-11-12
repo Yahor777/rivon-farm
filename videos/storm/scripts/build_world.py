@@ -450,13 +450,12 @@ def build_garden():
     _gp = lambda x, y: (x, y, ground_z(x, y))
     mulch = S.ph_material("forrest_ground_01", "bed_mulch")
     # planting beds: along the south terrace edge and a long border on the south boundary
-    beds = [(TER["x1"] + 0.15, TER["x1"] + 1.15, TER["y0"] - 0.2, TER["y1"] * 0.2),       # in front of the terrace (garden side)
-            (3.0, 9.0, -9.6, -8.2), (3.0, 9.0, 8.2, 9.6)]                                 # side borders
+    beds = [(5.5, 10.0, -9.6, -8.2), (5.5, 10.0, 8.2, 9.6)]                              # side borders (front band: design.py)
     for i, (xa, xb, ya, yb) in enumerate(beds):
         b = S.box(f"bed_{i}", (xb - xa, yb - ya, 0.04), ((xa + xb) / 2, (ya + yb) / 2, ground_z((xa + xb) / 2, (ya + yb) / 2) + 0.005), c, mulch); S.uv_box(b, 2.0)
     shrubs = (S.ph_variants("shrub_01") + S.ph_variants("shrub_02") + S.ph_variants("shrub_03") + S.ph_variants("shrub_04")
               + S.ph_variants("shrub_sorrel_01"))
-    flowers = S.ph_variants("celandine_01") + S.ph_variants("dandelion_01")
+    flowers = S.ph_variants("celandine_01")                     # no dandelions: a designed garden, not a meadow
     ferns = S.ph_variants("fern_02")
     meadow = S.ph_variants("grass_medium_02")
     n = 0
@@ -466,7 +465,7 @@ def build_garden():
             me = shrubs[rnd.integers(len(shrubs))]
             S.place(me, f"shrub_{n:04d}", _gp(rnd.uniform(xa, xb), rnd.uniform(ya, yb)), c, rnd.uniform(0, 6.28),
                     rnd.uniform(0.8, 1.35), tilt=0.05); n += 1
-        for _ in range(int(area * 6)):
+        for _ in range(int(area * 1.5)):
             me = flowers[rnd.integers(len(flowers))]
             S.place(me, f"flower_{n:04d}", _gp(rnd.uniform(xa, xb), rnd.uniform(ya, yb)), c, rnd.uniform(0, 6.28),
                     rnd.uniform(0.7, 1.2), tilt=0.08); n += 1

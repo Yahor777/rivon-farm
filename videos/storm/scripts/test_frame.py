@@ -8,15 +8,15 @@ out = args[0]; w, h, spp = (int(args[1]), int(args[2]), int(args[3])) if len(arg
 shot = args[4] if len(args) > 4 else "s01"
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import build_world as BW, look as LK
-BW.build_house(); BW.build_ground(); BW.build_table(); BW.build_garden(); BW.build_fence(); BW.build_surroundings(); BW.build_coast()
-if shot not in ("s01", "wide", "glass", "glassbg"):      # before the storm the terrace is still open (pergola arrives in the time-freeze)
-    BW.build_pergola()
-LK.setup_sky(elev_deg=20, rot_deg=125)
+import design as D
+bad = D.build_all_v2(with_pergola=shot not in ("s01", "wide", "glass", "glassbg"))   # pergola arrives in the time-freeze
+print("PERGOLA_ZONE_CONFLICTS", bad)
+LK.setup_sky(elev_deg=float(__import__("os").environ.get("SUN_EL", 12)), rot_deg=float(__import__("os").environ.get("SUN_ROT", 145)))
 LK.setup_render(w, h, spp)
 if shot == "s01":
     LK.camera("CAM", (2.15, -2.55, 1.06), (-1.5, 1.0, 1.0), lens=32, fstop=3.5, focus=3.0)
 elif shot == "wide":
-    LK.camera("CAM", (5.9, -4.6, 1.45), (-2.6, 0.7, 2.0), lens=26, fstop=8.0, focus=8.0)
+    LK.camera("CAM", (7.4, -5.6, 1.25), (-2.4, 0.9, 2.05), lens=24, fstop=8.0, focus=9.5)
 elif shot == "glass":
     import storm_lib as S
     g = bpy.data.objects["wine_glass_0"]; gx, gy, gz = g.location
