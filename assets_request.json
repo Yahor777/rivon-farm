@@ -1,1 +1,225 @@
-{"name":"cat1","catalog":true}
+{
+ "name": "set1",
+ "polyhaven": [
+  {
+   "id": "pine_tree_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "fir_tree_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "tree_small_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "shrub_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "shrub_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "shrub_03",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "shrub_04",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "shrub_sorrel_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "grass_medium_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "grass_medium_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "celandine_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "dandelion_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "periwinkle_plant",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "fern_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "rock_moss_set_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "boulder_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "dry_branches_medium_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "potted_plant_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "planter_box_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "outdoor_table_chair_set_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "dining_table",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wooden_table_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "modern_ceiling_lamp_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "Lantern_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "ceramic_vase_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wooden_bowl_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "jug_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wine_bottles_01",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "large_floor_tiles_02",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "large_grey_tiles",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "granite_tile",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "white_plaster_02",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "white_rough_plaster",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "exterior_wall_cladding",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wood_table_001",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "oak_veneer_01",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wood_planks",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "rough_linen",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "box_profile_metal_sheet",
+   "res": "4k",
+   "fmt": "blend"
+  },
+  {
+   "id": "forrest_ground_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "rocks_ground_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "gravelly_sand",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "concrete_floor_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "concrete_tile_facade",
+   "res": "2k",
+   "fmt": "blend"
+  }
+ ]
+}
