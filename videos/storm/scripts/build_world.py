@@ -257,6 +257,8 @@ def build_lawn(c):
 def build_table():
     c = fresh("TABLE")
     oak = S.ph_material("oak_veneer_01", "table_oak")
+    if "tinted" not in oak:                          # natural oiled oak (the raw scan reads pale / unfinished)
+        S.tint(oak, (0.86, 0.70, 0.54), gain=0.95); oak["tinted"] = 1
     steel = S.mat_powder_coat()
     L, W, Ht, T = 2.2, 0.98, 0.75, 0.045
     # solid oak top from 5 glued staves (each own grain patch) with eased edges
@@ -325,8 +327,8 @@ def build_tableware(c, ht):
     wine = bpy.data.materials.new("red_wine"); wine.use_nodes = True; wb = S.principled(wine)
     wb.inputs["Base Color"].default_value = (1.0, 0.92, 0.92, 1); wb.inputs["Transmission Weight"].default_value = 1.0
     wb.inputs["IOR"].default_value = 1.35; wb.inputs["Roughness"].default_value = 0.0
-    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.86, 0.004, 0.07, 1)
-    vol.inputs["Density"].default_value = 260     # young red: near-opaque at 7 cm, ruby at the thin edge
+    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.74, 0.0, 0.07, 1)
+    vol.inputs["Density"].default_value = 900     # young red: near-opaque at 7 cm, ruby at the thin edge
     wine.node_tree.links.new(vol.outputs[0], wine.node_tree.nodes["Material Output"].inputs["Volume"])
     porcelain = S.mat_simple("porcelain", (0.86, 0.85, 0.82), rough=0.12, spec=0.5)
     pbz = S.principled(porcelain); pbz.inputs["Subsurface Weight"].default_value = 0.15

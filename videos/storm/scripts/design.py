@@ -51,7 +51,7 @@ def build_deck():
     rnd = S.RNG
     base = S.ph_material("oak_veneer_01", "thermo_ash_base")
     if "tinted" not in base:                       # thermo-treated ash: deep honey-brown, oiled (satin), open grain
-        S.tint(base, (0.56, 0.43, 0.33), gain=0.95); base["tinted"] = 1
+        S.tint(base, (0.50, 0.35, 0.24), gain=0.9)      # thermo-ash is a deep brown, not pale pine; base["tinted"] = 1
         pb = S.principled(base)
         if not pb.inputs["Roughness"].is_linked:
             pb.inputs["Roughness"].default_value = 0.55
@@ -146,7 +146,7 @@ def build_planters():
     """Precast concrete planters (1.2 x 1.2 x 0.6 m, 6 cm walls) with multi-stem trees + grasses, outside the pergola zone."""
     c = BW.fresh("PLANTERS")
     rnd = S.RNG
-    conc = _tinted("precast_concrete_wall", "planter_concrete", (0.56, 0.545, 0.52), 0.55)
+    conc = _tinted("smooth_concrete_floor", "planter_concrete", (0.50, 0.49, 0.47), 0.6)   # smooth cast, no fake block pattern
     soil = _tinted("forrest_ground_01", "planter_soil", (0.08, 0.065, 0.05), 0.6)
     tree = S.ph_variants("tree_small_02")
     grass = S.ph_variants("grass_medium_02")
@@ -206,7 +206,7 @@ def build_house():
     render = S.ph_material("white_plaster_02", "facade_plaster")
     if "tinted" not in render:
         S.calm_albedo(render, (0.79, 0.775, 0.74), keep=0.22); render["tinted"] = 1
-    conc = _tinted("precast_concrete_wall", "facade_architectural_concrete", (0.50, 0.49, 0.47), 0.75)
+    conc = _tinted("smooth_concrete_floor", "facade_architectural_concrete", (0.54, 0.53, 0.51), 0.65)
     larch = S.ph_material("oak_veneer_01", "facade_larch")
     frame = S.mat_simple("alu_RAL7021", (0.018, 0.019, 0.021), rough=0.38, metal=0.9)
     glass = S.mat_glass("window_glass", (0.93, 0.96, 0.95, 1))
@@ -375,7 +375,11 @@ def chair_v2(name, c, oak, steel, loc, rot):
     """Danish-style outdoor dining chair: round tapered teak legs splayed 3 deg, seat of 6 crowned slats on rails,
     laminated curved back band on two raked rear posts. Every slat its own grain patch."""
     e = bpy.data.objects.new(name, None); c.objects.link(e); e.location = loc; e.rotation_euler.z = rot
-    teak = S.mat_variant(oak, f"{name}_teak", hue_shift=-0.006, val=0.78)
+    tb = bpy.data.materials.get("teak_base")
+    if tb is None:                                   # oiled teak: warm honey-brown, richer than the table oak
+        tb = oak.copy(); tb.name = "teak_base"; S.tint(tb, (0.66, 0.44, 0.27), gain=0.85)
+    oak = tb
+    teak = S.mat_variant(oak, f"{name}_teak", hue_shift=-0.004, val=0.92)
     sh, sw, sd = 0.45, 0.47, 0.46
     def add(o):
         o.parent = e; return o
@@ -389,7 +393,7 @@ def chair_v2(name, c, oak, steel, loc, rot):
     add(S.box(f"{name}_railB", (0.022, sw - 0.09, 0.05), (-sd / 2 + 0.035, 0, sh - 0.055), c, teak, bevel=0.004, seg=3))
     for k in range(6):
         sl = add(S.box(f"{name}_seat{k}", (0.066, sw - 0.012, 0.021), (sd / 2 - 0.045 - k * 0.075, 0, sh - 0.0105), c, None, bevel=0.006, seg=4))
-        sl.data.materials.append(S.mat_variant(oak, f"{name}_slat{k}", hue_shift=-0.006, val=float(S.RNG.normal(0.78, 0.05)),
+        sl.data.materials.append(S.mat_variant(oak, f"{name}_slat{k}", hue_shift=-0.004, val=float(S.RNG.normal(0.95, 0.05)),
                                                uv_offset=(float(S.RNG.random()), float(S.RNG.random()))))
         S.uv_box(sl, 1.83)
     band = add(_bent_band(f"{name}_back", c, 0.55, 48, 0.12, 0.018, (-sd / 2 - 0.065, 0), 0.66, teak))
