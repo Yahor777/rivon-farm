@@ -151,6 +151,10 @@ def ph_variants(aid, lod=None, prefix=None):
     for c in dst.collections:
         for o in c.all_objects:
             if o.type == "MESH" and (prefix is None or o.name.startswith(prefix)):
+                # some Poly Haven grass/shrub files ship a dark "sphere" helper (impostor / preview ball) inside the
+                # LOD collection; instanced in the scene it rendered as a black dome in the lawn and on the planter
+                if o.name.lower().startswith("sphere") or any(m and "sphere" in m.name.lower() for m in o.data.materials):
+                    continue
                 meshes.append(o.data)
         for o in list(c.all_objects):
             bpy.data.objects.remove(o, do_unlink=True)

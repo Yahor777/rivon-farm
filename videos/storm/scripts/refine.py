@@ -122,14 +122,14 @@ def build_lawn_v2():
     specs = [  # name, parents, length, rand, radius, mat colours (tip, mid, root), tilt
         ("lawn_fine", 200000 if not S.PREVIEW else 60000, 0.042, 0.55, 0.0011, ((0.20, 0.32, 0.07), (0.10, 0.20, 0.035), (0.03, 0.055, 0.012)), 0.020),
         ("lawn_rye", 60000 if not S.PREVIEW else 18000, 0.070, 0.6, 0.0016, ((0.24, 0.33, 0.09), (0.09, 0.18, 0.03), (0.03, 0.05, 0.012)), 0.030),
-        ("lawn_seed", 4000 if not S.PREVIEW else 1500, 0.11, 0.5, 0.0012, ((0.42, 0.40, 0.20), (0.18, 0.22, 0.07), (0.05, 0.07, 0.02)), 0.045),
+        ("lawn_seed", 1500 if not S.PREVIEW else 600, 0.075, 0.5, 0.0012, ((0.42, 0.40, 0.20), (0.18, 0.22, 0.07), (0.05, 0.07, 0.02)), 0.045),
     ]
     for k, (nm, cnt, ln, rr, rad, cols, tilt) in enumerate(specs):
         mat = blade_mat(f"grass_{nm}", *cols); lawn.data.materials.append(mat)
         ps = lawn.modifiers.new(nm, "PARTICLE_SYSTEM").particle_system; st = bpy.data.particles.new(nm); ps.settings = st
         st.type = "HAIR"; st.count = cnt; st.hair_length = ln; st.use_advanced_hair = True; st.hair_step = 5
         st.material = len(lawn.data.materials); st.emit_from = "FACE"; st.use_emit_random = True; st.use_even_distribution = False
-        st.child_type = "INTERPOLATED"; st.child_percent = 4; st.rendered_child_count = 4 if not S.PREVIEW else 2
+        st.child_type = "INTERPOLATED"; st.child_percent = 4; st.rendered_child_count = ({"lawn_fine": 14, "lawn_rye": 8}.get(nm, 2)) if not S.PREVIEW else 2
         st.child_parting_factor = 0.0; st.clump_factor = 0.0; st.child_length = 1.0; st.child_length_threshold = 0.25
         st.length_random = rr; st.child_radius = 0.06
         # every blade leans its own way and bends (no combed 'hair'): random initial velocity + roughness + endpoint droop
