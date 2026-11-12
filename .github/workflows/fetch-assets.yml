@@ -1,0 +1,24 @@
+name: fetch-assets
+# Downloads free CC0 assets (Poly Haven, ambientCG) on the runner, which has open internet.
+# Push a branch assets/<name> with assets_request.json:
+#  {"name":"cat1","catalog":true}                                    -> branch lib/cat1 with catalog JSONs
+#  {"name":"set1","polyhaven":[{"id":"x","res":"4k","fmt":"blend"}],"ambientcg":[{"id":"Wood049","res":"4K"}]}
+on:
+  push:
+    branches: ['assets/**']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        run: python3 tools/fetch_assets.py assets_request.json out
+      - name: Push to lib branch
+        run: |
+          NAME=$(jq -r .name assets_request.json); B=lib/$NAME
+          cd out && du -sh . && git init -q -b $B && git config user.name ci && git config user.email ci@example.com
+          git add -A && git commit -q -m "assets $NAME"
+          for t in 1 2 3 4; do git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" $B && break; sleep $((t*15)); done
