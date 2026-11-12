@@ -31,6 +31,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Free disk
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; df -h / | tail -1
+          sudo swapoff -a || true; sudo fallocate -l 24G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2; free -g
       - name: Blender + assets
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libxext6 >/dev/null
@@ -47,8 +48,17 @@ jobs:
           cd videos/storm
           W=$(jq -r .w stills.json); H=$(jq -r .h stills.json); SPP=$(jq -r .spp stills.json); NAME=$(jq -r .name stills.json)
           mkdir -p /tmp/out
-          TEX_LIMIT=2048 STORM_QUALITY=final /tmp/blender/blender -b --python-exit-code 1 -P scripts/test_frame_blender.py -- /tmp/out/${{ matrix.shot }}_raw.png $W $H $SPP ${{ matrix.shot }} 2>&1 | grep -vE "Fra:|Sample " | tail -40
+          (while true; do echo "MEM $(date +%T) $(free -m | awk 'NR==2{print $3"M used"} NR==3{print "swap "$3"M"}' | tr '\n' ' ')" >> /tmp/out/mem.log; sleep 30; done) &
+          set -o pipefail
+          TEX_LIMIT=2048 STORM_QUALITY=final /tmp/blender/blender -b --python-exit-code 1 -P scripts/test_frame_blender.py -- /tmp/out/${{ matrix.shot }}_raw.png $W $H $SPP ${{ matrix.shot }} > /tmp/out/${{ matrix.shot }}_blender.log 2>&1 || { tail -60 /tmp/out/${{ matrix.shot }}_blender.log; tail -20 /tmp/out/mem.log; exit 1; }
+          grep -vE "Fra:|Sample " /tmp/out/${{ matrix.shot }}_blender.log | tail -40; tail -5 /tmp/out/mem.log
           python3 scripts/post_photo.py /tmp/out/${{ matrix.shot }}_raw.png /tmp/out/${{ matrix.shot }}_photo.png --seed 7
+      - name: Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-${{ matrix.shot }}
+          path: /tmp/out/*.log
       - name: Publish
         run: |
           NAME=$(jq -r .name videos/storm/stills.json); TAG=stills-$NAME
