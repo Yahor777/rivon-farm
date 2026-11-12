@@ -18,7 +18,7 @@ if shot == "s01":
 elif shot == "s09":
     LK.camera("CAM", (9.5, -6.5, 1.7), (-1.0, 0.3, 1.6), lens=32, fstop=8)
 elif shot == "macro":
-    LK.camera("CAM", (-1.05, -2.35, 2.35), (-1.75, -2.98, 2.45), lens=90, fstop=4.0)
+    LK.camera("CAM", (-1.05, -2.25, 2.25), (-1.72, -2.95, 2.47), lens=85, fstop=4.0)
 bpy.context.scene.render.filepath = out
 bpy.ops.render.render(write_still=True)
 import numpy as np

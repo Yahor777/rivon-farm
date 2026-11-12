@@ -96,6 +96,9 @@ def ph_material(aid, name=None):
     mats = [m for m in dst.materials if m]
     m = max(mats, key=lambda m: len(m.node_tree.nodes) if m.use_nodes else 0)
     m.name = key
+    # Poly Haven ships true displacement; on low-poly boxes it pushes whole faces outward by centimetres (a beam would swallow
+    # the 2 mm RIVON socket wall). Height becomes bump only: geometry stays exactly where the CAD layout puts it.
+    m.displacement_method = "BUMP"
     for im in bpy.data.images:                        # make texture paths absolute to the unpacked asset folder
         if im.filepath.startswith("//"):
             im.filepath = str(Path(path).parent / im.filepath[2:])

@@ -259,7 +259,50 @@ def build_table():
                               ("foot", (W - 0.12, 0.04, 0.02), (0, y, 0.01))]:
             S.box(f"{nm}{sy}", size, loc, c, steel, bevel=0.003)
     build_tableware(c, Ht)
+    build_napkin(c, Ht)
+    build_chairs(c, oak, steel)
+    vase = S.ph_variants("ceramic_vase_01")
+    if vase:
+        v = S.place(vase[0], "vase", (-0.12, 0.35, Ht), c, 0.4, 0.75)
     return c
+
+
+def chair(name, c, oak, steel, loc, rot):
+    """Modern outdoor dining chair: 25x25 powder-coated steel frame, 5 oak seat slats, 3 back slats, back raked 9 deg."""
+    e = bpy.data.objects.new(name, None); c.objects.link(e); e.location = loc; e.rotation_euler.z = rot
+    sh, sw, sd = 0.455, 0.46, 0.47
+    parts = []
+    def add(o):
+        o.parent = e; parts.append(o); return o
+    for sx in (-1, 1):
+        add(S.box(f"{name}_legF{sx}", (0.025, 0.025, sh - 0.02), (sd / 2 - 0.02, sx * (sw / 2 - 0.0125), (sh - 0.02) / 2), c, steel, bevel=0.003))
+        rl = add(S.box(f"{name}_legB{sx}", (0.025, 0.025, 0.86), (-sd / 2 + 0.02, sx * (sw / 2 - 0.0125), 0.43), c, steel, bevel=0.003))
+        rl.rotation_euler.y = math.radians(-4)
+        add(S.box(f"{name}_rail{sx}", (sd - 0.04, 0.025, 0.03), (0, sx * (sw / 2 - 0.0125), sh - 0.035), c, steel, bevel=0.003))
+    add(S.box(f"{name}_railF", (0.025, sw - 0.05, 0.03), (sd / 2 - 0.02, 0, sh - 0.035), c, steel, bevel=0.003))
+    for k in range(5):
+        sl = add(S.box(f"{name}_seat{k}", (0.082, sw - 0.01, 0.02), (sd / 2 - 0.05 - k * 0.09, 0, sh - 0.01), c, None, bevel=0.003))
+        sl.data.materials.append(S.mat_variant(oak, f"{name}_oak_s{k}", val=float(S.RNG.normal(1.0, 0.05)),
+                                               uv_offset=(float(S.RNG.random()), float(S.RNG.random()))))
+        S.uv_box(sl, 1.83)
+    for k in range(3):
+        z = sh + 0.13 + k * 0.1
+        bs = add(S.box(f"{name}_back{k}", (0.018, sw - 0.02, 0.075), (-sd / 2 + 0.005 - (z - sh) * math.tan(math.radians(9)), 0, z), c, None, bevel=0.003))
+        bs.rotation_euler.y = math.radians(-9)
+        bs.data.materials.append(S.mat_variant(oak, f"{name}_oak_b{k}", val=float(S.RNG.normal(1.0, 0.05)),
+                                               uv_offset=(float(S.RNG.random()), float(S.RNG.random()))))
+        S.uv_box(bs, 1.83)
+    return e
+
+
+def build_chairs(c, oak, steel):
+    k = 0
+    for sx in (-1, 1):
+        for y in (-0.72, 0.0, 0.72):
+            pull = 0.86 + float(S.RNG.uniform(0.0, 0.1))
+            chair(f"chair_{k}", c, oak, steel, (sx * pull, y + float(S.RNG.normal(0, 0.03)), 0.0),
+                  (math.pi if sx > 0 else 0.0) + float(S.RNG.normal(0, 0.06)))
+            k += 1
 
 
 def build_tableware(c, ht):
