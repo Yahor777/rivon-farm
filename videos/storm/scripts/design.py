@@ -333,3 +333,89 @@ def build_all_v2(with_pergola=False):
     if with_pergola:
         BW.build_pergola()
     return validate_layout()
+
+
+# ------------------------------------------------------------------ chair v2 (replaces the box-built chair)
+def _round_member(name, c, p0, p1, r0, r1, mat, seg=20):
+    """Tapered round member (turned leg / steel rod) between two points."""
+    p0, p1 = Vector(p0), Vector(p1); d = p1 - p0; L = d.length
+    bpy.ops.mesh.primitive_cone_add(vertices=seg, radius1=r0, radius2=r1, depth=L, location=(p0 + p1) / 2)
+    o = bpy.context.object; o.name = name; S.link(o, c); o.data.materials.append(mat)
+    o.rotation_euler = d.to_track_quat("Z", "Y").to_euler()
+    bv = o.modifiers.new("ease", "BEVEL"); bv.width = min(r0, r1) * 0.35; bv.segments = 3; bv.limit_method = "ANGLE"
+    o.data.shade_smooth(); wn = o.modifiers.new("wn", "WEIGHTED_NORMAL"); wn.keep_sharp = True
+    return o
+
+
+def _bent_band(name, c, radius, span_deg, height, thick, center, z0, mat, rake_deg=10.0, seg=40):
+    """Steam-bent / laminated back rest: an arc of `span_deg` with real thickness, raked backwards."""
+    bm = bmesh.new(); rows = []
+    for i in range(seg + 1):
+        a = math.radians(-span_deg / 2 + span_deg * i / seg)
+        ring = []
+        for rr in (radius, radius + thick):
+            for z in (0.0, height):
+                ring.append(bm.verts.new((-rr * math.cos(a) + radius, rr * math.sin(a), z)))
+        rows.append(ring)
+    for i in range(seg):
+        a, b = rows[i], rows[i + 1]
+        for (p, q) in ((0, 1), (1, 3), (3, 2), (2, 0)):
+            bm.faces.new([a[p], b[p], b[q], a[q]])
+    bm.faces.new([rows[0][0], rows[0][1], rows[0][3], rows[0][2]]); bm.faces.new([rows[-1][2], rows[-1][3], rows[-1][1], rows[-1][0]])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(name, me); c.objects.link(o); me.materials.append(mat)
+    o.location = (center[0], center[1], z0); o.rotation_euler.y = math.radians(-rake_deg)
+    bv = o.modifiers.new("ease", "BEVEL"); bv.width = 0.004; bv.segments = 3; bv.limit_method = "ANGLE"
+    me.shade_smooth(); wn = o.modifiers.new("wn", "WEIGHTED_NORMAL"); wn.keep_sharp = True
+    return o
+
+
+def chair_v2(name, c, oak, steel, loc, rot):
+    """Danish-style outdoor dining chair: round tapered teak legs splayed 3 deg, seat of 6 crowned slats on rails,
+    laminated curved back band on two raked rear posts. Every slat its own grain patch."""
+    e = bpy.data.objects.new(name, None); c.objects.link(e); e.location = loc; e.rotation_euler.z = rot
+    teak = S.mat_variant(oak, f"{name}_teak", hue_shift=-0.006, val=0.78)
+    sh, sw, sd = 0.45, 0.47, 0.46
+    def add(o):
+        o.parent = e; return o
+    for sy in (-1, 1):
+        fx, fy = sd / 2 - 0.035, sy * (sw / 2 - 0.035)
+        add(_round_member(f"{name}_legF{sy}", c, (fx + 0.012, fy + sy * 0.012, 0.0), (fx, fy, sh - 0.03), 0.013, 0.017, teak))
+        bx = -sd / 2 + 0.04
+        add(_round_member(f"{name}_legB{sy}", c, (bx - 0.03, fy + sy * 0.012, 0.0), (bx - 0.075, fy, 0.80), 0.013, 0.015, teak))
+        add(S.box(f"{name}_rail{sy}", (sd - 0.05, 0.022, 0.05), (0, fy, sh - 0.055), c, teak, bevel=0.004, seg=3))
+    add(S.box(f"{name}_railF", (0.022, sw - 0.09, 0.05), (sd / 2 - 0.035, 0, sh - 0.055), c, teak, bevel=0.004, seg=3))
+    add(S.box(f"{name}_railB", (0.022, sw - 0.09, 0.05), (-sd / 2 + 0.035, 0, sh - 0.055), c, teak, bevel=0.004, seg=3))
+    for k in range(6):
+        sl = add(S.box(f"{name}_seat{k}", (0.066, sw - 0.012, 0.021), (sd / 2 - 0.045 - k * 0.075, 0, sh - 0.0105), c, None, bevel=0.006, seg=4))
+        sl.data.materials.append(S.mat_variant(oak, f"{name}_slat{k}", hue_shift=-0.006, val=float(S.RNG.normal(0.78, 0.05)),
+                                               uv_offset=(float(S.RNG.random()), float(S.RNG.random()))))
+        S.uv_box(sl, 1.83)
+    band = add(_bent_band(f"{name}_back", c, 0.55, 48, 0.12, 0.018, (-sd / 2 - 0.065, 0), 0.66, teak))
+    for o in e.children:
+        if o.type == "MESH" and not o.data.uv_layers:
+            S.uv_box(o, 1.83)
+    return e
+
+
+BW.chair = chair_v2
+
+
+# ------------------------------------------------------------------ realism pass: wear, soiling, smudges
+def realism_pass():
+    g = lambda n: bpy.data.materials.get(n)
+    for n, kw in {"facade_plaster": dict(ao=0.25, splash=0.18, splash_h=0.6, streaks=0.05),
+                  "facade_architectural_concrete": dict(ao=0.3, splash=0.22, splash_h=0.5, streaks=0.06),
+                  "step_concrete": dict(ao=0.45, dust=0.25), "planter_concrete": dict(ao=0.4, splash=0.15, splash_h=0.25),
+                  "thermo_ash_deck": dict(ao=0.35, dust=0.12), "neighbour_render": dict(ao=0.2, streaks=0.08)}.items():
+        if g(n):
+            S.add_grime(g(n), **kw)
+    for m in bpy.data.materials:
+        if m.name.startswith(("table_oak_", "larch_", "soffit_slat", "timber_")) and m.use_nodes:
+            S.add_grime(m, ao=0.3)
+    for n in ("window_glass",):
+        if g(n):
+            S.smudged_glass(g(n), 0.03)
+    if g("wine_glass"):
+        S.smudged_glass(g("wine_glass"), 0.012)

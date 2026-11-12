@@ -48,8 +48,10 @@ def setup_render(w=540, h=960, spp=64, final=False, device="CPU"):
     sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.5     # 180-degree shutter
     sc.render.image_settings.file_format = "PNG"
     import storm_lib as S
-    if S.PREVIEW:                     # low-RAM look-dev box: cap texture size (4k float EXR maps are ~270 MB each in RAM)
-        sc.render.use_simplify = True; sc.cycles.texture_limit_render = "1024"
+    import os
+    lim = os.environ.get("TEX_LIMIT") or ("1024" if S.PREVIEW else "")
+    if lim:                           # cap texture size on RAM-limited machines (4k float EXR maps are ~270 MB each in RAM)
+        sc.render.use_simplify = True; sc.cycles.texture_limit_render = lim
     return sc
 
 
@@ -64,6 +66,51 @@ def camera(name, loc, target, lens=40.0, fstop=5.6, focus=None, sensor=36.0):
     cam.data.lens = lens; cam.data.sensor_fit = "VERTICAL"; cam.data.sensor_height = sensor
     cam.data.dof.use_dof = True; cam.data.dof.aperture_fstop = fstop
     cam.data.dof.focus_distance = focus if focus else (Vector(target) - Vector(loc)).length
-    cam.data.clip_start = 0.02; cam.data.clip_end = 400
+    cam.data.clip_start = 0.02; cam.data.clip_end = 20000      # clouds are 2-7 km away
     sc.camera = cam
     return cam
+
+
+def build_clouds(kind="fair", seed=3):
+    """Volumetric cumulus (real 3D volumes lit by the same sun/sky, so shading and shadows are physically consistent).
+    kind='fair': scattered fair-weather cumulus 1.2-1.8 km up; 'storm': heavy cumulonimbus wall (weather pass)."""
+    import numpy as np
+    rnd = np.random.default_rng(seed)
+    c = S.coll("CLOUDS")
+    for o in list(c.objects):
+        bpy.data.objects.remove(o, do_unlink=True)
+    m = bpy.data.materials.get(f"cloud_{kind}")
+    if m is None:
+        m = bpy.data.materials.new(f"cloud_{kind}"); m.use_nodes = True
+        N, L = m.node_tree.nodes, m.node_tree.links; N.clear()
+        out = N.new("ShaderNodeOutputMaterial"); vol = N.new("ShaderNodeVolumePrincipled")
+        vol.inputs["Color"].default_value = (1, 1, 1, 1) if kind == "fair" else (0.55, 0.57, 0.6, 1)
+        vol.inputs["Anisotropy"].default_value = 0.55
+        tc = N.new("ShaderNodeTexCoord")
+        ln = N.new("ShaderNodeVectorMath"); ln.operation = "LENGTH"; L.new(tc.outputs["Object"], ln.inputs[0])
+        fall = N.new("ShaderNodeMapRange"); fall.inputs["From Min"].default_value = 0.35; fall.inputs["From Max"].default_value = 1.0
+        fall.inputs["To Min"].default_value = 1.0; fall.inputs["To Max"].default_value = 0.0; L.new(ln.outputs["Value"], fall.inputs["Value"])
+        # flat-ish cloud base: density cut below local z=-0.35
+        sep = N.new("ShaderNodeSeparateXYZ"); L.new(tc.outputs["Object"], sep.inputs[0])
+        base = N.new("ShaderNodeMapRange"); base.inputs["From Min"].default_value = -0.45; base.inputs["From Max"].default_value = -0.25
+        L.new(sep.outputs["Z"], base.inputs["Value"])
+        nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 2.2; nz.inputs["Detail"].default_value = 10
+        nz.inputs["Roughness"].default_value = 0.62; L.new(tc.outputs["Object"], nz.inputs["Vector"])
+        a = N.new("ShaderNodeMath"); a.operation = "MULTIPLY_ADD"; a.inputs[1].default_value = 1.3
+        L.new(fall.outputs[0], a.inputs[0]); L.new(nz.outputs["Fac"], a.inputs[2])
+        th = N.new("ShaderNodeMapRange"); th.inputs["From Min"].default_value = 1.15; th.inputs["From Max"].default_value = 1.45
+        th.inputs["To Max"].default_value = 0.035 if kind == "fair" else 0.06; L.new(a.outputs[0], th.inputs["Value"])
+        dm = N.new("ShaderNodeMath"); dm.operation = "MULTIPLY"; L.new(th.outputs[0], dm.inputs[0]); L.new(base.outputs[0], dm.inputs[1])
+        L.new(dm.outputs[0], vol.inputs["Density"]); L.new(vol.outputs[0], out.inputs["Volume"])
+    n = 14 if kind == "fair" else 30
+    for i in range(n):
+        az = rnd.uniform(0, 2 * np.pi); dist = rnd.uniform(1800, 6500)
+        if kind == "fair" and abs(np.degrees(az) - 0) < 25:
+            dist += 1500                               # keep the sun side (camera backlight) a bit clearer
+        sx, sy, sz = rnd.uniform(350, 900), rnd.uniform(350, 900), rnd.uniform(180, 380)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=1.0, location=(dist * np.cos(az), dist * np.sin(az), rnd.uniform(1300, 1900) + sz * 0.3))
+        o = bpy.context.object; o.name = f"cloud_{i:02d}"; S.link(o, c); o.scale = (sx, sy, sz)
+        o.data.materials.append(m)
+        o.visible_shadow = True
+    sc = bpy.context.scene; sc.cycles.volume_step_rate = 4.0 if S.PREVIEW else 1.0; sc.cycles.volume_max_steps = 256
+    return c

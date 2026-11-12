@@ -317,3 +317,77 @@ def calm_albedo(m, rgb, keep=0.25):
     for k in range(3):
         L.new(lerp.outputs[0], comb.inputs[k])
     L.new(comb.outputs[0], cm.inputs[7]); L.new(cm.outputs[2], b.inputs["Base Color"])
+
+
+def add_grime(m, ao=0.35, splash=0.0, splash_h=0.35, streaks=0.0, dust=0.0):
+    """Real-world wear on a PBR material (keeps the scan; multiplies base colour, nudges roughness):
+    ao      darkening in crevices / contact (Cycles AO node, 8 cm radius) - dirt collects where air does not move
+    splash  rain-splash soiling near the ground (world Z < splash_h), broken up by noise
+    streaks faint vertical run-off stains (window sills, coping)
+    dust    lighter, rougher film on up-facing surfaces"""
+    if m.get("grimed"):
+        return m
+    m["grimed"] = 1
+    N, L = m.node_tree.nodes, m.node_tree.links; b = principled(m)
+    if b.inputs["Base Color"].is_linked:
+        src = b.inputs["Base Color"].links[0].from_socket
+    else:
+        rgb = N.new("ShaderNodeRGB"); rgb.outputs[0].default_value = b.inputs["Base Color"].default_value; src = rgb.outputs[0]
+    fac = None
+    def mulf(a, bb):
+        n = N.new("ShaderNodeMath"); n.operation = "MULTIPLY"; L.new(a, n.inputs[0]); L.new(bb, n.inputs[1]); return n.outputs[0]
+    one = N.new("ShaderNodeValue"); one.outputs[0].default_value = 1.0; cur = one.outputs[0]
+    if ao > 0:
+        a = N.new("ShaderNodeAmbientOcclusion"); a.inputs["Distance"].default_value = 0.08; a.samples = 8
+        mr = N.new("ShaderNodeMapRange"); mr.inputs["To Min"].default_value = 1 - ao; mr.inputs["To Max"].default_value = 1.0
+        L.new(a.outputs["AO"], mr.inputs["Value"]); cur = mulf(cur, mr.outputs[0])
+    geo = N.new("ShaderNodeNewGeometry"); sep = N.new("ShaderNodeSeparateXYZ"); L.new(geo.outputs["Position"], sep.inputs[0])
+    nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 6.0; nz.inputs["Detail"].default_value = 6
+    L.new(geo.outputs["Position"], nz.inputs["Vector"])
+    if splash > 0:
+        mr = N.new("ShaderNodeMapRange"); mr.inputs["From Min"].default_value = -0.2; mr.inputs["From Max"].default_value = splash_h
+        mr.inputs["To Min"].default_value = 1 - splash; mr.inputs["To Max"].default_value = 1.0
+        L.new(sep.outputs["Z"], mr.inputs["Value"])
+        mix = N.new("ShaderNodeMapRange"); mix.inputs["To Min"].default_value = 0.6; mix.inputs["To Max"].default_value = 1.4
+        L.new(nz.outputs["Fac"], mix.inputs["Value"])
+        k = mulf(mr.outputs[0], mix.outputs[0]); cl = N.new("ShaderNodeClamp"); L.new(k, cl.inputs[0]); cl.inputs[2].default_value = 1.0
+        cur = mulf(cur, cl.outputs[0])
+    if streaks > 0:
+        mp = N.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (14.0, 14.0, 0.6)
+        L.new(geo.outputs["Position"], mp.inputs["Vector"])
+        sn = N.new("ShaderNodeTexNoise"); sn.inputs["Scale"].default_value = 3.0; sn.inputs["Detail"].default_value = 4
+        L.new(mp.outputs[0], sn.inputs["Vector"])
+        mr = N.new("ShaderNodeMapRange"); mr.inputs["From Min"].default_value = 0.45; mr.inputs["From Max"].default_value = 0.75
+        mr.inputs["To Min"].default_value = 1.0; mr.inputs["To Max"].default_value = 1 - streaks
+        L.new(sn.outputs["Fac"], mr.inputs["Value"]); cur = mulf(cur, mr.outputs[0])
+    mx = N.new("ShaderNodeMix"); mx.data_type = "RGBA"; mx.blend_type = "MULTIPLY"; mx.inputs["Factor"].default_value = 1.0
+    L.new(src, mx.inputs[6]); comb = N.new("ShaderNodeCombineColor")
+    for i in range(3):
+        L.new(cur, comb.inputs[i])
+    L.new(comb.outputs[0], mx.inputs[7]); out = mx.outputs[2]
+    if dust > 0:
+        up = N.new("ShaderNodeSeparateXYZ"); L.new(geo.outputs["Normal"], up.inputs[0])
+        mr = N.new("ShaderNodeMapRange"); mr.inputs["From Min"].default_value = 0.6; mr.inputs["To Max"].default_value = dust
+        L.new(up.outputs["Z"], mr.inputs["Value"])
+        dm = N.new("ShaderNodeMix"); dm.data_type = "RGBA"; dm.inputs[7].default_value = (0.45, 0.43, 0.40, 1)
+        k = mulf(mr.outputs[0], nz.outputs["Fac"]); L.new(k, dm.inputs["Factor"]); L.new(out, dm.inputs[6]); out = dm.outputs[2]
+    L.new(out, b.inputs["Base Color"])
+    return m
+
+
+def smudged_glass(m, amount=0.035):
+    """Window / wine glass: fingerprint-and-rain-spot roughness field instead of a mathematically perfect surface."""
+    if m.get("smudged"):
+        return m
+    m["smudged"] = 1
+    N, L = m.node_tree.nodes, m.node_tree.links; b = principled(m)
+    tc = N.new("ShaderNodeTexCoord")
+    v = N.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = 140; v.feature = "F1"; L.new(tc.outputs["Object"], v.inputs["Vector"])
+    nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 9; nz.inputs["Detail"].default_value = 8; L.new(tc.outputs["Object"], nz.inputs["Vector"])
+    spots = N.new("ShaderNodeMapRange"); spots.inputs["From Min"].default_value = 0.0; spots.inputs["From Max"].default_value = 0.12
+    spots.inputs["To Min"].default_value = amount; spots.inputs["To Max"].default_value = 0.0; L.new(v.outputs["Distance"], spots.inputs["Value"])
+    film = N.new("ShaderNodeMapRange"); film.inputs["From Min"].default_value = 0.45; film.inputs["From Max"].default_value = 0.75
+    film.inputs["To Min"].default_value = 0.0; film.inputs["To Max"].default_value = amount * 0.6; L.new(nz.outputs["Fac"], film.inputs["Value"])
+    add = N.new("ShaderNodeMath"); add.operation = "ADD"; L.new(spots.outputs[0], add.inputs[0]); L.new(film.outputs[0], add.inputs[1])
+    L.new(add.outputs[0], b.inputs["Roughness"])
+    return m
