@@ -54,14 +54,10 @@ jobs:
           TEX_LIMIT=2048 STORM_QUALITY=final /tmp/blender/blender -b --python-exit-code 1 -P scripts/test_frame_blender.py -- /tmp/out/${{ matrix.shot }}_raw.png $W $H $SPP ${{ matrix.shot }} > /tmp/out/${{ matrix.shot }}_blender.log 2>&1 || { tail -60 /tmp/out/${{ matrix.shot }}_blender.log; tail -20 /tmp/out/mem.log; exit 1; }
           grep -vE "Fra:|Sample " /tmp/out/${{ matrix.shot }}_blender.log | tail -40; tail -5 /tmp/out/mem.log
           python3 scripts/post_photo.py /tmp/out/${{ matrix.shot }}_raw.png /tmp/out/${{ matrix.shot }}_photo.png --seed 7
-      - name: Logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: log-${{ matrix.shot }}
-          path: /tmp/out/*.log
       - name: Publish
+        if: always()
         run: |
           NAME=$(jq -r .name videos/storm/stills.json); TAG=stills-$NAME
           gh release view $TAG -R ${{ github.repository }} >/dev/null 2>&1 || gh release create $TAG -R ${{ github.repository }} --title $TAG --notes "THE STORM control stills $NAME (full quality, CPU runner)" || true
-          for i in 1 2 3; do gh release upload $TAG /tmp/out/*.png -R ${{ github.repository }} --clobber && break; sleep 10; done
+          cp /tmp/out/mem.log /tmp/out/mem_${{ matrix.shot }}.txt || true; cp /tmp/out/${{ matrix.shot }}_blender.log /tmp/out/${{ matrix.shot }}_blender.txt || true
+          for i in 1 2 3; do gh release upload $TAG /tmp/out/*.png /tmp/out/*.txt -R ${{ github.repository }} --clobber && break; sleep 10; done
