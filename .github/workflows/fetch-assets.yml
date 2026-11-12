@@ -16,9 +16,19 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch
         run: python3 tools/fetch_assets.py assets_request.json out
-      - name: Push to lib branch
+      - name: Publish as release (one tar per asset, <2 GB each)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          NAME=$(jq -r .name assets_request.json); B=lib/$NAME
-          cd out && du -sh . && git init -q -b $B && git config user.name ci && git config user.email ci@example.com
-          git add -A && git commit -q -m "assets $NAME"
-          for t in 1 2 3 4; do git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" $B && break; sleep $((t*15)); done
+          NAME=$(jq -r .name assets_request.json); TAG=lib-$NAME
+          mkdir -p tars
+          [ -f out/polyhaven_catalog.json ] && cp out/*.json tars/
+          for src in polyhaven ambientcg; do
+            [ -d out/$src ] || continue
+            for d in out/$src/*/; do a=$(basename $d); tar -C out/$src -cf tars/${src}__$a.tar $a; done
+          done
+          cp out/errors.json tars/errors.json
+          ls -la tars | head -80
+          gh release delete $TAG -y --cleanup-tag -R ${{ github.repository }} 2>/dev/null || true
+          gh release create $TAG -R ${{ github.repository }} --title "$TAG" --notes "CC0 assets fetched by CI (Poly Haven / ambientCG). Request: $NAME"
+          gh release upload $TAG tars/* -R ${{ github.repository }} --clobber
