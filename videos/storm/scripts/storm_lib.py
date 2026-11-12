@@ -64,6 +64,7 @@ def lathe(name, profile, c, mat=None, seg=96):
     for i in range(seg):
         a = 2 * math.pi * i / seg; ca, sa = math.cos(a), math.sin(a)
         for r, z in profile:
+            r = 0.0 if r < 2e-4 else r            # points on the axis collapse to one vertex -> watertight (volumes need it)
             verts.append((r * ca, r * sa, z))
     for i in range(seg):
         j = (i + 1) % seg

@@ -9,7 +9,8 @@ import numpy as np
 from mathutils import Vector, Matrix
 import storm_lib as S
 
-FILM = S.ROOT.parent / "rivon_film"          # validated pergola layout + builder from the earlier film (exact STEP meshes)
+FILM = S.ROOT.parent / "rivon_film"
+SEASIDE = True            # owner: the plot ends at a Baltic beach with a wooden pier (background of the glass macro)          # validated pergola layout + builder from the earlier film (exact STEP meshes)
 
 
 def fresh(name):
@@ -126,9 +127,10 @@ def build_house():
     p = S.box("plinth", (0.025, H_W, PLINTH + 0.2), (FAC_X + 0.0125, 0, (PLINTH - 0.2) / 2), c, plinth); S.uv_box(p, 2.0)
     S.box("coping", (0.5, H_W + 0.1, 0.04), (FAC_X - 0.19, 0, z_top + 0.02), c, coping, bevel=0.004)
     # side and back walls + roof slab (simple, they are never close to camera)
-    S.box("wall_S", (H_DEPTH, 0.42, z_top + 0.2), (FAC_X - H_DEPTH / 2, y0 + 0.21, z_top / 2 - 0.1), c, plaster)
-    S.box("wall_N", (H_DEPTH, 0.42, z_top + 0.2), (FAC_X - H_DEPTH / 2, y1 - 0.21, z_top / 2 - 0.1), c, plaster)
-    S.box("roof", (H_DEPTH, H_W, 0.3), (FAC_X - H_DEPTH / 2, 0, z_top - 0.45), c, interior_wall)
+    # side walls / roof slab start 6 cm behind the facade skin: coplanar faces would z-fight (black bands in Cycles)
+    S.box("wall_S", (H_DEPTH - 0.06, 0.42, z_top + 0.2), (FAC_X - 0.06 - (H_DEPTH - 0.06) / 2, y0 + 0.21, z_top / 2 - 0.1), c, plaster)
+    S.box("wall_N", (H_DEPTH - 0.06, 0.42, z_top + 0.2), (FAC_X - 0.06 - (H_DEPTH - 0.06) / 2, y1 - 0.21, z_top / 2 - 0.1), c, plaster)
+    S.box("roof", (H_DEPTH - 0.5, H_W - 0.9, 0.3), (FAC_X - 0.5 - (H_DEPTH - 0.5) / 2, 0, z_top - 0.45), c, interior_wall)
     for o in c.objects:
         if o.name.startswith("wall_"):
             S.uv_box(o, 1.0)
@@ -149,6 +151,15 @@ def build_house():
 
 # ------------------------------------------------------------------ terrace + ground
 TER = dict(x0=-3.0, x1=2.75, y0=-4.25, y1=4.25, h=0.16)
+
+
+def ground_z(x, y=0.0):
+    """Garden ground height: flat lawn by the terrace, then a 5 % fall towards the beach from x=8 m (the plot sits above the
+    Baltic shore, so the sea is visible over the dune from table height)."""
+    z = -TER["h"] + 0.025 * math.sin(x * 0.9) * math.cos(y * 0.7) + 0.012 * math.sin(x * 3.1 + y * 2.3)
+    if SEASIDE and x > 8.0:
+        z -= (min(x, 19.5) - 8.0) * 0.05
+    return z
 
 
 def build_ground():
@@ -195,14 +206,18 @@ def build_lawn(c):
     """Lawn = soil plane with gentle undulation + Cycles hair grass (curves): 3 blade colours, length 3-9 cm, clumped,
     density falls with distance from the terrace so the far lawn costs little."""
     soil = S.ph_material("forrest_ground_01", "lawn_soil")
+    if "tinted" not in soil:                                  # thatch under a mown lawn: green-brown, not forest litter
+        S.calm_albedo(soil, (0.11, 0.14, 0.05), keep=0.5); soil["tinted"] = 1
     bpy.ops.mesh.primitive_grid_add(x_subdivisions=240, y_subdivisions=240, size=60, location=(27.0, 0, -TER["h"]))
     g = bpy.context.object; g.name = "lawn"; S.link(g, c); g.data.materials.append(soil)
     for v in g.data.vertices:
         wx, wy = v.co.x + 27.0, v.co.y
         if wx < TER["x1"] + 0.08 and abs(wy) < TER["y1"] + 0.08:
             v.co.z = -0.5                     # under the terrace: drop out of sight
+        elif SEASIDE and wx > 19.6:
+            v.co.z = ground_z(19.5, wy) - 1.0  # beyond the plot: the dune mesh takes over
         else:
-            v.co.z = 0.025 * math.sin(wx * 0.9) * math.cos(wy * 0.7) + 0.012 * math.sin(wx * 3.1 + wy * 2.3)
+            v.co.z = ground_z(wx, wy) + TER["h"]
     S.uv_box(g, 2.0)
     # density vertex group: dense near the terrace / camera paths
     vg = g.vertex_groups.new(name="density")
@@ -225,7 +240,7 @@ def build_lawn(c):
     pb.inputs["Sheen Weight"].default_value = 0.15
     g.data.materials.append(blade)
     ps = g.modifiers.new("grass", "PARTICLE_SYSTEM").particle_system
-    st = ps.settings; st.type = "HAIR"; st.count = 40000 if S.PREVIEW else 260000; st.hair_length = 0.07; st.use_advanced_hair = True
+    st = ps.settings; st.type = "HAIR"; st.count = 90000 if S.PREVIEW else 300000; st.hair_length = 0.07; st.use_advanced_hair = True
     st.material = 2; st.emit_from = "FACE"; st.use_emit_random = True
     st.child_type = "INTERPOLATED"; st.child_percent = 6; st.rendered_child_count = 2 if S.PREVIEW else 6
     st.length_random = 0.6; st.roughness_1 = 0.012; st.roughness_endpoint = 0.02; st.roughness_2 = 0.006
@@ -298,7 +313,7 @@ def chair(name, c, oak, steel, loc, rot):
 def build_chairs(c, oak, steel):
     k = 0
     for sx in (-1, 1):
-        for y in (-0.72, 0.0, 0.72):
+        for y in ((-0.72, 0.0, 0.72) if sx < 0 else (-0.78, 0.78)):
             pull = 0.86 + float(S.RNG.uniform(0.0, 0.1))
             chair(f"chair_{k}", c, oak, steel, (sx * pull, y + float(S.RNG.normal(0, 0.03)), 0.0),
                   (math.pi if sx > 0 else 0.0) + float(S.RNG.normal(0, 0.06)))
@@ -308,10 +323,10 @@ def build_chairs(c, oak, steel):
 def build_tableware(c, ht):
     glass = S.mat_glass("wine_glass", (1, 1, 1, 1))
     wine = bpy.data.materials.new("red_wine"); wine.use_nodes = True; wb = S.principled(wine)
-    wb.inputs["Base Color"].default_value = (0.35, 0.01, 0.03, 1); wb.inputs["Transmission Weight"].default_value = 1.0
+    wb.inputs["Base Color"].default_value = (1.0, 0.92, 0.92, 1); wb.inputs["Transmission Weight"].default_value = 1.0
     wb.inputs["IOR"].default_value = 1.35; wb.inputs["Roughness"].default_value = 0.0
-    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.55, 0.02, 0.05, 1)
-    vol.inputs["Density"].default_value = 60
+    vol = wine.node_tree.nodes.new("ShaderNodeVolumeAbsorption"); vol.inputs["Color"].default_value = (0.86, 0.004, 0.07, 1)
+    vol.inputs["Density"].default_value = 260     # young red: near-opaque at 7 cm, ruby at the thin edge
     wine.node_tree.links.new(vol.outputs[0], wine.node_tree.nodes["Material Output"].inputs["Volume"])
     porcelain = S.mat_simple("porcelain", (0.86, 0.85, 0.82), rough=0.12, spec=0.5)
     pbz = S.principled(porcelain); pbz.inputs["Subsurface Weight"].default_value = 0.15
@@ -322,14 +337,25 @@ def build_tableware(c, ht):
         return 0.0395 * math.sin(math.pi * (0.12 + 0.72 * t)) ** 0.85 + 0.004
     out = [(0.0001, 0), (0.0375, 0.0), (0.038, 0.002), (0.012, 0.004), (0.004, 0.012), (0.0032, 0.03), (0.0032, 0.09), (0.006, 0.1)]
     out += [(bowl_r(t), 0.1 + 0.125 * t) for t in np.linspace(0.02, 1.0, 34)]
-    inner = [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in np.linspace(1.0, 0.04, 34)] + [(0.0001, 0.104)]
-    prof = out + inner
-    wine_prof = [(0.0001, 0.104)] + [(bowl_r(t) - 0.0012, 0.1 + 0.125 * t) for t in np.linspace(0.04, 0.34, 14)]
-    wine_prof += [(0.0001, 0.1 + 0.125 * 0.34)]
-    place = [(-0.22, -0.42), (0.22, 0.38)]
+    TW = 0.34                                                       # pour level (fraction of the bowl height)
+    ts_in = [t for t in np.linspace(1.0, 0.04, 34) if t > TW] + [TW]
+    # glass = outer skin + rim + inner skin only ABOVE the wine; below the line the wine object owns the interface
+    prof_wet = out + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in ts_in]
+    # dry glass (second glass, empty) keeps a full inner skin down to the bottom
+    prof_dry = out + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in np.linspace(1.0, 0.04, 34)] + [(0.0001, 0.104)]
+    ts_w = [t for t in np.linspace(0.04, 0.34, 14)]
+    wine_prof = [(0.0, 0.104)] + [(bowl_r(t) - 0.0011, 0.1 + 0.125 * t) for t in ts_w] + [(0.0, 0.1 + 0.125 * TW)]
+    # glass->wine boundary: relative IOR 1.333/1.52 (no air film -> no false mirror); wine->air top: 1.333
+    wine_side = wine.copy(); wine_side.name = "red_wine_glass_interface"
+    S.principled(wine_side).inputs["IOR"].default_value = 1.333 / 1.52
+    S.principled(wine).inputs["IOR"].default_value = 1.333
+    place = [(0.18, -0.18), (-0.22, 0.38)]   # glass 0 = hero glass near the sea-side edge
     for k, (gx, gy) in enumerate(place):
-        g = S.lathe(f"wine_glass_{k}", prof, c, glass); g.location = (gx + 0.12, gy + 0.2, ht)
+        g = S.lathe(f"wine_glass_{k}", prof_wet, c, glass); g.location = (gx + 0.12, gy + 0.2, ht)
         w = S.lathe(f"wine_{k}", wine_prof, c, wine); w.location = g.location
+        w.data.materials.append(wine_side)
+        for pl in w.data.polygons:                                  # side + bottom -> interface material, top disc -> air
+            pl.material_index = 0 if pl.normal.z > 0.99 else 1
         # dinner plate 27 cm with rim + side plate
         pl = S.lathe(f"plate_{k}", [(0.0001, 0.0), (0.06, 0.0), (0.062, 0.006), (0.105, 0.008), (0.135, 0.02), (0.1355, 0.022),
                                     (0.1325, 0.022), (0.104, 0.0115), (0.06, 0.0095), (0.0001, 0.0095)], c, porcelain)
@@ -343,7 +369,7 @@ def build_tableware(c, ht):
     bp = [(0.0001, 0.0), (0.035, 0.0), (0.0375, 0.006), (0.0375, 0.205), (0.033, 0.23), (0.016, 0.255), (0.0145, 0.29),
           (0.0155, 0.292), (0.0155, 0.30), (0.0105, 0.30), (0.0105, 0.29), (0.0123, 0.255), (0.029, 0.23), (0.0335, 0.205),
           (0.0335, 0.008), (0.012, 0.025), (0.0001, 0.026)]
-    b = S.lathe("wine_bottle", bp, c, bott); b.location = (0.05, 0.02, ht)
+    b = S.lathe("wine_bottle", bp, c, bott); b.location = (-0.24, 0.05, ht)
     cork = S.mat_simple("cork", (0.45, 0.33, 0.2), rough=0.8)
     ck = S.lathe("cork", [(0.0001, 0.27), (0.0103, 0.27), (0.0103, 0.305), (0.0001, 0.305)], c, cork); ck.location = b.location
     wl = S.lathe("bottle_wine", [(0.0001, 0.027), (0.033, 0.009), (0.033, 0.2), (0.0001, 0.2)], c, wine); wl.location = b.location
@@ -421,12 +447,13 @@ def build_garden():
     c = fresh("GARDEN")
     zg = -TER["h"]
     rnd = S.RNG
+    _gp = lambda x, y: (x, y, ground_z(x, y))
     mulch = S.ph_material("forrest_ground_01", "bed_mulch")
     # planting beds: along the south terrace edge and a long border on the south boundary
     beds = [(TER["x1"] + 0.15, TER["x1"] + 1.15, TER["y0"] - 0.2, TER["y1"] * 0.2),       # in front of the terrace (garden side)
-            (3.0, 15.0, -9.6, -8.2), (3.0, 15.0, 8.2, 9.6)]                                 # side borders
+            (3.0, 9.0, -9.6, -8.2), (3.0, 9.0, 8.2, 9.6)]                                 # side borders
     for i, (xa, xb, ya, yb) in enumerate(beds):
-        b = S.box(f"bed_{i}", (xb - xa, yb - ya, 0.04), ((xa + xb) / 2, (ya + yb) / 2, zg + 0.005), c, mulch); S.uv_box(b, 2.0)
+        b = S.box(f"bed_{i}", (xb - xa, yb - ya, 0.04), ((xa + xb) / 2, (ya + yb) / 2, ground_z((xa + xb) / 2, (ya + yb) / 2) + 0.005), c, mulch); S.uv_box(b, 2.0)
     shrubs = (S.ph_variants("shrub_01") + S.ph_variants("shrub_02") + S.ph_variants("shrub_03") + S.ph_variants("shrub_04")
               + S.ph_variants("shrub_sorrel_01"))
     flowers = S.ph_variants("celandine_01") + S.ph_variants("dandelion_01")
@@ -437,30 +464,30 @@ def build_garden():
         area = (xb - xa) * (yb - ya)
         for _ in range(int(area * 2.2)):
             me = shrubs[rnd.integers(len(shrubs))]
-            S.place(me, f"shrub_{n:04d}", (rnd.uniform(xa, xb), rnd.uniform(ya, yb), zg), c, rnd.uniform(0, 6.28),
+            S.place(me, f"shrub_{n:04d}", _gp(rnd.uniform(xa, xb), rnd.uniform(ya, yb)), c, rnd.uniform(0, 6.28),
                     rnd.uniform(0.8, 1.35), tilt=0.05); n += 1
         for _ in range(int(area * 6)):
             me = flowers[rnd.integers(len(flowers))]
-            S.place(me, f"flower_{n:04d}", (rnd.uniform(xa, xb), rnd.uniform(ya, yb), zg), c, rnd.uniform(0, 6.28),
+            S.place(me, f"flower_{n:04d}", _gp(rnd.uniform(xa, xb), rnd.uniform(ya, yb)), c, rnd.uniform(0, 6.28),
                     rnd.uniform(0.7, 1.2), tilt=0.08); n += 1
         for _ in range(int(area * 0.8)):
             me = ferns[rnd.integers(len(ferns))]
-            S.place(me, f"fern_{n:04d}", (rnd.uniform(xa, xb), rnd.uniform(ya, yb), zg), c, rnd.uniform(0, 6.28),
+            S.place(me, f"fern_{n:04d}", _gp(rnd.uniform(xa, xb), rnd.uniform(ya, yb)), c, rnd.uniform(0, 6.28),
                     rnd.uniform(0.6, 1.0), tilt=0.06); n += 1
     # a few meadow tufts where the lawn meets the border (unmown edge)
     for _ in range(60):
         y = rnd.choice([-1, 1]) * rnd.uniform(7.9, 8.3); x = rnd.uniform(3, 15)
-        S.place(meadow[rnd.integers(len(meadow))], f"tuft_{n:04d}", (x, y, zg), c, rnd.uniform(0, 6.28), rnd.uniform(0.25, 0.45)); n += 1
+        S.place(meadow[rnd.integers(len(meadow))], f"tuft_{n:04d}", (x, y, ground_z(x, y)), c, rnd.uniform(0, 6.28), rnd.uniform(0.25, 0.45)); n += 1
     # conifer hedge on the back boundary (typical Polish plot) + specimen trees
     firs = S.ph_variants("fir_tree_01")
-    for i in range(26):
+    for i in ([] if SEASIDE else range(26)):
         y = -12.5 + i * 1.0 + rnd.normal(0, 0.12)
         S.place(firs[rnd.integers(len(firs))], f"hedge_{i:02d}", (19.5 + rnd.normal(0, 0.15), y, zg), c, rnd.uniform(0, 6.28),
                 rnd.uniform(0.17, 0.21), tilt=0.02)
     small = S.ph_variants("tree_small_02")
     for k, (x, y, s) in enumerate([(7.2, -6.3, 1.0), (13.5, 7.0, 1.15), (16.0, -3.0, 0.9)]):
         for me in small:
-            S.place(me, f"tree_{k}_{me.name}", (x, y, zg), c, rnd.uniform(0, 6.28) if False else 0.6 * k, s)
+            S.place(me, f"tree_{k}_{me.name}", (x, y, ground_z(x, y) - 0.03), c, rnd.uniform(0, 6.28) if False else 0.6 * k, s)
     pines = S.ph_variants("pine_tree_01") if False else []       # 570 MB; enabled for wide shots only (see build_far)
     rocks = S.ph_variants("rock_moss_set_01") if False else []
     return c
@@ -475,9 +502,9 @@ def build_fence(c=None):
         y = sy * 10.2
         for i in range(14):
             x0 = -14.5 + i * 2.5
-            S.box(f"fpost_{sy}_{i}", (0.06, 0.06, 1.6), (x0, y, zg + 0.8), c, steel, bevel=0.003)
+            S.box(f"fpost_{sy}_{i}", (0.06, 0.06, 1.6), (x0, y, ground_z(x0, y) + 0.75), c, steel, bevel=0.003)
             for k in range(12):
-                S.box(f"fslat_{sy}_{i}_{k}", (2.44, 0.02, 0.09), (x0 + 1.25, y, zg + 0.15 + k * 0.115), c, steel, bevel=0.002)
+                S.box(f"fslat_{sy}_{i}_{k}", (2.44, 0.02, 0.09), (x0 + 1.25, y, ground_z(x0 + 1.25, y) + 0.15 + k * 0.115), c, steel, bevel=0.002)
     return c
 
 
@@ -501,15 +528,97 @@ def build_surroundings():
             wv = S.box(f"{name}_win{k}", (d + 0.02, 1.2, 1.3), (x, y - w / 3 + k * w / 3, zg + 1.6), c, win, rot_z=rot)
     gable_house("nbS", 2.0, -19.0, 11.0, 9.0, 5.6, 0.0)
     gable_house("nbN", 4.0, 19.5, 12.0, 8.5, 5.4, 0.0)
-    gable_house("nbE", 32.0, -6.0, 10.0, 9.0, 5.8, 1.5708)
-    gable_house("nbE2", 33.0, 12.0, 11.0, 9.0, 5.5, 1.5708)
+    if not SEASIDE:
+        gable_house("nbE", 32.0, -6.0, 10.0, 9.0, 5.8, 1.5708)
+        gable_house("nbE2", 33.0, 12.0, 11.0, 9.0, 5.5, 1.5708)
     small = S.ph_variants("tree_small_02"); firs = S.ph_variants("fir_tree_01")
     ring = [(x, y) for x in np.linspace(-14, 30, 12) for y in (-13.5, 13.5)] + [(26.0, y) for y in np.linspace(-12, 12, 7)]
+    if SEASIDE:
+        ring = [(x, y) for x in np.linspace(-14, 17, 9) for y in (-13.5, 13.5)]
     for k, (x, y) in enumerate(ring):
         x += rnd.normal(0, 1.2); y += rnd.normal(0, 0.8)
         if rnd.random() < 0.55:
             for me in small:
-                S.place(me, f"ringtree_{k}_{me.name}", (x, y, zg), c, 0.9 * k, rnd.uniform(1.1, 1.6))
+                S.place(me, f"ringtree_{k}_{me.name}", (x, y, ground_z(x, y) - 0.03), c, 0.9 * k, rnd.uniform(1.1, 1.6))
         else:
-            S.place(firs[rnd.integers(len(firs))], f"ringfir_{k}", (x, y, zg), c, rnd.uniform(0, 6.28), rnd.uniform(0.35, 0.55))
+            S.place(firs[rnd.integers(len(firs))], f"ringfir_{k}", (x, y, ground_z(x, y) - 0.03), c, rnd.uniform(0, 6.28), rnd.uniform(0.35, 0.55))
     return c
+
+
+
+# ------------------------------------------------------------------ Baltic coast: dune, beach, sea, wooden pier
+SEA_Z = -1.55          # mean sea level relative to the terrace (house on a low dune ridge)
+PIER_Y = 4.6           # pier centre line (runs out to sea along +X, just right of the table axis)
+
+
+def build_coast():
+    c = fresh("COAST")
+    rnd = S.RNG; zg = ground_z(19.5)
+    sand = S.ph_material("gravelly_sand", "beach_sand")
+    if "tinted" not in sand:
+        S.calm_albedo(sand, (0.62, 0.55, 0.43), keep=0.45); sand["tinted"] = 1
+    # dune + beach profile along X, gently varying along Y; continues under water so the shoreline is a real intersection
+    xs = np.concatenate([np.linspace(19.0, 40.0, 180), np.linspace(40.5, 70.0, 30)])
+    ys = np.linspace(-90, 90, 220)
+    def zprof(x, y):
+        if x < 20.2:  t = (x - 19.0) / 1.2; z = zg + 0.18 * math.sin(math.pi * t)            # dune crest
+        elif x < 26.5: z = zg - (x - 20.2) / 6.3 * (SEA_Z - zg + 0.35) * -1 * -1             # dune face
+        elif x < 31.0: z = SEA_Z + 0.35 - (x - 26.5) / 4.5 * 0.45                             # dry -> wet beach
+        else:          z = SEA_Z - 0.1 - (x - 31.0) * 0.06                                    # shelf under water
+        if 20.2 <= x < 26.5:
+            z = zg + (SEA_Z + 0.35 - zg) * ((x - 20.2) / 6.3) ** 0.8
+        return z + 0.05 * math.sin(y * 0.21 + x * 0.4) + 0.02 * math.sin(y * 0.9)
+    verts = [(x, y, zprof(x, y)) for x in xs for y in ys]
+    ny = len(ys); faces = [(i * ny + j, i * ny + j + 1, (i + 1) * ny + j + 1, (i + 1) * ny + j) for i in range(len(xs) - 1) for j in range(ny - 1)]
+    beach = S.mesh_obj("beach", verts, faces, c, sand, smooth=True); S.uv_box(beach, 2.48)
+    # marram grass on the dune
+    tufts = S.ph_variants("grass_medium_01") + S.ph_variants("grass_medium_02")
+    for k in range(260):
+        x = rnd.uniform(19.2, 23.5); y = rnd.uniform(-40, 40)
+        if abs(y - PIER_Y) < 2.2:
+            continue
+        S.place(tufts[rnd.integers(len(tufts))], f"dune_grass_{k}", (x, y, zprof(x, y) - 0.02), c, rnd.uniform(0, 6.28),
+                rnd.uniform(0.35, 0.7), tilt=0.12)
+    # sea: displaced wave mesh near shore (Ocean modifier, fixed seed), flat far sea with fine bump to the horizon
+    water = bpy.data.materials.new("baltic_water"); water.use_nodes = True; wb = S.principled(water)
+    wb.inputs["Base Color"].default_value = (0.012, 0.035, 0.04, 1); wb.inputs["Roughness"].default_value = 0.035
+    wb.inputs["IOR"].default_value = 1.333; wb.inputs["Transmission Weight"].default_value = 0.0
+    N, L = water.node_tree.nodes, water.node_tree.links
+    tc = N.new("ShaderNodeTexCoord"); nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 3.0; nz.inputs["Detail"].default_value = 8
+    L.new(tc.outputs["Object"], nz.inputs["Vector"])
+    bm = N.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.08; L.new(nz.outputs["Fac"], bm.inputs["Height"]); L.new(bm.outputs["Normal"], wb.inputs["Normal"])
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(110.0, 0, SEA_Z)); near = bpy.context.object; near.name = "sea_near"; S.link(near, c)
+    oc = near.modifiers.new("ocean", "OCEAN"); oc.geometry_mode = "GENERATE"; oc.size = 1.0; oc.spatial_size = 160
+    oc.resolution = 9 if S.PREVIEW else 14; oc.wave_scale = 0.35; oc.wind_velocity = 7.5; oc.choppiness = 0.9; oc.random_seed = 11
+    oc.wave_alignment = 0.4; oc.wave_direction = math.radians(180); oc.time = 1.0; oc.repeat_x = 1; oc.repeat_y = 2
+    near.data.materials.append(water); near.data.shade_smooth()
+    near.location = (29.0 + 80.0, 0, SEA_Z)
+    far = S.box("sea_far", (4000, 4000, 0.01), (2000 + 189.0, 0, SEA_Z - 0.06), c, water)
+    build_pier(c)
+    return c
+
+
+def build_pier(c):
+    """Baltic wooden pier: 3.0 m deck on paired oak piles every 3 m, board deck, posts + handrail, 140 m long."""
+    wood = S.ph_material("wood_planks", "pier_boards")
+    piles_m = S.mat_variant(wood, "pier_piles", val=0.55)
+    rail_m = S.mat_variant(wood, "pier_rail", val=0.8, uv_offset=(0.3, 0.7))
+    x0, x1, wdt = 21.5, 165.0, 3.0
+    deck_z = SEA_Z + 1.55
+    d = S.box("pier_deck", (x1 - x0, wdt, 0.06), ((x0 + x1) / 2, PIER_Y, deck_z), c, wood, bevel=0.01); S.uv_box(d, 1.5)
+    for side in (-1, 1):
+        S.box(f"pier_stringer{side}", (x1 - x0, 0.2, 0.3), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.1), deck_z - 0.18), c, piles_m)
+        S.box(f"pier_handrail{side}", (x1 - x0, 0.09, 0.09), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.05), deck_z + 1.05), c, rail_m, bevel=0.01)
+        S.box(f"pier_midrail{side}", (x1 - x0, 0.05, 0.12), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.05), deck_z + 0.55), c, rail_m)
+    k = 0
+    for x in np.arange(x0 + 0.5, x1, 3.0):
+        for side in (-1, 1):
+            y = PIER_Y + side * (wdt / 2 - 0.12)
+            S.box(f"pier_post_{k}", (0.1, 0.1, 1.1), (x, y, deck_z + 0.55), c, rail_m, bevel=0.008)
+            bottom = SEA_Z - 2.5; top = deck_z - 0.2
+            bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.14, depth=top - bottom, location=(x, y, (top + bottom) / 2))
+            pl = bpy.context.object; pl.name = f"pier_pile_{k}"; S.link(pl, c); pl.data.materials.append(piles_m); S.uv_box(pl, 1.5)
+            k += 1
+    for o in c.objects:
+        if o.name.startswith("pier_") and o.type == "MESH" and not o.data.uv_layers:
+            S.uv_box(o, 1.5)
