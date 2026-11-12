@@ -24,7 +24,7 @@ def setup_sky(elev_deg=21.0, rot_deg=125.0, strength=1.0, cloud=0.0):
     old = bpy.data.objects.get("SUN")
     if old:
         bpy.data.objects.remove(old, do_unlink=True)
-    sc.view_settings.exposure = -3.6      # the physical sky is ~100 klx; this is the "camera exposure" for a sunny afternoon
+    sc.view_settings.exposure = float(__import__("os").environ.get("EXPOSURE", -3.05))   # owner: bright, sunny look; the physical sky is ~100 klx; this is the "camera exposure" for a sunny afternoon
     return sky, None
 
 

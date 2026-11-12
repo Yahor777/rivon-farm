@@ -11,7 +11,7 @@ import build_world as BW, look as LK
 import design as D
 bad = D.build_all_v2(with_pergola=shot not in ("s01", "wide", "glass", "glassbg"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
-LK.setup_sky(elev_deg=float(__import__("os").environ.get("SUN_EL", 12)), rot_deg=float(__import__("os").environ.get("SUN_ROT", 145)))
+LK.setup_sky(elev_deg=float(__import__("os").environ.get("SUN_EL", 32)), rot_deg=float(__import__("os").environ.get("SUN_ROT", 135)))
 LK.setup_render(w, h, spp)
 if shot == "s01":
     LK.camera("CAM", (2.15, -2.55, 1.06), (-1.5, 1.0, 1.0), lens=32, fstop=3.5, focus=3.0)
