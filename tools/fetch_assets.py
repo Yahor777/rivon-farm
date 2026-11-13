@@ -31,7 +31,7 @@ def polyhaven(item, out):
             save(inc["url"], os.path.join(base, rel))
     else:
         for mapname, byres in files.items():
-            if mapname in ("blend", "gltf", "fbx", "usd", "mtlx"):
+            if mapname in ("blend", "gltf", "fbx", "usd", "mtlx", "tonemapped", "colorchart", "backplates"):
                 continue
             node = byres.get(res) or byres[sorted(byres)[-1]]
             ext = "exr" if "exr" in node else ("png" if "png" in node else "jpg")

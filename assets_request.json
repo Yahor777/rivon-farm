@@ -1,35 +1,20 @@
 {
- "name": "set4",
+ "name": "set5",
  "polyhaven": [
   {
-   "id": "rosewood_veneer1",
-   "res": "4k",
-   "fmt": "blend"
+   "id": "kloofendal_48d_partly_cloudy_puresky",
+   "res": "8k",
+   "fmt": "hdri"
   },
   {
-   "id": "island_tree_01",
-   "res": "2k",
-   "fmt": "blend"
+   "id": "qwantani_noon_puresky",
+   "res": "8k",
+   "fmt": "hdri"
   },
   {
-   "id": "island_tree_02",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "grass_bermuda_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "pine_sapling_medium",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "moss_01",
-   "res": "2k",
-   "fmt": "blend"
+   "id": "citrus_orchard_puresky",
+   "res": "8k",
+   "fmt": "hdri"
   }
  ]
 }
