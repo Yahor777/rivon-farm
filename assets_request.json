@@ -4,17 +4,17 @@
   {
    "id": "kloofendal_48d_partly_cloudy_puresky",
    "res": "8k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "qwantani_noon_puresky",
    "res": "8k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "citrus_orchard_puresky",
    "res": "8k",
-   "fmt": "hdri"
+   "fmt": "maps"
   }
  ]
 }

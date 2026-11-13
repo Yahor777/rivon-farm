@@ -21,7 +21,7 @@ def polyhaven(item, out):
     aid, res, fmt = item["id"], item.get("res", "4k"), item.get("fmt", "blend")
     files = json.loads(get(f"https://api.polyhaven.com/files/{aid}"))
     if fmt not in files:  # textures may lack .blend; fall back to gltf, then raw maps
-        fmt = "gltf" if "gltf" in files else None
+        fmt = "gltf" if ("gltf" in files and fmt != "maps") else None
     base = os.path.join(out, "polyhaven", aid)
     if fmt:
         node = files[fmt].get(res) or files[fmt][sorted(files[fmt])[-1]]
