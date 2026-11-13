@@ -22,6 +22,9 @@ for line in RF2.apply_all():
 if __import__("os").environ.get("HDRI", "kloofendal_48d_partly_cloudy_puresky") != "none":
     RF2.setup_hdri_sky(rot_deg=float(__import__("os").environ.get("SUN_ROT", 135)))
 print("\n".join("RF2 " + l for l in RF2.LOG))
+if __import__("os").environ.get("WEAR", "1") == "1":
+    import refine3 as RF3
+    print("\n".join("RF3 " + l for l in RF3.apply_all()))
 LK.setup_render(w, h, spp)
 RF.render_v2()
 if __import__("os").environ.get("CLOUDS", "0") == "1":
