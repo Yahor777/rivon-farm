@@ -1,18 +1,18 @@
 {
- "name": "set5",
+ "name": "set6",
  "polyhaven": [
   {
-   "id": "kloofendal_48d_partly_cloudy_puresky",
+   "id": "approaching_storm",
    "res": "8k",
    "fmt": "maps"
   },
   {
-   "id": "qwantani_noon_puresky",
+   "id": "kloofendal_overcast_puresky",
    "res": "8k",
    "fmt": "maps"
   },
   {
-   "id": "citrus_orchard_puresky",
+   "id": "overcast_soil_puresky",
    "res": "8k",
    "fmt": "maps"
   }
