@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
-B, A, O = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3]); O.mkdir(parents=True, exist_ok=True)
+B, A, O = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3]); LB = sys.argv[4] if len(sys.argv) > 4 else "ДО (q2)"; LA = sys.argv[5] if len(sys.argv) > 5 else "ПОСЛЕ (q3)"; O.mkdir(parents=True, exist_ok=True)
 try:
     F = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 34)
     f2 = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 26)
@@ -32,8 +32,8 @@ for shot in CROPS:
     b = Image.open(B / f"{shot}_photo.png").convert("RGB"); a = Image.open(A / f"{shot}_photo.png").convert("RGB")
     half = (540, 960)
     sheet = Image.new("RGB", (1080 + 20, 960), (20, 20, 20))
-    sheet.paste(label(b.resize(half, Image.LANCZOS), "ДО (q2)"), (0, 0))
-    sheet.paste(label(a.resize(half, Image.LANCZOS), "ПОСЛЕ (q3)"), (560, 0))
+    sheet.paste(label(b.resize(half, Image.LANCZOS), LB), (0, 0))
+    sheet.paste(label(a.resize(half, Image.LANCZOS), LA), (560, 0))
     sheet.save(O / f"compare_{shot}.jpg", quality=92)
     for k, (name, box) in enumerate(CROPS[shot]):
         cb, ca = b.crop(box), a.crop(box)

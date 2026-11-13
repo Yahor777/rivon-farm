@@ -73,14 +73,28 @@ def setup_hdri_sky(rot_deg=135.0, aid=HDRI):
 
 # ------------------------------------------------------------------ report defects
 def wine_ruby():
-    m = bpy.data.materials.get("red_wine")
-    if not m:
-        return
-    for n in m.node_tree.nodes:
-        if n.type == "VOLUME_ABSORPTION":
-            # sigma = density*(1-colour): R 17/m (ruby glow through 3-7 cm), G opaque, B 290/m (purple edge, not brown)
-            n.inputs["Color"].default_value = (0.975, 0.0, 0.68, 1); n.inputs["Density"].default_value = 700
-    log("wine: absorption re-tuned to ruby (red passes ~30 % over 7 cm, blue partly -> purple rim instead of amber)")
+    """Both wine materials own the volume: rays entering through the glass-contact faces get the INTERFACE material's
+    volume (a copy made in build_tableware), so tuning only red_wine changed nothing in q4."""
+    col = tuple(float(x) for x in os.environ.get("WINE_COL", "0.92,0.0,0.75").split(","))
+    dens = float(os.environ.get("WINE_DENS", 700))
+    n = 0
+    for name in ("red_wine", "red_wine_glass_interface"):
+        m = bpy.data.materials.get(name)
+        if not m:
+            continue
+        for nd in m.node_tree.nodes:
+            if nd.type == "VOLUME_ABSORPTION":
+                nd.inputs["Color"].default_value = (*col, 1); nd.inputs["Density"].default_value = dens; n += 1
+    dbg = os.environ.get("WINE_DEBUG", "")
+    if dbg == "hide":
+        for o in bpy.data.objects:
+            if o.name.startswith("wine_"):
+                o.hide_render = True
+    if dbg == "ior":
+        S.principled(bpy.data.materials["red_wine_glass_interface"]).inputs["IOR"].default_value = 1.333
+    if dbg == "flip":
+        w = bpy.data.objects.get("wine_0"); w.data.flip_normals()
+    log(f"wine: absorption colour {col} density {dens} on {n} volume(s) (wine top + glass-contact interface)")
 
 
 def chairs_fine_grain():
@@ -155,7 +169,12 @@ def _pillow(name, size, c, mat, sag=0.35):
     for v in me.vertices:
         v.co.x *= sx; v.co.y *= sy; v.co.z *= sz
     o.scale = (1, 1, 1)
-    md = o.modifiers.new("sub", "SUBSURF"); md.levels = md.render_levels = 3
+    # dense grid first (no smoothing) so the outline stays a rounded SQUARE; a subsurfed 8-vertex cube becomes an
+    # oval "bean bag" (what q4 showed). One smooth level afterwards only softens the seams.
+    bm = bmesh.new(); bm.from_mesh(me)
+    bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], cuts=14, use_grid_fill=True)
+    bm.to_mesh(me); bm.free()
+    md = o.modifiers.new("sub", "SUBSURF"); md.levels = md.render_levels = 1
     bpy.context.view_layer.objects.active = o
     bpy.ops.object.modifier_apply(modifier="sub")
     rnd = S.RNG
@@ -174,7 +193,7 @@ def _pillow(name, size, c, mat, sag=0.35):
 
 def lived_in():
     c = BW.fresh("LIVED_IN"); rnd = S.RNG
-    linen = _fabric("linen_cushion", (0.36, 0.33, 0.27))     # washed oatmeal linen (albedo ~0.33, white read as plastic)
+    linen = _fabric("linen_cushion", (0.21, 0.20, 0.16))     # taupe/olive outdoor linen: light albedos blew out in full sun
     # seat cushions on the two chairs facing the camera side (not all: real tables are never fully dressed)
     chairs = sorted([o for o in bpy.data.objects if o.type == "EMPTY" and o.name.startswith("chair")], key=lambda o: o.name)
     used = 0
@@ -183,7 +202,7 @@ def lived_in():
             break
         if e.location.x < -0.2:
             continue
-        p = _pillow(f"cushion_{used}", (0.42, 0.41, 0.032), c, linen, sag=0.5)
+        p = _pillow(f"cushion_{used}", (0.42, 0.41, 0.03), c, linen, sag=0.45)
         p.parent = e; p.location = (float(rnd.normal(0, 0.008)), float(rnd.normal(0.005, 0.008)), 0.47)
         p.rotation_euler.z = float(rnd.normal(0, 0.05)); used += 1
     # table: a closed hardback book left askew + a small bowl of olives (simple, physically honest objects)
