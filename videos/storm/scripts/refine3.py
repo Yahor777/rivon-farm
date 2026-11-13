@@ -112,8 +112,7 @@ def glazing():
     N, L, b = _nodes(m); g = _world_pos(N)
     # IGU "pillow" effect: panes bow by a few mm with temperature -> mirror images bend near the frames. Low-frequency
     # height field in world space (scale ~0.4/m) with a very small bump distance.
-    h = _noise(N, L, g.outputs["Position"], 0.45, detail=2, rough=0.4)
-    _add_bump(N, L, b, h, 1.0, 0.0035)
+    # (pillow distortion removed on request: reflections stay flat)
     # dried rain spots + dust film, heavier on the lower third (splash) -> roughness, very slight milky base
     v = N.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = 260; L.new(g.outputs["Position"], v.inputs["Vector"])
     spots = _maprange(N, L, v.outputs["Distance"], 0.0, 0.05, 1.0, 0.0)
@@ -124,7 +123,7 @@ def glazing():
                   _math(N, L, "MULTIPLY", _math(N, L, "MULTIPLY", dust, low), 0.05))
     base = _input_src(N, b, "Roughness")
     L.new(_math(N, L, "ADD", base, rough), b.inputs["Roughness"])
-    log("glazing: IGU pillow distortion (bump 3.5 mm, 0.45/m), dried rain spots + dust film on the lower panes")
+    log("glazing: dried rain spots + dust film on the lower panes (flat reflections kept)")
 
 
 def wine_glass_marks():
@@ -290,15 +289,13 @@ def deck():
         st = _ring_field(N, L, pos, [(0.95, -0.55, 0.06)], 0.0, 0.06)
         st = _math(N, L, "MULTIPLY", st, _maprange(N, L, _noise(N, L, pos, 25, 6, 0.7, 1.5), 0.35, 0.55, 0.0, 1.0))
         col = _input_src(N, b, "Base Color")
-        col = _mix_col(N, L, col, (0.52, 0.51, 0.49), grey)
-        col = _mix_col(N, L, col, (1.12, 1.08, 1.02), _math(N, L, "MULTIPLY", path, 0.6), "MULTIPLY")
-        col = _mix_col(N, L, col, (0.45, 0.22, 0.20), _math(N, L, "MULTIPLY", st, 0.7), "MULTIPLY")
+        col = _mix_col(N, L, col, (1.12, 1.08, 1.02), _math(N, L, "MULTIPLY", path, 0.35), "MULTIPLY")
         L.new(col, b.inputs["Base Color"])
         rough = _input_src(N, b, "Roughness")
-        rough = _mix_f(N, L, rough, 0.78, _math(N, L, "MAXIMUM", _math(N, L, "MULTIPLY", grey, 0.8), path))
+        rough = _mix_f(N, L, rough, 0.72, _math(N, L, "MULTIPLY", path, 0.6))
         L.new(rough, b.inputs["Roughness"])
-    log(f"deck: {k} boards individually proud/sunk (+-0.7 mm), cupped and twisted; UV greying towards the lawn, "
-        f"foot-traffic band door->table, old wine stain by the table")
+    log(f"deck: {k} boards individually proud/sunk (+-0.7 mm), cupped and twisted; faint foot-traffic band door->table "
+        f"(no greying, no stains - on request)")
 
 
 # ------------------------------------------------------------------ metal, plaster, chairs, bottle
@@ -318,14 +315,14 @@ def metal():
         up = N.new("ShaderNodeSeparateXYZ"); L.new(g.outputs["Normal"], up.inputs[0])
         dust = _math(N, L, "MULTIPLY", _maprange(N, L, up.outputs[2], 0.6, 0.95, 0.0, 1.0), 0.6)
         col = _input_src(N, b, "Base Color")
-        col = _mix_col(N, L, col, (0.30, 0.29, 0.28), _math(N, L, "MULTIPLY", _math(N, L, "MULTIPLY", chips, low), 0.9))
-        col = _mix_col(N, L, col, (0.16, 0.155, 0.15), _math(N, L, "MULTIPLY", scuff, 0.5))
-        col = _mix_col(N, L, col, (0.32, 0.30, 0.27), _math(N, L, "MULTIPLY", dust, 0.35))
+        col = _mix_col(N, L, col, (0.30, 0.29, 0.28), _math(N, L, "MULTIPLY", _math(N, L, "MULTIPLY", chips, low), 0.25))
+        col = _mix_col(N, L, col, (0.16, 0.155, 0.15), _math(N, L, "MULTIPLY", scuff, 0.15))
+        col = _mix_col(N, L, col, (0.32, 0.30, 0.27), _math(N, L, "MULTIPLY", dust, 0.10))
         L.new(col, b.inputs["Base Color"])
-        rough = _mix_f(N, L, _input_src(N, b, "Roughness"), 0.25, _math(N, L, "MULTIPLY", scuff, 0.8))
-        rough = _mix_f(N, L, rough, 0.85, dust)
+        rough = _mix_f(N, L, _input_src(N, b, "Roughness"), 0.3, _math(N, L, "MULTIPLY", scuff, 0.25))
+        rough = _mix_f(N, L, rough, 0.8, _math(N, L, "MULTIPLY", dust, 0.3))
         L.new(rough, b.inputs["Roughness"])
-        log(f"metal: table frame ({len(legs)} parts) got its own worn powder coat - shoe/chair scuffs and chips at the feet, "
+        log(f"metal (light): table frame ({len(legs)} parts) got its own worn powder coat - shoe/chair scuffs and chips at the feet, "
             f"dust on top faces; RIVON connector material untouched")
     for n in ("alu_RAL7021", "fence_RAL7016"):
         mm = bpy.data.materials.get(n)
@@ -335,8 +332,8 @@ def metal():
             up = N.new("ShaderNodeSeparateXYZ"); L.new(g.outputs["Normal"], up.inputs[0])
             dust = _math(N, L, "MULTIPLY", _maprange(N, L, up.outputs[2], 0.5, 0.95, 0.0, 1.0),
                          _maprange(N, L, _noise(N, L, g.outputs["Position"], 8, 5), 0.3, 0.7, 0.3, 1.0))
-            L.new(_mix_col(N, L, _input_src(N, b, "Base Color"), (0.36, 0.34, 0.31), _math(N, L, "MULTIPLY", dust, 0.45)), b.inputs["Base Color"])
-            L.new(_mix_f(N, L, _input_src(N, b, "Roughness"), 0.8, dust), b.inputs["Roughness"])
+            L.new(_mix_col(N, L, _input_src(N, b, "Base Color"), (0.36, 0.34, 0.31), _math(N, L, "MULTIPLY", dust, 0.12)), b.inputs["Base Color"])
+            L.new(_mix_f(N, L, _input_src(N, b, "Roughness"), 0.8, _math(N, L, "MULTIPLY", dust, 0.3)), b.inputs["Roughness"])
     log("metal: dust and pollen on up-facing window frames, coping and fence rails")
 
 
@@ -423,7 +420,7 @@ def bottle_label():
 
 
 def apply_all():
-    for f in (glazing, wine_glass_marks, table_top, deck, metal, plaster, chairs, bottle_label):
+    for f in (glazing, wine_glass_marks, table_top, deck, metal, plaster, bottle_label):   # chairs(): UV burn off on request
         try:
             f()
         except Exception as e:
