@@ -75,7 +75,7 @@ def setup_hdri_sky(rot_deg=135.0, aid=HDRI):
 def wine_ruby():
     """Both wine materials own the volume: rays entering through the glass-contact faces get the INTERFACE material's
     volume (a copy made in build_tableware), so tuning only red_wine changed nothing in q4."""
-    col = tuple(float(x) for x in os.environ.get("WINE_COL", "0.92,0.0,0.75").split(","))
+    col = tuple(float(x) for x in os.environ.get("WINE_COL", "0.95,0.0,0.60").split(","))
     dens = float(os.environ.get("WINE_DENS", 700))
     n = 0
     for name in ("red_wine", "red_wine_glass_interface"):
@@ -198,7 +198,7 @@ def lived_in():
     chairs = sorted([o for o in bpy.data.objects if o.type == "EMPTY" and o.name.startswith("chair")], key=lambda o: o.name)
     used = 0
     for e in chairs:
-        if used >= 2:
+        if used >= int(os.environ.get("CUSHIONS", 0)):   # q5: modelled pads read as slabs -> off until a scanned cushion is found
             break
         if e.location.x < -0.2:
             continue
@@ -264,7 +264,7 @@ def lived_in():
         o.location = (x, y, z); o.rotation_euler = (rnd.normal(0, 0.08), rnd.normal(0, 0.08), rnd.uniform(0, 6.28))
         sol = o.modifiers.new("sol", "SOLIDIFY"); sol.thickness = 0.0004
         n += 1
-    log(f"lived-in: 2 linen seat cushions, closed book + olive bowl on the table, {n} fallen leaves on the deck")
+    log(f"lived-in: {used} seat cushions, closed book + olive bowl on the table, {n} fallen leaves on the deck")
 
 
 def apply_all(rot_deg=135.0):
