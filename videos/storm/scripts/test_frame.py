@@ -16,6 +16,12 @@ import refine as RF
 for line in RF.apply_all():
     pass
 LK.setup_sky(elev_deg=float(__import__("os").environ.get("SUN_EL", 32)), rot_deg=float(__import__("os").environ.get("SUN_ROT", 135)))
+import refine2 as RF2
+for line in RF2.apply_all():
+    pass
+if __import__("os").environ.get("HDRI", "kloofendal_48d_partly_cloudy_puresky") != "none":
+    RF2.setup_hdri_sky(rot_deg=float(__import__("os").environ.get("SUN_ROT", 135)))
+print("\n".join("RF2 " + l for l in RF2.LOG))
 LK.setup_render(w, h, spp)
 RF.render_v2()
 if __import__("os").environ.get("CLOUDS", "0") == "1":

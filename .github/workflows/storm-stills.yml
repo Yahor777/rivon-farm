@@ -38,7 +38,7 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libxext6 >/dev/null
           cd /tmp && curl -sL -f --retry 6 --retry-all-errors --retry-delay 10 -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz && tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender
           L=$GITHUB_WORKSPACE/videos/storm/lib/polyhaven; mkdir -p $L
-          for TAG in lib-set1 lib-set2 lib-set3 lib-set4; do
+          for TAG in lib-set1 lib-set2 lib-set3 lib-set4 lib-set5; do
             gh release download $TAG -R ${{ github.repository }} -p 'polyhaven__*' -D /tmp/rel_$TAG
             for t in /tmp/rel_$TAG/*.tar; do tar -xf $t -C $L; done; rm -rf /tmp/rel_$TAG
           done
