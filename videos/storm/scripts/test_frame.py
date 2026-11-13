@@ -9,8 +9,12 @@ shot = args[4] if len(args) > 4 else "s01"
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import build_world as BW, look as LK
 import design as D
-bad = D.build_all_v2(with_pergola=shot in ("macro", "s09", "pergola", "rain_under", "final"))   # pergola arrives in the time-freeze
+bad = D.build_all_v2(with_pergola=shot in ("macro", "s09", "pergola", "rain_under", "final", "splash"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
+import cozy as CZ
+if bpy.data.collections.get("PERGOLA"):
+    CZ.glass_roof()
+    print("\n".join("CZ " + l for l in CZ.LOG))
 D.realism_pass()
 import refine as RF
 for line in RF.apply_all():
@@ -25,6 +29,8 @@ print("\n".join("RF2 " + l for l in RF2.LOG))
 if __import__("os").environ.get("WEAR", "1") == "1":
     import refine3 as RF3
     print("\n".join("RF3 " + l for l in RF3.apply_all()))
+if bpy.data.collections.get("PERGOLA"):              # after refine (its interior pass deletes every lamp in the scene)
+    CZ.warm_lights(on=shot in ("pergola", "rain_under", "final", "splash")); print("CZ " + CZ.LOG[-1])
 LK.setup_render(w, h, spp)
 RF.render_v2()
 if __import__("os").environ.get("CLOUDS", "0") == "1":
@@ -33,15 +39,18 @@ if shot == "s01":
     LK.camera("CAM", (2.15, -2.55, 1.06), (-1.5, 1.0, 1.0), lens=32, fstop=3.5, focus=3.0)
 elif shot == "wide":
     LK.camera("CAM", (7.4, -5.6, 1.25), (-2.4, 0.9, 2.05), lens=24, fstop=8.0, focus=9.5)
-elif shot in ("glass", "freeze"):
+elif shot in ("glass", "freeze", "splash"):
     import storm_lib as S
     g = bpy.data.objects["wine_glass_0"]; gx, gy, gz = g.location
     wine_top = gz + 0.1 + 0.125 * 0.34
     drop_z = wine_top + 0.0045                     # frozen 4.5 mm above the wine surface, just before contact
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, drop_z))
-    d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, 0.86)          # falling drops are slightly oblate
-    d.data.materials.append(S.mat_glass("rain_water", (1, 1, 1, 1))); S.principled(d.data.materials[0]).inputs["IOR"].default_value = 1.333
-    d.data.shade_smooth()
+    if shot == "splash":                           # c10: the one drop that got under the roof lands in the wine
+        CZ.splash(gx + 0.004, gy - 0.003, wine_top)
+    else:
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, drop_z))
+        d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, 0.86)          # falling drops are slightly oblate
+        d.data.materials.append(S.mat_glass("rain_water", (1, 1, 1, 1))); S.principled(d.data.materials[0]).inputs["IOR"].default_value = 1.333
+        d.data.shade_smooth()
     import math as _m
     focus_far = len(sys.argv) > 6 and sys.argv[6] == "far"
     dist = 0.30; cz = drop_z + 0.024                 # eye 2.4 cm above the drop: at 6 mm the underside of the wine surface
@@ -62,7 +71,7 @@ elif shot == "glassbg":
     c = LK.camera("CAM", (gx - 0.23, gy - 0.012, wine_top + 0.02), (gx + 1.0, gy + 0.02, wine_top - 0.035), lens=24, fstop=64, focus=30)
     c.data.dof.use_dof = False
 elif shot == "storm":                                 # c04: the storm front over the sea, seen from the deck edge
-    LK.camera("CAM", (1.0, -1.15, 1.45), (40.0, 3.5, 10.5), lens=24, fstop=8.0, focus=25.0)
+    LK.camera("CAM", (2.6, -1.3, 1.75), (40.0, 3.5, 13.5), lens=24, fstop=8.0, focus=25.0)   # sky 2/3 of the frame
 elif shot == "pergola":                               # c07: the pergola standing, frozen time
     LK.camera("CAM", (5.6, -3.4, 1.45), (0.0, 0.2, 1.75), lens=24, fstop=8.0, focus=6.5)
 elif shot == "rain_under":                            # c08: under the roof, looking out through the water curtain
@@ -73,12 +82,14 @@ elif shot == "s09":
     LK.camera("CAM", (9.5, -6.5, 1.7), (-1.0, 0.3, 1.6), lens=32, fstop=8)
 elif shot == "macro":
     LK.camera("CAM", (2.62, -3.98, 2.12), (1.72, -3.02, 2.56), lens=70, fstop=5.6, focus=1.38)   # outer corner Trojak C2 from the lawn
-WEATHER = __import__("os").environ.get("WEATHER", {"storm": "storm", "freeze": "freeze", "macro": "freeze", "pergola": "freeze",
+WEATHER = __import__("os").environ.get("WEATHER", {"storm": "storm", "freeze": "freeze", "macro": "freeze", "pergola": "freeze", "splash": "rain",
                                                     "rain_under": "rain", "final": "rain"}.get(shot, ""))
 if WEATHER:
     import weather as WX
     print("\n".join("WX " + l for l in WX.apply(WEATHER, bpy.context.scene.camera.location)))
-    bpy.context.scene.view_settings.exposure += {"macro": 1.0, "freeze": 0.3}.get(shot, 0.0)   # per-shot exposure, as a photographer would
+    bpy.context.scene.view_settings.exposure += {"macro": 1.0, "freeze": 0.3}.get(shot, 0.0)
+    if WEATHER == "rain" and bpy.data.collections.get("PERGOLA"):
+        CZ.roof_drops(); print("CZ " + CZ.LOG[-1])   # per-shot exposure, as a photographer would
 bpy.context.scene.render.filepath = out
 bpy.ops.render.render(write_still=True)
 if __import__("os").environ.get("AERIAL", "1") == "1":

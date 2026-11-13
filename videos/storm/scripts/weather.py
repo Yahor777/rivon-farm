@@ -263,5 +263,5 @@ def apply(state, cam_loc):
     elif state == "freeze":
         rain(cam_loc, frozen=True, n=int(os.environ.get("RAIN_N", 30000)))
     sc = bpy.context.scene
-    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 1.0, "freeze": 1.3, "rain": 1.3}[state]))
+    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 1.3, "freeze": 1.5, "rain": 1.5}[state]))
     return LOG
