@@ -123,7 +123,7 @@ def _rain_mat():
     b = S.principled(m); b.inputs["Transmission Weight"].default_value = 0.85; b.inputs["IOR"].default_value = 1.333
     b.inputs["Roughness"].default_value = 0.15; b.inputs["Base Color"].default_value = (0.85, 0.88, 0.9, 1)
     # a drop smeared over the exposure: its integrated look is a faint, slightly milky line, not a glass rod
-    b.inputs["Alpha"].default_value = 0.28
+    b.inputs["Alpha"].default_value = 0.2
     return m
 
 
@@ -133,13 +133,14 @@ def rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 140000))):
     mat = _rain_mat() if not frozen else S.mat_glass("rain_drop_frozen", (1, 1, 1, 1))
     if frozen:
         S.principled(mat).inputs["IOR"].default_value = 1.333
-    wind = Vector((0.18, 0.05, -1.0)).normalized()          # sea wind pushes the rain landwards a little
     variants = []
-    for k, ln in enumerate((0.12, 0.17, 0.22)):
+    for k, ln in enumerate((0.09, 0.12, 0.15, 0.18, 0.21, 0.13)):
+        # gusts: every streak family has its own tilt (8-16 deg) and heading, so the rain never looks combed
+        wind = Vector((0.14 + 0.03 * (k % 3), 0.03 * (k - 2.5), -1.0)).normalized()
         if frozen:
-            bpy.ops.mesh.primitive_uv_sphere_add(segments=10, ring_count=6, radius=0.0014 + 0.0004 * k)
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=10, ring_count=6, radius=0.0012 + 0.0002 * k)
         else:
-            bpy.ops.mesh.primitive_cylinder_add(vertices=5, radius=0.0005 + 0.00015 * k, depth=ln)
+            bpy.ops.mesh.primitive_cylinder_add(vertices=5, radius=0.0004 + 0.00008 * k, depth=ln)
         o = bpy.context.object; o.name = f"rain_src_{k}"
         for cc in o.users_collection:
             cc.objects.unlink(o)
@@ -152,7 +153,7 @@ def rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 140000))):
     cl = Vector(cam_loc)
     tot = 0
     for k, src in enumerate(variants):
-        cnt = n // 3
+        cnt = n // len(variants)
         # sample in a camera-centred cylinder 0.4..35 m, denser near the camera (we only see near drops individually)
         r = 1.6 + 35 * R.random(cnt) ** 1.6; a = R.uniform(0, 2 * math.pi, cnt)   # nothing closer than 1.6 m (lens-blurred away)
         x = cl.x + r * np.cos(a); y = cl.y + r * np.sin(a); z = R.uniform(-0.3, 9.0, cnt)
@@ -166,7 +167,7 @@ def rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 140000))):
         cloud = bpy.data.objects.new(f"rain_cloud_{k}", me); c.objects.link(cloud)
         cloud.instance_type = "VERTS"; src.parent = cloud
         src.location = (0, 0, 0); tot += len(x)
-    log(f"rain: {tot} {'frozen drops (spheres 1.4-2.2 mm)' if frozen else 'streaks 12-22 cm (1/50 s at ~9 m/s), wind-tilted 10 deg'}, "
+    log(f"rain: {tot} {'frozen drops (spheres 1.4-2.2 mm)' if frozen else 'streaks 9-21 cm in 6 families with their own gust tilt 8-16 deg'}, "
         f"none under the pergola roof")
     edge = _roof_edge()
     if edge and not frozen:
@@ -252,8 +253,27 @@ def wet(dry_box=None):
     log(f"wet: {n} materials wetted outside the pergola footprint (albedo x0.55-0.6, water coat on up-facing faces, puddles)")
 
 
+def lawn_overcast(state):
+    """Under an overcast sky a lawn reads muted olive, not the saturated sunlit green; wet blades darken and get a sheen."""
+    n = 0
+    for m in bpy.data.materials:
+        if not m.name.startswith(("lawn_", "lawn")) or not m.use_nodes:
+            continue
+        for nd in m.node_tree.nodes:
+            if nd.type == "HUE_SAT":
+                nd.inputs["Saturation"].default_value = 0.70
+            if nd.type == "MAP_RANGE" and abs(nd.inputs["To Min"].default_value - 0.72) < 1e-3:
+                k = 0.72 if state == "rain" else 0.85
+                nd.inputs["To Min"].default_value = 0.72 * k; nd.inputs["To Max"].default_value = 1.18 * k
+        b = next((x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED"), None)
+        if b is not None and state == "rain":
+            b.inputs["Roughness"].default_value = 0.2; b.inputs["Specular IOR Level"].default_value = 0.6
+        n += 1
+    log(f"lawn: {n} blade materials muted for overcast (saturation x0.7){', wet: darker + sheen' if state == 'rain' else ''}")
+
+
 def apply(state, cam_loc):
-    _sky(state); _sea(state)
+    _sky(state); _sea(state); lawn_overcast(state)
     if state in ("storm", "freeze") and os.environ.get("CB", "1") == "1":
         storm_cloud()
     pb = _pergola_box()
