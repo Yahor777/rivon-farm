@@ -30,7 +30,7 @@ for cat, rows in rep.items():
                 ext = e["url"].split("?")[0].rsplit(".", 1)[-1][:4]; fn = re.sub(r"[^A-Za-z0-9]+", "_", e["title"])[:50] + "." + ext
                 (out / cat / fn).write_bytes(get(e["url"])); e["file"] = f"{cat}/{fn}"
             elif e.get("licence") == "CC0" and e.get("mp3") and n < K and float(e.get("duration") or 999) <= 240:
-                url = "https://" + e["mp3"].split("https://")[-1]
+                url = "https://" + e["mp3"].split("https://")[-1].replace("-lq.mp3", "-hq.mp3")
                 (out / cat / f"{e['id']}.mp3").write_bytes(get(url)); e["file"] = f"{cat}/{e['id']}.mp3"; e["mp3"] = url; n += 1
                 time.sleep(0.3)
         except Exception as ex:
