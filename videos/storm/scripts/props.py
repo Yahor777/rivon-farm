@@ -81,6 +81,7 @@ def real_cutlery():
         m.rotation_euler.z = ang
         d = Vector((math.cos(ang), math.sin(ang), 0))
         m.location = loc - d * (L / 2); m.location.z = loc.z - 0.0012
+        m.location.y += 0.022 if not minus else -0.022            # 2 cm clear of the plate rim
         n += 1
     LOG.append(f"cutlery: {n} placeholder bars replaced by modelled forks (4 tines, 200 mm) and knives (215 mm), bent like real ones")
     return LOG

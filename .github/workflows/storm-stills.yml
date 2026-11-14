@@ -36,7 +36,15 @@ jobs:
       - name: Blender + assets
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libxext6 >/dev/null
-          cd /tmp && curl -sL -f --retry 6 --retry-all-errors --retry-delay 10 -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz && tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender
+          cd /tmp
+          # Blender from our own release cache first (download.blender.org drops connections when 20 runners pull at once)
+          gh release download lib-blender -R ${{ github.repository }} -p 'blender-5.2.3-linux-x64.tar.xz' -O b.tar.xz 2>/dev/null || true
+          for i in 1 2 3 4 5 6 7 8; do
+            [ -s b.tar.xz ] && tar tf b.tar.xz >/dev/null 2>&1 && break
+            curl -sL -f --retry 3 --retry-all-errors -o b.tar.xz https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz || curl -sL -f -o b.tar.xz https://mirrors.ocf.berkeley.edu/blender/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz || sleep 30
+          done
+          tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender && test -x /tmp/blender/blender
+          (gh release view lib-blender -R ${{ github.repository }} >/dev/null 2>&1 || gh release create lib-blender -R ${{ github.repository }} --title lib-blender --notes "Blender binary cache for the render runners") && (gh release view lib-blender -R ${{ github.repository }} --json assets -q '.assets[].name' | grep -q blender-5.2.3 || (cp b.tar.xz blender-5.2.3-linux-x64.tar.xz && gh release upload lib-blender blender-5.2.3-linux-x64.tar.xz -R ${{ github.repository }} --clobber)) || true
           L=$GITHUB_WORKSPACE/videos/storm/lib/polyhaven; mkdir -p $L
           for TAG in lib-set1 lib-set2 lib-set3 lib-set4 lib-set5 lib-set6; do
             gh release download $TAG -R ${{ github.repository }} -p 'polyhaven__*' -D /tmp/rel_$TAG

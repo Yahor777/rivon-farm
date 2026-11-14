@@ -64,7 +64,7 @@ def move_camera(shot):
     cam = bpy.context.scene.camera; e = ease(T); k = e - {"wide": 1.0, "final": 0.0}.get(shot, 0.5)
     fwd = cam.matrix_world.to_3x3() @ Vector((0, 0, -1)); right = cam.matrix_world.to_3x3() @ Vector((1, 0, 0))
     up = Vector((0, 0, 1))
-    mv = {"wide": fwd * 1.6, "glass": right * 0.012 + fwd * 0.015, "s01": right * 0.35, "storm": fwd * 0.5 + up * 0.05,
+    mv = {"wide": fwd * 0.55 + up * 0.04, "glass": right * 0.012 + fwd * 0.015, "s01": right * 0.35, "storm": fwd * 0.5 + up * 0.05,
           "freeze": right * 0.012, "macro": right * 0.16 + up * 0.03, "pergola": up * 0.55 - fwd * 0.9,
           "rain_under": -fwd * 0.35, "splash": fwd * 0.0, "final": -fwd * 1.3 + up * 0.25}[shot]
     cam.location = Vector(cam.location) + mv * k
