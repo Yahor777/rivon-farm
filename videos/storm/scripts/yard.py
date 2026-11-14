@@ -41,10 +41,10 @@ def build(lit=False):
     c = BW.fresh("YARD"); CLEAR.clear()
     stone = S.ph_material("granite_tile", "path_granite")
     # stepping-stone path: deck step -> pier steps, a gentle S-curve
-    p0, p1 = Vector((4.75, 1.9)), Vector((17.9, 4.6)); n = 23
+    p0, p1 = Vector((4.75, 0.5)), Vector((17.9, 4.6)); n = 23
     pts = []
     for i in range(n):
-        t = i / (n - 1); p = p0.lerp(p1, t); p.y += 0.9 * math.sin(t * math.pi) - 0.35 * math.sin(2 * t * math.pi)
+        t = i / (n - 1); p = p0.lerp(p1, t); p.y += 0.25 * math.sin(t * math.pi) - 0.55 * math.sin(2 * t * math.pi)
         pts.append(p)
         ang = math.atan2(p1.y - p0.y, p1.x - p0.x) + R.normal(0, 0.25)
         _slab(f"step_stone_{i}", p.x + R.normal(0, 0.03), p.y + R.normal(0, 0.05), ang, R.uniform(0.50, 0.62), R.uniform(0.36, 0.46), c, stone)
@@ -75,9 +75,9 @@ def build(lit=False):
             lo = bpy.data.objects.new(f"bollard_light_{nb}", Lp); c.objects.link(lo); lo.location = (x + 0.06, y, g + 0.44)
         nb += 1
     # bistro set + fire bowl on the lawn, north side (clear of the pergola zone and of the camera foregrounds)
-    bx, by = 8.4, 6.9; g = BW.ground_z(bx, by)
+    bx, by = 12.8, -3.5; g = BW.ground_z(bx, by)          # the bistro set sits by the fire bowl: one fire-pit corner
     _asset("outdoor_table_chair_set_01", "bistro", (bx, by, g), 0.7, 1.0, c)
-    fx, fy = 10.3, 5.6; g = BW.ground_z(fx, fy)
+    fx, fy = 11.4, -2.5; g = BW.ground_z(fx, fy)
     corten = S.mat_simple("corten_steel", (0.21, 0.095, 0.045), rough=0.85)
     S.lathe("fire_bowl", [(0.0001, 0.12), (0.12, 0.125), (0.30, 0.19), (0.40, 0.30), (0.405, 0.305), (0.395, 0.31), (0.29, 0.205),
                           (0.12, 0.14), (0.0001, 0.135)], c, corten, seg=64).location = (fx, fy, g)
