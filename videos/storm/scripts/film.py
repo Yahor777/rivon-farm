@@ -61,7 +61,7 @@ def move_camera(shot):
     the approved still, for the others the still sits at mid-move"""
     if FRAME is None:
         return
-    cam = bpy.context.scene.camera; e = ease(T); k = e - {"wide": 1.0, "final": 0.0}.get(shot, 0.5)
+    cam = bpy.context.scene.camera; e = ease(T); k = e - {"wide": 0.0, "final": 0.0}.get(shot, 0.5)    # wide starts ON the approved still and pushes in (behind it hangs a tree branch)
     fwd = cam.matrix_world.to_3x3() @ Vector((0, 0, -1)); right = cam.matrix_world.to_3x3() @ Vector((1, 0, 0))
     up = Vector((0, 0, 1))
     mv = {"wide": fwd * 0.55 + up * 0.04, "glass": right * 0.012 + fwd * 0.015, "s01": right * 0.35, "storm": fwd * 0.5 + up * 0.05,
