@@ -7,18 +7,23 @@ args = [a for a in sys.argv[1:]]
 out = args[0]; w, h, spp = (int(args[1]), int(args[2]), int(args[3])) if len(args) > 3 else (270, 480, 16)
 shot = args[4] if len(args) > 4 else "s01"
 bpy.ops.wm.read_factory_settings(use_empty=True)
+import film as FM
+if shot[:1] == "f" and shot[1:].isdigit():            # film frame: f0001..f0600 -> base shot + per-frame parameters
+    shot = FM.set_frame(int(shot[1:])); print("FILM frame", FM.FRAME, "shot", shot, "t", round(FM.T, 3))
+LIT = FM.lights_on(shot)
 import build_world as BW, look as LK
 import design as D
 bad = D.build_all_v2(with_pergola=shot in ("macro", "s09", "pergola", "rain_under", "final", "splash"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
 import yard as YD
-print("\n".join("YD " + l for l in YD.build(lit=shot in ("pergola", "rain_under", "final", "splash"))))
+print("\n".join("YD " + l for l in YD.build(lit=LIT)))
 import props as PR
 print("\n".join("PR " + l for l in PR.real_cutlery()))
 import cozy as CZ
 if bpy.data.collections.get("PERGOLA"):
     CZ.glass_roof()
     print("\n".join("CZ " + l for l in CZ.LOG))
+    print("FILM assembly hidden parts:", FM.assemble())
 D.realism_pass()
 import refine as RF
 for line in RF.apply_all():
@@ -34,8 +39,8 @@ if __import__("os").environ.get("WEAR", "1") == "1":
     import refine3 as RF3
     print("\n".join("RF3 " + l for l in RF3.apply_all()))
 if bpy.data.collections.get("PERGOLA"):              # after refine (its interior pass deletes every lamp in the scene)
-    CZ.warm_lights(on=shot in ("pergola", "rain_under", "final", "splash")); print("CZ " + CZ.LOG[-1])
-    if shot in ("pergola", "rain_under", "final", "splash"):
+    CZ.warm_lights(on=LIT); print("CZ " + CZ.LOG[-1])
+    if LIT:
         CZ.cozy_extras(); print("CZ " + CZ.LOG[-1])
 LK.setup_render(w, h, spp)
 RF.render_v2()
@@ -50,10 +55,14 @@ elif shot in ("glass", "freeze", "splash"):
     g = bpy.data.objects["wine_glass_0"]; gx, gy, gz = g.location
     wine_top = gz + 0.1 + 0.125 * 0.34
     drop_z = wine_top + 0.0045                     # frozen 4.5 mm above the wine surface, just before contact
-    if shot == "splash":                           # c10: the one drop that got under the roof lands in the wine
-        CZ.splash(gx + 0.004, gy - 0.003, wine_top)
-    else:
-        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, drop_z))
+    su = FM.splash_u(shot) if shot == "splash" else None
+    if shot == "splash" and su >= 0:               # c10: the one drop that got under the roof lands in the wine
+        CZ.splash(gx + 0.004, gy - 0.003, wine_top, u=su)
+    elif not (shot == "glass" and FM.FRAME is not None):      # (film: no drop yet in the sunny glass shot)
+        dzz = drop_z + FM.drop_offset(shot)
+        if shot == "splash":                       # the frozen drop resumes its fall: 4.5 mm in ~7 frames
+            dzz = wine_top + 0.0021 + 0.0045 * min(1.0, max(0.0, -su / 0.4))
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, dzz))
         d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, 0.86)          # falling drops are slightly oblate
         d.data.materials.append(S.mat_glass("rain_water", (1, 1, 1, 1))); S.principled(d.data.materials[0]).inputs["IOR"].default_value = 1.333
         d.data.shade_smooth()
@@ -88,6 +97,7 @@ elif shot == "s09":
     LK.camera("CAM", (9.5, -6.5, 1.7), (-1.0, 0.3, 1.6), lens=32, fstop=8)
 elif shot == "macro":
     LK.camera("CAM", (2.62, -3.98, 2.12), (1.72, -3.02, 2.56), lens=70, fstop=5.6, focus=1.38)   # outer corner Trojak C2 from the lawn
+FM.move_camera(shot); FM.wind()
 WEATHER = __import__("os").environ.get("WEATHER", {"storm": "storm", "freeze": "freeze", "macro": "freeze", "pergola": "freeze", "splash": "rain",
                                                     "rain_under": "rain", "final": "clearing"}.get(shot, ""))
 if WEATHER:

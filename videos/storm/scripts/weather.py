@@ -51,7 +51,7 @@ def storm_cloud():
     is built: one volumetric shelf cloud / cumulonimbus base over the sea, lit only by the overcast sky dome.
     Real numbers: base 500-700 m, tops ~3 km, front edge ~2 km offshore, extinction ~0.01-0.05 /m."""
     c = BW.fresh("STORM_CLOUD")
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(4700, 0, 1700))
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(float(os.environ.get("CB_X", 4700)), 0, 1700))
     o = bpy.context.object; o.name = "cb_front"
     for cc in o.users_collection:
         cc.objects.unlink(o)
@@ -92,7 +92,7 @@ def _sea(state):
         for md in o.modifiers:
             if md.type == "OCEAN":
                 md.wind_velocity = 15.0 if state != "freeze" else 15.0
-                md.wave_scale = 0.9; md.choppiness = 1.25
+                md.wave_scale = 0.9; md.choppiness = 1.25; md.time = float(os.environ.get("SEA_TIME", 1.0))
     log("sea: wind 15 m/s, choppy (0.9 wave scale, 1.25 choppiness)")
 
 
@@ -349,6 +349,8 @@ def sun_break(target=(0.0, 0.0, 1.6)):
 
 
 def apply(state, cam_loc):
+    global R
+    R = np.random.default_rng(int(os.environ.get("WX_SEED", 777)))
     _sky(state); _sea(state); lawn_overcast(state)
     if state in ("storm", "freeze") and os.environ.get("CB", "1") == "1":
         storm_cloud()

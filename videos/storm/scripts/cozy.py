@@ -183,19 +183,24 @@ def roof_drops(n=int(os.environ.get("ROOF_DROPS", 6000))):
     log(f"roof water: {len(P)} rain beads on the glass (3 mm, flattened)")
 
 
-def splash(gx, gy, wine_top):
+def splash(gx, gy, wine_top, u=0.55):
     """crown splash of the single drop entering the wine (~3 ms after contact): thin wine wall rising 3-4 mm with cusps
     that pinch off into droplets; a few secondary droplets in flight."""
     c = BW.fresh("SPLASH")
     wine = bpy.data.materials.get("red_wine")
+    # u: 0 contact -> 0.55 full crown -> 1 collapsing -> >1.3 gone (only ripples of light remain)
+    if u > 1.35:
+        return
+    grow = math.sin(min(1.0, u / 0.55) * math.pi / 2) if u <= 0.55 else max(0.0, 1.0 - (u - 0.55) / 0.8)
+    wide = 0.55 + 0.45 * min(1.0, u / 0.55) + 0.5 * max(0.0, u - 0.55)
     bm = bmesh.new(); nseg, nz = 96, 10; r0 = 0.0062; cusps = 13      # 4.6 mm drop from ~0.5 m -> crown ~13 mm across
     rings = []
     for j in range(nz + 1):
         t = j / nz; ring = []
         for i in range(nseg):
             th = 2 * math.pi * i / nseg
-            hcusp = 0.0052 + 0.0020 * abs(math.cos(cusps * th / 2)) ** 6
-            r = r0 + 0.0019 * t ** 1.5 + 0.00015 * math.sin(7 * th)       # flares outwards as it rises
+            hcusp = (0.0052 + 0.0020 * abs(math.cos(cusps * th / 2)) ** 6) * grow
+            r = (r0 + 0.0019 * t ** 1.5) * wide + 0.00015 * math.sin(7 * th)       # flares outwards as it rises
             ring.append(bm.verts.new((gx + r * math.cos(th), gy + r * math.sin(th), wine_top - 0.0004 + hcusp * t)))
         rings.append(ring)
     for j in range(nz):
@@ -208,7 +213,7 @@ def splash(gx, gy, wine_top):
     for i in range(cusps):
         th = 2 * math.pi * (i + 0.5) / cusps * 1.0
         for k in range(2 if R.random() < 0.6 else 1):
-            rr = r0 + 0.0021 + 0.0008 * k; zz = wine_top + 0.0078 + 0.0020 * k + float(R.uniform(0, 0.0008))
+            rr = (r0 + 0.0021 + 0.0008 * k) * wide; zz = wine_top + (0.0078 + 0.0020 * k) * (0.3 + 0.7 * math.sin(min(1.0, u / 0.9) * math.pi)) + float(R.uniform(0, 0.0008))
             bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=float(R.uniform(0.0004, 0.0007)),
                                                  location=(gx + rr * math.cos(th), gy + rr * math.sin(th), zz))
             d = bpy.context.object; d.name = f"splash_drop_{n}"; S.link(d, c); d.data.materials.append(wine); d.data.shade_smooth(); n += 1
