@@ -1,0 +1,24 @@
+name: sfx
+# branch sfx/search -> candidate list; branch sfx/fetch -> download the chosen recordings (videos/storm/sound/sources.json)
+on:
+  push:
+    branches: ['sfx/**']
+permissions:
+  contents: write
+jobs:
+  sfx:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
+          gh release view lib-sfx -R ${{ github.repository }} >/dev/null 2>&1 || gh release create lib-sfx -R ${{ github.repository }} --title lib-sfx --notes "Free-licence (CC0 / public domain) recordings for the film sound"
+          if [ "${{ github.ref_name }}" = "sfx/search" ]; then
+            python3 tools/sfx_search.py /tmp/sfx_candidates.json
+            gh release upload lib-sfx /tmp/sfx_candidates.json -R ${{ github.repository }} --clobber
+          else
+            python3 tools/sfx_fetch.py videos/storm/sound/sources.json /tmp/sfx
+            cd /tmp/sfx && tar -cf ../sfx_pack.tar . && gh release upload lib-sfx /tmp/sfx_pack.tar /tmp/sfx/sfx_report.json -R ${{ github.repository }} --clobber
+          fi
