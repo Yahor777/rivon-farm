@@ -108,7 +108,7 @@ if WEATHER:
         CZ.roof_drops(); print("CZ " + CZ.LOG[-1])   # per-shot exposure, as a photographer would
 bpy.context.scene.render.filepath = out
 bpy.ops.render.render(write_still=True)
-if __import__("os").environ.get("AERIAL", "1") == "1":
+if __import__("os").environ.get("AERIAL", "1") == "1" and not WEATHER:    # storm/rain shots: the depth haze greyed out the shelf cloud
     LK.render_haze_pass(out.replace(".png", "_haze.png"))
 import numpy as np
 im = bpy.data.images.load(out); a = np.array(im.pixels[:]).reshape(-1, 4)[:, :3]
