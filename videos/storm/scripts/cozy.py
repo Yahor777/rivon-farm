@@ -61,6 +61,11 @@ def glass_roof():
     N, L = glass.node_tree.nodes, glass.node_tree.links
     va = N.new("ShaderNodeVolumeAbsorption"); va.inputs["Color"].default_value = (0.86, 0.95, 0.92, 1); va.inputs["Density"].default_value = 6.0
     out = next(n for n in N if n.type == "OUTPUT_MATERIAL"); L.new(va.outputs[0], out.inputs["Volume"])
+    # direct light passes the pane (caustics are off; real laminated glass transmits ~85 %)
+    src = out.inputs["Surface"].links[0].from_socket
+    lp = N.new("ShaderNodeLightPath"); trs = N.new("ShaderNodeBsdfTransparent"); trs.inputs["Color"].default_value = (0.84, 0.87, 0.85, 1)
+    mxs = N.new("ShaderNodeMixShader"); L.new(lp.outputs["Is Shadow Ray"], mxs.inputs[0]); L.new(src, mxs.inputs[1])
+    L.new(trs.outputs[0], mxs.inputs[2]); L.new(mxs.outputs[0], out.inputs["Surface"])
     tanf = math.tan(FALL)
     bars_y = np.linspace(-YH, YH, 7)
     for k, y in enumerate(bars_y):

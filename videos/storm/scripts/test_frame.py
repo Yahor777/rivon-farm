@@ -11,6 +11,8 @@ import build_world as BW, look as LK
 import design as D
 bad = D.build_all_v2(with_pergola=shot in ("macro", "s09", "pergola", "rain_under", "final", "splash"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
+import yard as YD
+print("\n".join("YD " + l for l in YD.build(lit=shot in ("pergola", "rain_under", "final", "splash"))))
 import props as PR
 print("\n".join("PR " + l for l in PR.real_cutlery()))
 import cozy as CZ
@@ -87,12 +89,12 @@ elif shot == "s09":
 elif shot == "macro":
     LK.camera("CAM", (2.62, -3.98, 2.12), (1.72, -3.02, 2.56), lens=70, fstop=5.6, focus=1.38)   # outer corner Trojak C2 from the lawn
 WEATHER = __import__("os").environ.get("WEATHER", {"storm": "storm", "freeze": "freeze", "macro": "freeze", "pergola": "freeze", "splash": "rain",
-                                                    "rain_under": "rain", "final": "rain"}.get(shot, ""))
+                                                    "rain_under": "rain", "final": "clearing"}.get(shot, ""))
 if WEATHER:
     import weather as WX
     print("\n".join("WX " + l for l in WX.apply(WEATHER, bpy.context.scene.camera.location)))
     bpy.context.scene.view_settings.exposure += {"macro": 1.0, "freeze": 0.3}.get(shot, 0.0)
-    if WEATHER == "rain" and bpy.data.collections.get("PERGOLA"):
+    if WEATHER in ("rain", "clearing") and bpy.data.collections.get("PERGOLA"):
         CZ.roof_drops(); print("CZ " + CZ.LOG[-1])   # per-shot exposure, as a photographer would
 bpy.context.scene.render.filepath = out
 bpy.ops.render.render(write_still=True)

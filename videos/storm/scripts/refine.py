@@ -315,7 +315,8 @@ def render_v2():
 def apply_all():
     fix_colorspaces(); vegetation_shading(); build_lawn_v2()
     import lawn3 as L3                                           # mown-turf blades replace the v2 hair systems (weeds kept)
-    lawn = bpy.data.objects["lawn"]; L3.trim_density(lawn); L3.build(lawn, L3.weighted_area(lawn), preview=S.PREVIEW); LOG.extend(L3.LOG)
+    import yard as _Y
+    lawn = bpy.data.objects["lawn"]; L3.trim_density(lawn, clear=_Y.CLEAR); L3.build(lawn, L3.weighted_area(lawn), preview=S.PREVIEW); LOG.extend(L3.LOG)
     trees_v2(); materials_v2(); interior_v2()
     fix_colorspaces(); vegetation_shading()                      # assets loaded by the steps above
     return LOG

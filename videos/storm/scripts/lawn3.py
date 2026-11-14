@@ -69,7 +69,7 @@ SPECS = [  # name, parents per unit-weight m2 (x area), length, rand, width radi
 ]
 
 
-def trim_density(lawn, x_max=19.8, y_abs=8.6):
+def trim_density(lawn, x_max=19.8, y_abs=10.3, clear=()):
     """no blades where no camera can see them: under the dune (x > 19.8) and far beyond the side fences"""
     vg = lawn.vertex_groups.get("density")
     if not vg:
@@ -86,6 +86,9 @@ def trim_density(lawn, x_max=19.8, y_abs=8.6):
             vg.add([v.index], 0.0, "REPLACE")
         elif abs(y) > y_abs:
             vg.add([v.index], 0.03, "REPLACE")
+        for (cx, cy, cr) in clear:                              # stepping stones: no blades under them
+            if (x - cx) ** 2 + (y - cy) ** 2 < cr * cr:
+                vg.add([v.index], 0.0, "REPLACE"); break
 
 
 def build(lawn, area_m2, preview=False):
@@ -102,6 +105,8 @@ def build(lawn, area_m2, preview=False):
         cnt = int(per_m2 * area_m2 * (0.12 if preview else 1.0))
         st.type = "HAIR"; st.count = cnt; st.hair_length = ln; st.use_advanced_hair = True; st.hair_step = 3
         st.material = len(lawn.data.materials); st.emit_from = "FACE"; st.use_emit_random = True; st.use_even_distribution = True
+        st.distribution = "RAND"          # NOT jittered: the jitter table caps particles per face, and on the 25 cm lawn
+                                          # faces that left ~150 parents/m2 in a visible grid of tufts (d1 stills)
         st.child_type = "SIMPLE"; st.child_percent = 2; st.rendered_child_count = kids if not preview else max(2, kids // 3)
         st.child_radius = 0.012; st.child_roundness = 0.0; st.child_length = 1.0; st.child_length_threshold = 0.0
         st.clump_factor = 0.0; st.child_parting_factor = 0.0

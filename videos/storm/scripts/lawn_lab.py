@@ -9,7 +9,7 @@ w, h, spp = (int(a[2]), int(a[3]), int(a[4])) if len(a) > 4 else (540, 960, 64)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import storm_lib as S, look as LK, refine2 as RF2, lawn3 as L3
 c = S.coll("LAB")
-bpy.ops.mesh.primitive_grid_add(x_subdivisions=60, y_subdivisions=60, size=6.0, location=(0, 0, 0))
+bpy.ops.mesh.primitive_grid_add(x_subdivisions=24, y_subdivisions=24, size=6.0, location=(0, 0, 0))   # 25 cm faces, like the real lawn mesh
 g = bpy.context.object; g.name = "lawn"; S.link(g, c)
 soil = S.ph_material("forrest_ground_01", "lawn_soil"); S.calm_albedo(soil, (0.11, 0.14, 0.05), keep=0.5); soil["tinted"] = 1
 g.data.materials.append(soil); S.uv_box(g, 2.0)

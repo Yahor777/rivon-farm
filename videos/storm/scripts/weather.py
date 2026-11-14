@@ -13,7 +13,7 @@ import storm_lib as S, build_world as BW, refine2 as RF2
 LOG = []
 log = LOG.append
 R = np.random.default_rng(777)
-SKY = {"storm": ("kloofendal_overcast_puresky", 1.0), "freeze": ("kloofendal_overcast_puresky", 1.0), "rain": ("kloofendal_overcast_puresky", 1.0)}
+SKY = {"clearing": ("kloofendal_overcast_puresky", 1.0), "storm": ("kloofendal_overcast_puresky", 1.0), "freeze": ("kloofendal_overcast_puresky", 1.0), "rain": ("kloofendal_overcast_puresky", 1.0)}
 
 
 def _sky(state):
@@ -81,7 +81,7 @@ def storm_cloud():
     shape = op("MULTIPLY", op("MULTIPLY", base, top), front)
     dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78, 0.95), shape)
     L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.035))), pv.inputs["Density"])
-    pv.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1); pv.inputs["Anisotropy"].default_value = 0.35
+    pv.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1); pv.inputs["Anisotropy"].default_value = 0.05
     L.new(pv.outputs[0], out.inputs["Volume"]); o.data.materials.append(m)
     sc = bpy.context.scene; sc.cycles.volume_step_rate = 8.0; sc.cycles.volume_max_steps = 512; sc.cycles.volume_bounces = 2
     log("storm cloud: volumetric shelf cloud / cumulonimbus base over the sea (base ~550 m, tops ~2.5 km, front 0.7 km offshore, extinction 0.035/m -> dark base, light gap at the horizon)")
@@ -263,13 +263,89 @@ def lawn_overcast(state):
             if nd.type == "HUE_SAT":
                 nd.inputs["Saturation"].default_value = 0.70
             if nd.type == "MAP_RANGE" and abs(nd.inputs["To Min"].default_value - 0.72) < 1e-3:
-                k = 0.88 if state == "rain" else 0.95
+                k = 0.88 if state in ("rain", "clearing") else 0.95
                 nd.inputs["To Min"].default_value = 0.72 * k; nd.inputs["To Max"].default_value = 1.18 * k
         b = next((x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED"), None)
-        if b is not None and state == "rain":
+        if b is not None and state in ("rain", "clearing"):
             b.inputs["Roughness"].default_value = 0.2; b.inputs["Specular IOR Level"].default_value = 0.6
         n += 1
     log(f"lawn: {n} blade materials muted for overcast (saturation x0.7){', wet: darker + sheen' if state == 'rain' else ''}")
+
+
+def sun_break(target=(0.0, 0.0, 1.6)):
+    """The storm passes: the sun finds a gap and its shafts land on the pergola. Physical setup: a real sun lamp
+    (0.53 deg disc, 5200 K late-day white), a cloud deck 420 m up that only lets light through a few ragged holes (it
+    exists for light only - the camera never sees it), and thin humid air after rain (uniform haze, forward scattering)
+    in which the shafts become visible."""
+    c = BW.fresh("SUN_BREAK")
+    to_sun = Vector((0.797, 0.140, 0.588)).normalized()       # from over the sea (azimuth scan: only 75-105 deg is clear of the
+                                                                # neighbours' trees), 36 deg up - evening sun after the front has passed
+    Ld = bpy.data.lights.new("break_sun", "SUN"); Ld.energy = float(os.environ.get("BREAK_SUN", 34.0)); Ld.angle = math.radians(0.53)
+    Ld.use_nodes = True
+    bb = Ld.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = 5200
+    Ld.node_tree.links.new(bb.outputs[0], Ld.node_tree.nodes["Emission"].inputs["Color"])
+    so = bpy.data.objects.new("break_sun", Ld); c.objects.link(so); so.rotation_euler = to_sun.to_track_quat("Z", "Y").to_euler()
+    # cloud deck with holes (shadow caster only)
+    # low scud deck: at 420 m the 0.53 deg sun penumbra (3.9 m) melted the shafts together
+    H = 130.0; tgt = Vector(target); centre = tgt + to_sun * ((H - tgt.z) / to_sun.z)
+    bpy.ops.mesh.primitive_plane_add(size=3000, location=(centre.x, centre.y, H))
+    deck = bpy.context.object; deck.name = "cloud_deck_gobo"
+    for cc in deck.users_collection:
+        cc.objects.unlink(deck)
+    c.objects.link(deck); deck.visible_camera = False; deck.visible_glossy = False; deck.visible_diffuse = False; deck.visible_transmission = False
+    m = bpy.data.materials.new("cloud_deck_gobo"); m.use_nodes = True; N, L = m.node_tree.nodes, m.node_tree.links; N.clear()
+    out = N.new("ShaderNodeOutputMaterial"); tr = N.new("ShaderNodeBsdfTransparent"); df = N.new("ShaderNodeBsdfDiffuse")
+    df.inputs["Color"].default_value = (0, 0, 0, 1); mx = N.new("ShaderNodeMixShader")
+    geo = N.new("ShaderNodeNewGeometry"); sep = N.new("ShaderNodeSeparateXYZ"); L.new(geo.outputs["Position"], sep.inputs[0])
+    def op(o_, a, b):
+        x = N.new("ShaderNodeMath"); x.operation = o_
+        for i, v in enumerate((a, b)):
+            if isinstance(v, float):
+                x.inputs[i].default_value = v
+            else:
+                L.new(v, x.inputs[i])
+        return x.outputs[0]
+    dx = op("SUBTRACT", sep.outputs[0], float(centre.x)); dy = op("SUBTRACT", sep.outputs[1], float(centre.y))
+    d = op("SQRT", op("ADD", op("MULTIPLY", dx, dx), op("MULTIPLY", dy, dy)), 0.0)
+    nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 0.30; nz.inputs["Detail"].default_value = 1
+    L.new(geo.outputs["Position"], nz.inputs["Vector"])
+    # main hole ~14 m radius with ragged edge over the pergola + scattered smaller holes from the noise
+    hole_main = op("MULTIPLY", op("LESS_THAN", d, 9.0), op("GREATER_THAN", nz.outputs["Fac"], 0.5))   # a cluster of 1-3 m gaps -> separate shafts
+    nz2 = N.new("ShaderNodeTexNoise"); nz2.inputs["Scale"].default_value = 0.012; nz2.inputs["Detail"].default_value = 3
+    L.new(geo.outputs["Position"], nz2.inputs["Vector"])
+    holes = op("MAXIMUM", hole_main, op("GREATER_THAN", nz2.outputs["Fac"], 0.72))
+    L.new(holes, mx.inputs[0]); L.new(df.outputs[0], mx.inputs[1]); L.new(tr.outputs[0], mx.inputs[2]); L.new(mx.outputs[0], out.inputs["Surface"])
+    deck.data.materials.append(m)
+    deck.hide_render = os.environ.get("GOBO", "1") != "1"
+    # humid air: thin uniform haze volume around the garden
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(3.0, 0.0, 13.0)); hz = bpy.context.object; hz.name = "humid_air"
+    for cc in hz.users_collection:
+        cc.objects.unlink(hz)
+    c.objects.link(hz); hz.scale = (40, 40, 27)     # local: a big box dims the sun before it arrives
+    hm = bpy.data.materials.new("humid_air"); hm.use_nodes = True; N, L = hm.node_tree.nodes, hm.node_tree.links; N.clear()
+    out = N.new("ShaderNodeOutputMaterial"); pv = N.new("ShaderNodeVolumePrincipled")
+    pv.inputs["Density"].default_value = float(os.environ.get("HAZE_DENS", 0.011)); pv.inputs["Anisotropy"].default_value = 0.0
+    pv.inputs["Color"].default_value = (1, 1, 1, 1); L.new(pv.outputs[0], out.inputs["Volume"]); hz.data.materials.append(hm)
+    sc = bpy.context.scene; sc.cycles.volume_step_rate = 2.0; sc.cycles.volume_max_steps = 256; sc.cycles.volume_bounces = 1
+    if os.environ.get("SUN_DEBUG"):
+        dg = bpy.context.evaluated_depsgraph_get(); dg.update()
+        for pt in ((3.0, -3.5, 0.5), (0.0, -4.5, 0.5), (5.0, 0.0, 0.3), (1.9, -3.2, 2.0)):
+            o_ = Vector(pt); hit, loc, n_, i_, ob, mw = bpy.context.scene.ray_cast(dg, o_, to_sun)
+            print("SUNRAY", pt, hit, ob.name if ob else None, tuple(round(x, 1) for x in loc))
+        import math as _m
+        pts = [(x_, y_, z_) for x_ in (-1.5, 0.0, 1.9, 3.2) for y_ in (-3.2, 0.0, 3.2) for z_ in (0.4, 2.9)]
+        for el in (38, 46):
+            for az in range(0, 181, 15):                      # 0 = from -y (south), 90 = from +x (sea), 180 = from +y
+                d_ = Vector((_m.sin(_m.radians(az)) * _m.cos(_m.radians(el)), -_m.cos(_m.radians(az)) * _m.cos(_m.radians(el)), _m.sin(_m.radians(el))))
+                blk = {}
+                for pt in pts:
+                    hit, loc, n_, i_, ob, mw = bpy.context.scene.ray_cast(dg, Vector(pt) + d_ * 0.6, d_)
+                    if hit and ob.name != "humid_air":
+                        blk[ob.name.split(".")[0][:18]] = blk.get(ob.name.split(".")[0][:18], 0) + 1
+                print("SCAN el", el, "az", az, "blocked", sum(blk.values()), "/", len(pts), blk)
+        print("SUNLAMP", so.name, [c_.name for c_ in so.users_collection], Ld.energy, so.hide_render)
+    log(f"sun break: sun 36 deg from over the sea through a cluster of 1-3 m gaps (9 m across) in a 420 m cloud deck onto the pergola + stray "
+        f"holes; humid-air haze {pv.inputs['Density'].default_value:.3f}/m makes the shafts visible")
 
 
 def apply(state, cam_loc):
@@ -280,8 +356,12 @@ def apply(state, cam_loc):
     if state == "rain":
         wet(dry_box=(pb[0], pb[1], pb[2], pb[3]) if pb else None)
         rain(cam_loc, frozen=False)
+    elif state == "clearing":                               # last shot: the rain thins out, the sun breaks through
+        wet(dry_box=(pb[0], pb[1], pb[2], pb[3]) if pb else None)
+        rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 30000)))
+        sun_break()
     elif state == "freeze":
         rain(cam_loc, frozen=True, n=int(os.environ.get("RAIN_N", 30000)))
     sc = bpy.context.scene
-    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 0.9, "freeze": 1.5, "rain": 1.5}[state]))
+    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 0.9, "freeze": 1.5, "rain": 1.5, "clearing": 1.1}[state]))
     return LOG
