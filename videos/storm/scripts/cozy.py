@@ -285,3 +285,77 @@ def cozy_extras():
         _area(f"room_up_{k}", c, (-4.2, y, 6.1), (1.2, 0.8), 140, 2700)
     log(f"warm extras: 2 candles in glass hurricane lanterns on the table, {len(posts)} deck uplights at the posts, "
         f"warm ceiling light in 3 ground-floor + 2 upstairs rooms")
+
+
+def splash2(gx, gy, wine_top, t):
+    """Drop impact on a deep pool as a high-speed camera records it (t = seconds since contact):
+    0-25 ms   crown: a thin sheet rising and widening, thick irregular rim, uneven fingers; a few fingers pinch off late
+    20-60 ms  capillary ripples running outwards while the crater closes
+    40-110 ms Worthington jet: a column rising from the centre, a bulb at its tip that separates as one drop and falls back
+    Irregular on purpose (seeded): real crowns are never symmetric."""
+    if t is None:
+        return
+    c = BW.fresh("SPLASH"); wine = bpy.data.materials.get("red_wine"); rs = np.random.default_rng(31)
+    ms = t * 1000.0
+    def lathe_at(name, prof, loc):
+        o = S.lathe(name, prof, c, wine, seg=48); o.location = loc; o.data.shade_smooth(); return o
+    if ms < 27:                                             # ---- crown
+        u = ms / 25.0
+        H = 0.0062 * math.sin(min(1.0, u) * math.pi) ** 0.8; R0 = 0.0030 + 0.0048 * math.sqrt(max(u, 0.0))
+        nseg, nz = 144, 12; nf = 11
+        ph = rs.uniform(0, 2 * math.pi, nf); amp = rs.uniform(0.35, 1.0, nf); cen = np.sort(rs.uniform(0, 2 * math.pi, nf))
+        def finger(th):
+            return sum(a * math.exp(-(((th - c0 + math.pi) % (2 * math.pi)) - math.pi) ** 2 / 0.018) for a, c0 in zip(amp, cen))
+        bm = bmesh.new(); rings = []
+        for j in range(nz + 1):
+            tt = j / nz; ring = []
+            for i in range(nseg):
+                th = 2 * math.pi * i / nseg
+                wob = 1 + 0.06 * math.sin(3 * th + ph[0]) + 0.04 * math.sin(5 * th + ph[1])
+                h = H * (1 + 0.38 * finger(th) * tt ** 3) * tt
+                r = (R0 + 0.0016 * tt ** 1.6 * (1 + 0.5 * u)) * wob
+                ring.append(bm.verts.new((gx + r * math.cos(th), gy + r * math.sin(th), wine_top - 0.0003 + h)))
+            rings.append(ring)
+        for j in range(nz):
+            for i in range(nseg):
+                bm.faces.new([rings[j][i], rings[j][(i + 1) % nseg], rings[j + 1][(i + 1) % nseg], rings[j + 1][i]])
+        me = bpy.data.meshes.new("splash_crown"); bm.to_mesh(me); bm.free()
+        o = bpy.data.objects.new("splash_crown", me); c.objects.link(o); me.materials.append(wine); me.shade_smooth()
+        sol = o.modifiers.new("t", "SOLIDIFY"); sol.thickness = 0.00022 + 0.00018 * (1 - u); sol.offset = 0
+        # rim bead + late pinch-off droplets on the strongest fingers
+        for k in np.argsort(-amp)[:5]:
+            th = cen[k]; wob = 1 + 0.06 * math.sin(3 * th + ph[0]) + 0.04 * math.sin(5 * th + ph[1])
+            rr = (R0 + 0.0016 * (1 + 0.5 * u)) * wob; hh = H * (1 + 0.38 * amp[k])
+            tp = 9.0 + 5.0 * float(rs.random())               # ms at which this finger pinches
+            if ms > tp:
+                dt = (ms - tp) / 1000.0; vz = 0.55 * amp[k]; vr = 0.35
+                p = (gx + (rr + vr * dt) * math.cos(th), gy + (rr + vr * dt) * math.sin(th), wine_top + hh + vz * dt - 4.9 * dt * dt)
+                bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=10, radius=0.00042 + 0.0002 * amp[k], location=p)
+                d = bpy.context.object; d.name = f"splash_drop_{k}"; S.link(d, c); d.data.materials.append(wine); d.data.shade_smooth()
+                d.scale = (1, 1, 1.0 + 0.5 * math.exp(-dt * 400))  # stretched as it tears off, round afterwards
+    if 16 < ms < 70:                                        # ---- capillary ripples
+        for k, lag in enumerate((0.0, 9.0)):
+            a = ms - 16 - lag
+            if a <= 0:
+                continue
+            r = 0.006 + 0.00042 * a; hgt = 0.00045 * math.exp(-a / 28.0)
+            if r < 0.030:
+                prof = [(r - 0.0022, 0.0), (r - 0.0011, hgt * 0.7), (r, hgt), (r + 0.0011, hgt * 0.7), (r + 0.0022, 0.0), (r, -0.0002)]
+                lathe_at(f"splash_ripple_{k}", prof, (gx, gy, wine_top - 0.00005))
+    if ms > 38:                                             # ---- Worthington jet
+        a = (ms - 38) / 72.0
+        hj = 0.015 * math.sin(min(1.0, a) * math.pi) ** 0.9
+        if hj > 0.0005:
+            neck = max(0.25, 1 - 1.6 * max(0.0, a - 0.35))  # the column thins before the bulb separates
+            prof = [(0.0001, 0.0), (0.0042, 0.0), (0.0028, hj * 0.12), (0.0017 * neck + 0.0004, hj * 0.45), (0.0012 * neck + 0.0003, hj * 0.8)]
+            if a < 0.55:
+                prof += [(0.0019, hj * 0.9), (0.0021, hj * 0.97), (0.0014, hj * 1.04), (0.0001, hj * 1.06)]
+            else:
+                prof += [(0.0004, hj * 0.95), (0.0001, hj * 0.97)]
+            lathe_at("splash_jet", prof, (gx, gy, wine_top - 0.0002))
+        if a >= 0.55:                                       # the separated drop: ballistic
+            dt = (a - 0.55) * 0.072; z = wine_top + 0.015 * math.sin(0.55 * math.pi) ** 0.9 + 0.0025 + 0.22 * dt - 4.9 * dt * dt
+            if z > wine_top + 0.001:
+                bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=0.0020, location=(gx, gy, z))
+                d = bpy.context.object; d.name = "splash_jet_drop"; S.link(d, c); d.data.materials.append(wine); d.data.shade_smooth()
+    log(f"splash: t = {ms:.1f} ms after contact (crown < 27 ms, ripples 16-70 ms, jet > 38 ms)")
