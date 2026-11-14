@@ -280,7 +280,7 @@ def build_table():
     build_chairs(c, oak, steel)
     vase = S.ph_variants("ceramic_vase_01")
     if vase:
-        v = S.place(vase[0], "vase", (-0.12, 0.35, Ht), c, 0.4, 0.75)
+        v = S.place(vase[0], "vase", (0.12, 0.44, Ht), c, 0.4, 0.75)   # free table, clear of both plates (was inside plate 1)
     return c
 
 
@@ -369,8 +369,8 @@ def build_tableware(c, ht):
         w.data.materials.append(wine_side)
         nseg = len(wine_prof) - 1
         for pl in w.data.polygons:                                  # faces are emitted segment-major per ring
-            k = pl.index % nseg
-            pl.material_index = 1 if k < n_side else 0
+            seg = pl.index % nseg                                   # (own name: 'k' is the glass index of the outer loop)
+            pl.material_index = 1 if seg < n_side else 0
         w.data.update()
         # dinner plate 27 cm with rim + side plate
         pl = S.lathe(f"plate_{k}", [(0.0001, 0.0), (0.06, 0.0), (0.062, 0.006), (0.105, 0.008), (0.135, 0.02), (0.1355, 0.022),
@@ -618,13 +618,21 @@ def build_pier(c):
     wood = S.ph_material("wood_planks", "pier_boards")
     piles_m = S.mat_variant(wood, "pier_piles", val=0.55)
     rail_m = S.mat_variant(wood, "pier_rail", val=0.8, uv_offset=(0.3, 0.7))
-    x0, x1, wdt = 21.5, 165.0, 3.0
-    deck_z = SEA_Z + 1.55
+    # the pier starts on the lawn edge just before the dune crest: deck 26 cm above the lawn, three 8.7 cm steps up
+    # (it used to start in mid-air 0.9 m above the dune face)
+    x0, x1, wdt = 19.0, 165.0, 3.0
+    g0 = ground_z(x0, PIER_Y)
+    deck_z = g0 + 0.26
     d = S.box("pier_deck", (x1 - x0, wdt, 0.06), ((x0 + x1) / 2, PIER_Y, deck_z), c, wood, bevel=0.01); S.uv_box(d, 1.5)
     for side in (-1, 1):
         S.box(f"pier_stringer{side}", (x1 - x0, 0.2, 0.3), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.1), deck_z - 0.18), c, piles_m)
         S.box(f"pier_handrail{side}", (x1 - x0, 0.09, 0.09), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.05), deck_z + 1.05), c, rail_m, bevel=0.01)
         S.box(f"pier_midrail{side}", (x1 - x0, 0.05, 0.12), ((x0 + x1) / 2, PIER_Y + side * (wdt / 2 - 0.05), deck_z + 0.55), c, rail_m)
+    for i in range(3):
+        top = g0 + 0.0867 * (i + 1) - 0.03
+        S.box(f"pier_step_{i}", (0.30, wdt - 0.1, 0.06), (x0 - 0.15 - 0.30 * (2 - i), PIER_Y, top), c, wood, bevel=0.006)
+        S.box(f"pier_step_riser_{i}", (0.30, wdt - 0.1, top - g0 - 0.03 + 0.02), (x0 - 0.15 - 0.30 * (2 - i), PIER_Y,
+              g0 + (top - 0.03 - g0) / 2 - 0.01), c, piles_m)
     k = 0
     for x in np.arange(x0 + 0.5, x1, 3.0):
         for side in (-1, 1):

@@ -112,7 +112,7 @@ def warm_lights(on=True):
         # the light it throws: a long narrow area light at the strip, aimed down and slightly inwards
         A = bpy.data.lights.new(f"led_area_{k}", "AREA"); A.shape = "RECTANGLE"
         A.size, A.size_y = (0.02, ln) if along_y else (ln, 0.02)
-        A.energy = float(os.environ.get("LED_W_PER_M", 22)) * ln; A.spread = math.radians(120); A.use_nodes = True
+        A.energy = float(os.environ.get("LED_W_PER_M", 40)) * ln; A.spread = math.radians(120); A.use_nodes = True
         bb = A.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = k_led
         A.node_tree.links.new(bb.outputs[0], A.node_tree.nodes["Emission"].inputs["Color"])
         ao = bpy.data.objects.new(f"led_area_{k}", A); c.objects.link(ao); ao.location = (cx + nx * 0.01, cy + ny * 0.01, zt - 0.012)
@@ -143,13 +143,13 @@ def warm_lights(on=True):
         sol = o.modifiers.new("t", "SOLIDIFY"); sol.thickness = 0.003
         bpy.ops.mesh.primitive_torus_add(major_radius=0.012, minor_radius=0.0008, location=(x, y, zg))
         o = bpy.context.object; o.name = f"pendant_filament_{k}"; S.link(o, c); o.data.materials.append(fil)
-        L_ = bpy.data.lights.new(f"pendant_bulb_{k}", "POINT"); L_.energy = float(os.environ.get("PENDANT_W", 60))
+        L_ = bpy.data.lights.new(f"pendant_bulb_{k}", "POINT"); L_.energy = float(os.environ.get("PENDANT_W", 100))
         L_.shadow_soft_size = 0.02; L_.use_nodes = True
         bb = L_.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = 2300
         L_.node_tree.links.new(bb.outputs[0], L_.node_tree.nodes["Emission"].inputs["Color"])
         lo = bpy.data.objects.new(f"pendant_bulb_{k}", L_); c.objects.link(lo); lo.location = (x, y, zg)
     log(f"warm light: {k_led:.0f} K LED line along the inside of the 4 beams (~{s_led:.0f} emission), "
-        f"2 opal-glass pendants over the table (2300 K, {os.environ.get('PENDANT_W', 60)} W)")
+        f"2 opal-glass pendants over the table (2300 K, {os.environ.get('PENDANT_W', 100)} W)")
 
 
 def roof_drops(n=int(os.environ.get("ROOF_DROPS", 6000))):
@@ -209,3 +209,69 @@ def splash(gx, gy, wine_top):
             d = bpy.context.object; d.name = f"splash_drop_{n}"; S.link(d, c); d.data.materials.append(wine); d.data.shade_smooth(); n += 1
     # central cavity rim: a shallow ring bump on the surface around the crown base
     log(f"splash: wine crown (r 6.2 mm, 13 cusps, 5-7 mm high) + {n} pinch-off droplets at the moment the single drop lands")
+
+
+def _area(name, c, loc, size, power, kelvin, rot=(0, 0, 0)):
+    A = bpy.data.lights.new(name, "AREA"); A.shape = "RECTANGLE"; A.size, A.size_y = size; A.energy = power; A.use_nodes = True
+    bb = A.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = kelvin
+    A.node_tree.links.new(bb.outputs[0], A.node_tree.nodes["Emission"].inputs["Color"])
+    o = bpy.data.objects.new(name, A); c.objects.link(o); o.location = loc; o.rotation_euler = rot
+    return o
+
+
+def cozy_extras():
+    """More warm light, all of it from real fixtures: candles in glass hurricane lanterns on the table, deck uplights at
+    the pergola posts, and the house lived-in behind the glazing (warm ceiling light in the rooms)."""
+    c = BW.fresh("COZY_EXTRAS")
+    glass = S.mat_glass("hurricane_glass", (0.98, 0.98, 0.97, 1))
+    N, L = glass.node_tree.nodes, glass.node_tree.links; out = next(n for n in N if n.type == "OUTPUT_MATERIAL")
+    src = out.inputs["Surface"].links[0].from_socket
+    lp = N.new("ShaderNodeLightPath"); tr = N.new("ShaderNodeBsdfTransparent"); mx = N.new("ShaderNodeMixShader")
+    L.new(lp.outputs["Is Shadow Ray"], mx.inputs[0]); L.new(src, mx.inputs[1]); L.new(tr.outputs[0], mx.inputs[2]); L.new(mx.outputs[0], out.inputs["Surface"])
+    wax = bpy.data.materials.new("candle_wax"); wax.use_nodes = True; b = S.principled(wax)
+    b.inputs["Base Color"].default_value = (0.92, 0.86, 0.74, 1); b.inputs["Subsurface Weight"].default_value = 0.6
+    b.inputs["Subsurface Radius"].default_value = (0.012, 0.008, 0.004); b.inputs["Roughness"].default_value = 0.45
+    flame = _blackbody_emit("candle_flame", 1850, 60)
+    tops = [o for o in bpy.data.objects if o.name.startswith("top_")]
+    zt = max((o.matrix_world @ Vector(v)).z for o in tops for v in o.bound_box) if tops else 0.75
+    spots = [(-0.02, 0.22), (-0.05, -0.62)]
+    for k, (x, y) in enumerate(spots):
+        S.lathe(f"lantern_glass_{k}", [(0.0001, 0.0), (0.045, 0.0), (0.05, 0.01), (0.056, 0.09), (0.05, 0.19), (0.052, 0.2),
+                                        (0.049, 0.2), (0.047, 0.19), (0.053, 0.09), (0.047, 0.012), (0.0001, 0.004)],
+                c, glass).location = (x, y, zt)
+        cnd = S.lathe(f"candle_{k}", [(0.0001, 0.0), (0.03, 0.0), (0.03, 0.075), (0.026, 0.08), (0.004, 0.077), (0.0001, 0.077)], c, wax)
+        cnd.location = (x, y, zt + 0.004)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=10, radius=0.006, location=(x, y, zt + 0.004 + 0.077 + 0.012))
+        f = bpy.context.object; f.name = f"flame_{k}"; S.link(f, c); f.scale = (0.75, 0.75, 2.0); f.data.materials.append(flame)
+        Lp = bpy.data.lights.new(f"candle_light_{k}", "POINT"); Lp.energy = 4.0; Lp.shadow_soft_size = 0.006; Lp.use_nodes = True
+        bb = Lp.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = 1850
+        Lp.node_tree.links.new(bb.outputs[0], Lp.node_tree.nodes["Emission"].inputs["Color"])
+        lo = bpy.data.objects.new(f"candle_light_{k}", Lp); c.objects.link(lo); lo.location = (x, y, zt + 0.004 + 0.077 + 0.016)
+    # deck uplights at the posts: small warm spots in the deck washing up each post (outside face)
+    posts = []
+    pc = bpy.data.collections.get("PERGOLA")
+    if pc:
+        for o in pc.all_objects:
+            if o.type == "MESH" and o.dimensions.z > 1.8 and max(o.dimensions.x, o.dimensions.y) < 0.25:
+                bb = [o.matrix_world @ Vector(v) for v in o.bound_box]
+                p = Vector((sum(v.x for v in bb) / 8, sum(v.y for v in bb) / 8, 0))
+                if min(v.z for v in bb) < 0.4 and all((p - q).length > 0.3 for q in posts):   # one per standing post
+                    posts.append(p)
+    for k, p in enumerate(posts):
+        out = Vector((p.x, p.y, 0)).normalized() if p.length > 0.1 else Vector((1, 0, 0))
+        Ls = bpy.data.lights.new(f"post_uplight_{k}", "SPOT"); Ls.energy = 25; Ls.spot_size = math.radians(28); Ls.spot_blend = 0.6
+        Ls.shadow_soft_size = 0.02; Ls.use_nodes = True
+        bb = Ls.node_tree.nodes.new("ShaderNodeBlackbody"); bb.inputs["Temperature"].default_value = 2700
+        Ls.node_tree.links.new(bb.outputs[0], Ls.node_tree.nodes["Emission"].inputs["Color"])
+        lo = bpy.data.objects.new(f"post_uplight_{k}", Ls); c.objects.link(lo)
+        lo.location = (p.x + out.x * 0.16, p.y + out.y * 0.16, 0.02)
+        tgt = Vector((p.x, p.y, 2.4)); lo.rotation_euler = (tgt - Vector(lo.location)).to_track_quat("-Z", "Y").to_euler()
+        S.box(f"uplight_ring_{k}", (0.07, 0.07, 0.006), (lo.location[0], lo.location[1], 0.003), c,
+              S.mat_simple("uplight_ring", (0.05, 0.05, 0.05), rough=0.35))
+    # the house is lived in: warm ceiling light in the ground-floor living room and two upstairs rooms
+    for k, y in enumerate((-3.4, 0.0, 3.4)):
+        _area(f"room_gf_{k}", c, (-5.2, y, 2.95), (1.6, 0.9), 220, 2700)
+    for k, y in enumerate((-2.5, 2.5)):
+        _area(f"room_up_{k}", c, (-4.2, y, 6.1), (1.2, 0.8), 140, 2700)
+    log(f"warm extras: 2 candles in glass hurricane lanterns on the table, {len(posts)} deck uplights at the posts, "
+        f"warm ceiling light in 3 ground-floor + 2 upstairs rooms")

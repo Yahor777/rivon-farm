@@ -11,6 +11,8 @@ import build_world as BW, look as LK
 import design as D
 bad = D.build_all_v2(with_pergola=shot in ("macro", "s09", "pergola", "rain_under", "final", "splash"))   # pergola arrives in the time-freeze
 print("PERGOLA_ZONE_CONFLICTS", bad)
+import props as PR
+print("\n".join("PR " + l for l in PR.real_cutlery()))
 import cozy as CZ
 if bpy.data.collections.get("PERGOLA"):
     CZ.glass_roof()
@@ -31,6 +33,8 @@ if __import__("os").environ.get("WEAR", "1") == "1":
     print("\n".join("RF3 " + l for l in RF3.apply_all()))
 if bpy.data.collections.get("PERGOLA"):              # after refine (its interior pass deletes every lamp in the scene)
     CZ.warm_lights(on=shot in ("pergola", "rain_under", "final", "splash")); print("CZ " + CZ.LOG[-1])
+    if shot in ("pergola", "rain_under", "final", "splash"):
+        CZ.cozy_extras(); print("CZ " + CZ.LOG[-1])
 LK.setup_render(w, h, spp)
 RF.render_v2()
 if __import__("os").environ.get("CLOUDS", "0") == "1":
@@ -55,10 +59,10 @@ elif shot in ("glass", "freeze", "splash"):
     focus_far = len(sys.argv) > 6 and sys.argv[6] == "far"
     dist = 0.30; cz = drop_z + 0.024                 # eye 2.4 cm above the drop: at 6 mm the underside of the wine surface
                                                      # (total internal reflection) mirrored the bowl as dark arcs
-    if shot == "freeze":                                 # c05: time stopped - closer, the drop big in frame, storm light
-        cz2 = drop_z + 0.013
-        LK.camera("CAM", (gx - 0.2, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 - 1.2 * _m.tan(_m.radians(3.2))),
-                  lens=100, fstop=9.0, focus=0.2)
+    if shot == "freeze":                                 # c05: time stopped - the drop in the lower third, rim + bowl readable
+        cz2 = drop_z + 0.016
+        LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),
+                  lens=85, fstop=11.0, focus=0.25)
     elif len(sys.argv) > 6 and sys.argv[6] == "tight":     # end of the push-in: the frozen drop fills the frame
         dz = drop_z + 0.0022
         LK.camera("CAM", (gx - 0.13, gy - 0.003, dz), (gx + 1.0, gy + 0.008, dz - 1.13 * _m.tan(_m.radians(2.0))),

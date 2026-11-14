@@ -51,15 +51,15 @@ def storm_cloud():
     is built: one volumetric shelf cloud / cumulonimbus base over the sea, lit only by the overcast sky dome.
     Real numbers: base 500-700 m, tops ~3 km, front edge ~2 km offshore, extinction ~0.01-0.05 /m."""
     c = BW.fresh("STORM_CLOUD")
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(5200, 0, 1650))
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(4700, 0, 1700))
     o = bpy.context.object; o.name = "cb_front"
     for cc in o.users_collection:
         cc.objects.unlink(o)
-    c.objects.link(o); o.scale = (7000, 16000, 2300)
+    c.objects.link(o); o.scale = (8000, 16000, 2400)
     m = bpy.data.materials.new("cb_volume"); m.use_nodes = True; N, L = m.node_tree.nodes, m.node_tree.links
     N.clear(); out = N.new("ShaderNodeOutputMaterial"); pv = N.new("ShaderNodeVolumePrincipled")
     tc = N.new("ShaderNodeTexCoord"); sep = N.new("ShaderNodeSeparateXYZ"); L.new(tc.outputs["Generated"], sep.inputs[0])
-    mp = N.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (7.0, 16.0, 2.3); L.new(tc.outputs["Generated"], mp.inputs["Vector"])
+    mp = N.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (8.0, 16.0, 2.4); L.new(tc.outputs["Generated"], mp.inputs["Vector"])
     nz = N.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 1.6; nz.inputs["Detail"].default_value = 10
     nz.inputs["Roughness"].default_value = 0.62; nz.inputs["Distortion"].default_value = 0.35; L.new(mp.outputs[0], nz.inputs["Vector"])
     def mr(src, a, b, t0=0.0, t1=1.0):
@@ -80,11 +80,11 @@ def storm_cloud():
     front = mr(xg, 0.0, 0.08)
     shape = op("MULTIPLY", op("MULTIPLY", base, top), front)
     dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78, 0.95), shape)
-    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.02))), pv.inputs["Density"])
+    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.035))), pv.inputs["Density"])
     pv.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1); pv.inputs["Anisotropy"].default_value = 0.35
     L.new(pv.outputs[0], out.inputs["Volume"]); o.data.materials.append(m)
     sc = bpy.context.scene; sc.cycles.volume_step_rate = 8.0; sc.cycles.volume_max_steps = 512; sc.cycles.volume_bounces = 2
-    log("storm cloud: volumetric shelf cloud / cumulonimbus base over the sea (base ~550 m, tops ~2.5 km, front 1.7 km offshore)")
+    log("storm cloud: volumetric shelf cloud / cumulonimbus base over the sea (base ~550 m, tops ~2.5 km, front 0.7 km offshore, extinction 0.035/m -> dark base, light gap at the horizon)")
 
 
 def _sea(state):
@@ -257,13 +257,13 @@ def lawn_overcast(state):
     """Under an overcast sky a lawn reads muted olive, not the saturated sunlit green; wet blades darken and get a sheen."""
     n = 0
     for m in bpy.data.materials:
-        if not m.name.startswith(("lawn_", "lawn")) or not m.use_nodes:
+        if not m.name.startswith(("lawn_", "grass_lawn")) or not m.use_nodes:
             continue
         for nd in m.node_tree.nodes:
             if nd.type == "HUE_SAT":
                 nd.inputs["Saturation"].default_value = 0.70
             if nd.type == "MAP_RANGE" and abs(nd.inputs["To Min"].default_value - 0.72) < 1e-3:
-                k = 0.72 if state == "rain" else 0.85
+                k = 0.88 if state == "rain" else 0.95
                 nd.inputs["To Min"].default_value = 0.72 * k; nd.inputs["To Max"].default_value = 1.18 * k
         b = next((x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED"), None)
         if b is not None and state == "rain":
@@ -283,5 +283,5 @@ def apply(state, cam_loc):
     elif state == "freeze":
         rain(cam_loc, frozen=True, n=int(os.environ.get("RAIN_N", 30000)))
     sc = bpy.context.scene
-    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 1.3, "freeze": 1.5, "rain": 1.5}[state]))
+    sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 0.9, "freeze": 1.5, "rain": 1.5}[state]))
     return LOG
