@@ -1,20 +1,120 @@
 {
- "name": "set6",
+ "name": "set7",
  "polyhaven": [
   {
-   "id": "approaching_storm",
-   "res": "8k",
-   "fmt": "maps"
+   "id": "sofa_03",
+   "res": "2k",
+   "fmt": "blend"
   },
   {
-   "id": "kloofendal_overcast_puresky",
-   "res": "8k",
-   "fmt": "maps"
+   "id": "mid_century_lounge_chair",
+   "res": "2k",
+   "fmt": "blend"
   },
   {
-   "id": "overcast_soil_puresky",
-   "res": "8k",
-   "fmt": "maps"
+   "id": "modern_coffee_table_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "side_table_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "side_table_tall_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "modern_wooden_cabinet",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wooden_display_shelves_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "steel_frame_shelves_03",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "dining_table",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "dining_chair_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "hanging_picture_frame_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "hanging_picture_frame_02",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "hanging_picture_frame_03",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "standing_picture_frame_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "book_encyclopedia_set_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "decorative_book_set_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "ceramic_vase_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "ceramic_vase_03",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wall_clock",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "bar_chair_round_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "wooden_bowl_01",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "potted_plant_04",
+   "res": "2k",
+   "fmt": "blend"
+  },
+  {
+   "id": "ornate_mirror_01",
+   "res": "2k",
+   "fmt": "blend"
   }
  ]
 }
