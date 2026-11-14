@@ -66,12 +66,14 @@ jobs:
           Q=$(jq -r .quality film.json); TEX=$(jq -r .tex film.json); TAG=film-$NAME
           gh release view $TAG -R ${{ github.repository }} >/dev/null 2>&1 || gh release create $TAG -R ${{ github.repository }} --title $TAG --notes "THE STORM film frames $NAME" || true
           mkdir -p /tmp/out
+          # one asset listing per job (the runner token allows ~1000 API calls/hour for the whole repo)
+          for i in 1 2 3 4 5 6; do gh api "repos/${{ github.repository }}/releases/tags/$TAG" --paginate -q '.assets[].name' > /tmp/have.txt && break; sleep 120; done
           for F in ${{ matrix.chunk }}; do
             N=$(printf "f%04d" $F)
-            if gh release view $TAG -R ${{ github.repository }} --json assets -q '.assets[].name' | grep -q "^$N.png$"; then echo "$N exists"; continue; fi
+            if grep -q "^$N.png$" /tmp/have.txt; then echo "$N exists"; continue; fi
             AERIAL=$([ "$Q" = final ] && echo 1 || echo 0) TEX_LIMIT=$TEX STORM_QUALITY=$Q /tmp/blender/blender -b --python-exit-code 1 -P scripts/test_frame_blender.py -- /tmp/out/${N}_raw.png $W $H $SPP $N > /tmp/out/$N.log 2>&1 || { tail -40 /tmp/out/$N.log; continue; }
             python3 scripts/post_photo.py /tmp/out/${N}_raw.png /tmp/out/$N.png --seed $F
-            for i in 1 2 3; do gh release upload $TAG /tmp/out/$N.png -R ${{ github.repository }} --clobber && break; sleep 10; done
+            for i in $(seq 1 16); do gh release upload $TAG /tmp/out/$N.png -R ${{ github.repository }} --clobber && break; echo "upload retry $i"; sleep 150; done
             rm -f /tmp/out/${N}_raw*.png
           done
   assemble:
@@ -85,6 +87,6 @@ jobs:
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; pip install --quiet pillow numpy scipy
           cd videos/storm; NAME=$(jq -r .name film.json); TAG=film-$NAME; mkdir -p /tmp/fr
-          gh release download $TAG -R ${{ github.repository }} -p 'f*.png' -D /tmp/fr
+          for i in 1 2 3 4 5 6; do gh release download $TAG -R ${{ github.repository }} -p 'f*.png' -D /tmp/fr --clobber && break; sleep 300; done
           python3 scripts/finish_storm.py /tmp/fr film.json /tmp/RIVON_THE_STORM_$NAME.mp4
           gh release upload $TAG /tmp/RIVON_THE_STORM_$NAME.mp4 -R ${{ github.repository }} --clobber
