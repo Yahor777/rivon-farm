@@ -66,7 +66,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
     if shot == "splash":
         CZ.splash2(gx + 0.004, gy - 0.003, wine_top, FM.splash_time(shot))
     if dvis:
-        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, dzc))
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=float(__import__("os").environ.get("DROP_R", 0.0030)), location=(gx + 0.004, gy - 0.003, dzc))   # a big 6 mm raindrop
         d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, FM.drop_stretch(shot))   # oblate; a streak while still at real speed
         d.data.materials.append(S.mat_glass("rain_water", (1, 1, 1, 1))); S.principled(d.data.materials[0]).inputs["IOR"].default_value = 1.333
         d.data.shade_smooth()
@@ -80,9 +80,9 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         _e = FM.ease(FM.push_u()); _dp = _V((gx + 0.004, gy - 0.003, dzc))
         _up = wine_top + 0.10 + 0.35 * FM.ease((FM.FRAME - 316) / 30.0)
         _t1 = _V((gx + 0.004, gy - 0.003, min(_up, dzc))); _t2 = _V((gx + 0.004, gy - 0.003, drop_z + 0.006))
-        _p1 = _V((gx - 0.42, gy - 0.035, wine_top + 0.005)); _p2 = _V((gx - 0.19, gy - 0.003, drop_z + 0.024))
+        _p1 = _V((gx - float(__import__("os").environ.get("DROP_D", 0.30)), gy - 0.03, wine_top + 0.005)); _p2 = _V((gx - 0.19, gy - 0.003, drop_z + 0.024))
         _p = _p1.lerp(_p2, _e); _t = _t1.lerp(_t2, _e)
-        LK.camera("CAM", tuple(_p), tuple(_t), lens=50 + 45 * _e, fstop=4.0 + 7.0 * _e, focus=max(0.2, (_p - _dp).length) if FM.FRAME >= 356 else 0.42)
+        LK.camera("CAM", tuple(_p), tuple(_t), lens=50 + 45 * _e, fstop=4.0 + 7.0 * _e, focus=max(0.15, (_p - _dp).length) if FM.FRAME >= 356 else (_p1 - _t2).length)
     elif shot == "freeze":                                 # time stops - the drop in the lower third, rim + bowl readable
         cz2 = drop_z + 0.016
         LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),
