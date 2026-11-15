@@ -78,7 +78,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         # full speed and is followed; in its last 24 cm the camera pushes in on it while time runs down to a stop
         from mathutils import Vector as _V
         _e = FM.ease(FM.push_u()); _dp = _V((gx + 0.004, gy - 0.003, dzc))
-        _up = wine_top + 0.10 + 0.35 * FM.ease((FM.FRAME - 316) / 30.0)
+        _up = wine_top + 0.10 + 0.13 * FM.ease((FM.FRAME - 316) / 30.0)      # ~35 deg up: the dark cloud bases, not the blank zenith
         _t1 = _V((gx + 0.004, gy - 0.003, min(_up, dzc))); _t2 = _V((gx + 0.004, gy - 0.003, drop_z + 0.006))
         _p1 = _V((gx - float(__import__("os").environ.get("DROP_D", 0.30)), gy - 0.03, wine_top + 0.005)); _p2 = _V((gx - 0.19, gy - 0.003, drop_z + 0.024))
         _p = _p1.lerp(_p2, _e); _t = _t1.lerp(_t2, _e)

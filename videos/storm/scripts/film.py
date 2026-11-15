@@ -64,9 +64,9 @@ def set_frame(f):
         os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
         if os.environ.get("SKY_PHOTO", "1") == "1":                 # photographed storm sky condensing out of the sunny one
             # the front takes the visible sky over the first 3/4 of the shot, the rest of the dome (and the sun) at the end
-            _m = 0.36 * ease(min(1.0, T / 0.8)) + 0.64 * ease(max(0.0, min(1.0, (T - 0.72) / 0.28)))
+            _m = 0.27 * ease(min(1.0, T / 0.8)) + 0.73 * ease(max(0.0, min(1.0, (T - 0.72) / 0.28)))
             os.environ["SKY_MIX"] = str(_m)
-            os.environ["WEATHER_EV"] = str(float(os.environ.get("EV0", -0.35)) + float(os.environ.get("EV1", 1.25)) * ease(min(1.0, _m / 0.36)))
+            os.environ["WEATHER_EV"] = str(float(os.environ.get("EV0", -0.35)) + float(os.environ.get("EV1", 1.25)) * ease(min(1.0, _m / 0.27)))
     if shot == "rain_under":
         os.environ["RAIN_N"] = str(int(8000 + 132000 * ease(T / 0.6)))
     if shot == "final":
@@ -166,7 +166,7 @@ def exposure_add(shot):
     if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
         base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
     if shot in ("dropfall", "freeze") and FRAME is not None:
-        base = 0.7 + 0.5 * ease(push_u()) - 1.1 * (1.0 - ease((FRAME - 358) / 24.0))   # stopped down while the lens looks into the bright sky
+        base = 0.7 + 0.5 * ease(push_u()) - 1.5 * (1.0 - ease((FRAME - 358) / 24.0))   # stopped down while the lens looks into the bright sky
     return base
 
 
