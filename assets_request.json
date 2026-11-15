@@ -4,82 +4,82 @@
   {
    "id": "quarry_cloudy",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "cedar_bridge",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "mud_road_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "overcast_soil_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloppenheim_01_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloppenheim_03_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloppenheim_05_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloppenheim_06_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "sunflowers_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "wasteland_clouds_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloofendal_28d_misty_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "kloofendal_misty_morning_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "farm_field_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "aristea_wreck_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "cedar_bridge_sunset_1",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   },
   {
    "id": "belfast_sunset_puresky",
    "res": "2k",
-   "fmt": "hdri"
+   "fmt": "maps"
   }
  ]
 }
