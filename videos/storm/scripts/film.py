@@ -144,7 +144,7 @@ def drop_stretch(shot):
 def exposure_add(shot):
     base = {"macro": 1.0, "conn1": 0.55, "conn2": 0.55, "conn3": 0.6, "freeze": 0.3, "dropfall": 0.5, "splash": 0.7}.get(shot, 0.0)
     if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
-        base = 0.55 if FRAME is None else 0.55 - 0.40 * ease((FRAME - LIGHTS_ON) / 16.0)
+        base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
     return base
 
 
