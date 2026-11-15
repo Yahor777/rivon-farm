@@ -1,120 +1,85 @@
 {
- "name": "set7",
+ "name": "sky8",
  "polyhaven": [
   {
-   "id": "sofa_03",
+   "id": "quarry_cloudy",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "mid_century_lounge_chair",
+   "id": "cedar_bridge",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "modern_coffee_table_02",
+   "id": "mud_road_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "side_table_01",
+   "id": "overcast_soil_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "side_table_tall_01",
+   "id": "kloppenheim_01_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "modern_wooden_cabinet",
+   "id": "kloppenheim_03_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "wooden_display_shelves_01",
+   "id": "kloppenheim_05_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "steel_frame_shelves_03",
+   "id": "kloppenheim_06_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "dining_table",
+   "id": "sunflowers_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "dining_chair_02",
+   "id": "wasteland_clouds_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "hanging_picture_frame_01",
+   "id": "kloofendal_28d_misty_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "hanging_picture_frame_02",
+   "id": "kloofendal_misty_morning_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "hanging_picture_frame_03",
+   "id": "farm_field_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "standing_picture_frame_01",
+   "id": "aristea_wreck_puresky",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "book_encyclopedia_set_01",
+   "id": "cedar_bridge_sunset_1",
    "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   },
   {
-   "id": "decorative_book_set_01",
+   "id": "belfast_sunset_puresky",
    "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "ceramic_vase_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "ceramic_vase_03",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "wall_clock",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "bar_chair_round_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "wooden_bowl_01",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "potted_plant_04",
-   "res": "2k",
-   "fmt": "blend"
-  },
-  {
-   "id": "ornate_mirror_01",
-   "res": "2k",
-   "fmt": "blend"
+   "fmt": "hdri"
   }
  ]
 }
