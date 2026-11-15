@@ -30,7 +30,7 @@ CAMS = {"wind":  ((1.55, -2.45, 1.16), (-0.05, -0.25, 0.86), 40, 4.0, 2.4),
         # conn1: from inside and below the corner - both socket mouths visible, storm sky behind
         "conn1": ((0.72, -1.97, 2.50), (1.68, -2.93, 2.82), 45, 3.2, 1.38),
         # conn2: from inside, above the roof plane: rafter ends coming down into the Mocowanie saddles, one after another
-        "conn2": ((0.85, -1.68, 3.22), (1.57, -1.30, 2.95), 40, 2.8, 0.86),
+        "conn2": ((1.12, -1.22, 3.48), (1.57, -0.96, 2.96), 50, 2.8, 0.74),
         # conn3: from the lawn - the frame lands on the post, the house behind
         "conn3": ((2.80, -4.10, 2.20), (1.70, -2.95, 2.52), 70, 4.0, 1.62)}
 WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "freeze", "macro": "freeze", "conn1": "freeze", "conn2": "freeze",
@@ -100,7 +100,7 @@ def move_camera(shot):
             cam.location = tgt + Matrix.Rotation(0.16 * k, 3, "Z") @ r + up * 0.07 * k; look(cam, tgt)
         elif shot == "conn2":                                           # truck sideways, focus follows the landing rafters
             cam.location = L0 + fwd * 0.08 * e
-            cam.data.dof.focus_distance = 0.86 + 0.9 * ease((T - 0.45) / 0.5)
+            cam.data.dof.focus_distance = 0.74 - 0.06 * e
         else:                                                           # push in on the landing, rising a little
             cam.location = L0 + fwd * 0.22 * e + up * 0.05 * e; look(cam, tgt)
     elif shot == "pergola":                                             # crane up while pulling back
@@ -180,7 +180,7 @@ def _settle(f, t_land, amp=0.003):
 
 
 def rafter_t0(i):                                 # the row starts at the saddle in front of the conn2 camera
-    return 512 + 5 * (i - 2) if i >= 2 else 560 + 5 * (1 - i)
+    return 516 + 5 * (i - 3) if i >= 3 else 558 + 5 * (2 - i)
 
 
 def assemble():

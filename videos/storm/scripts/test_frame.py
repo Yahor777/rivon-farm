@@ -11,6 +11,8 @@ import film as FM
 if shot[:1] == "f" and shot[1:].isdigit():            # film frame: f0001..f0600 -> base shot + per-frame parameters
     shot = FM.set_frame(int(shot[1:])); print("FILM frame", FM.FRAME, "shot", shot, "t", round(FM.T, 3))
 LIT = FM.lights_on(shot) or __import__("os").environ.get("LIT") == "1"
+if shot == "splash":                                  # under the bright warm lamps the wine went amber: denser pour for this macro
+    __import__("os").environ.setdefault("WINE_DENS", "1700")
 import build_world as BW, look as LK
 import design as D
 bad = D.build_all_v2(with_pergola=shot in FM.PERGOLA_SHOTS)   # pergola arrives in the time-freeze
@@ -80,7 +82,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         LK.camera("CAM", (gx - 0.42, gy - 0.035, wine_top + 0.005), (gx + 0.004, gy - 0.003, _tz), lens=50, fstop=4.0, focus=0.42)
     elif shot == "splash":                               # side-on, just above the wine surface: the crown in profile
         _e = FM.ease(FM.T) if FM.FRAME is not None else 0.3
-        LK.camera("CAM", (gx - 0.16, gy - 0.17, wine_top + 0.046 + 0.012 * _e), (gx + 0.004, gy - 0.003, wine_top + 0.012), lens=90, fstop=8.0, focus=0.238)
+        LK.camera("CAM", (gx - 0.16, gy - 0.17, wine_top + 0.013 + 0.006 * _e), (gx + 0.004, gy - 0.003, wine_top + 0.012), lens=90, fstop=8.0, focus=0.238)
     elif len(sys.argv) > 6 and sys.argv[6] == "tight":     # end of the push-in: the frozen drop fills the frame
         dz = drop_z + 0.0022
         LK.camera("CAM", (gx - 0.13, gy - 0.003, dz), (gx + 1.0, gy + 0.008, dz - 1.13 * _m.tan(_m.radians(2.0))),
@@ -117,7 +119,7 @@ if WEATHER:
     if shot == "splash":                                 # the camera is balanced between the 2700 K lamps and the dusk: wine stays ruby
         try:
             vs = bpy.context.scene.view_settings; vs.use_white_balance = True
-            vs.white_balance_temperature = float(__import__("os").environ.get("SPLASH_WB", 4300)); vs.white_balance_tint = 10.0
+            vs.white_balance_temperature = float(__import__("os").environ.get("SPLASH_WB", 3900)); vs.white_balance_tint = 0.0
         except Exception as _ex:
             print("WB not available", _ex)
     if WEATHER in ("rain", "clearing") and bpy.data.collections.get("PERGOLA"):

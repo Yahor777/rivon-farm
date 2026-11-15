@@ -110,8 +110,8 @@ hit(W, 486, 1.0, -0.2, idx=0, dur=1.2, pitch=0.86); hit("wood_thud", 486, 0.55, 
 for k, f in enumerate((490, 497, 504)):
     hit("screwdriver", f, 0.36, 0.25 - 0.2 * k, idx=k, dur=0.45, peak=0.6)
 for k in range(11):                                                               # rafters laid into the Mocowanie saddles: wood on steel
-    f = (512 + 5 * (k - 2) if k >= 2 else 560 + 5 * (1 - k)) + 20
-    hit(W, f, 0.95 - 0.05 * min(abs(k - 2), 6), -0.15 + 0.07 * k, idx=k, dur=0.8, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
+    f = (516 + 5 * (k - 3) if k >= 3 else 558 + 5 * (2 - k)) + 20
+    hit(W, f, 0.95 - 0.05 * min(abs(k - 3), 6), -0.15 + 0.07 * k, idx=k, dur=0.8, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
     if k % 3 == 0:
         hit("metal_clank", f, 0.16, -0.15 + 0.07 * k, idx=k // 3, dur=0.35, pitch=1.1)
 for k, f in enumerate((550, 561, 572, 581)):
