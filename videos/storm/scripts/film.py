@@ -1,4 +1,4 @@
-"""RIVON: THE STORM - timeline v2 (990 frames, 33 s, 30 fps). Every frame renders stateless: frame -> shot + local t
+"""RIVON: THE STORM - timeline v2 (1050 frames, 35 s, 30 fps). Every frame renders stateless: frame -> shot + local t
 -> camera move, weather, animation. Camera grammar (one distinct, motivated move per shot, never repeated back to back):
   A wide       1- 75  slow dolly-in on the terrace (establishing)
   B glass     76-135  lateral slide with parallax + rack focus pier -> glass
@@ -12,7 +12,7 @@
   J pergola  646-735  crane-up wide: glazing bars and glass go on, then the warm light comes on
   K splash   736-810  over the rim, looking down: time resumes, the one drop lands (crater, crown, jet)
   L rain     811-885  under the roof, slow pull-back: the downpour starts outside, dry and warm inside
-  M final    886-990  slow pull-back: the rain thins, the sun breaks through onto the pergola; end card in post
+  M final    886-1050  slow pull-back: the rain thins, the sun breaks through onto the pergola; end card in post
 """
 import math, os, json
 from pathlib import Path
@@ -21,8 +21,8 @@ from mathutils import Vector, Matrix
 
 SHOTS = [("wide", 1, 75), ("glass", 76, 135), ("wind", 136, 210), ("storm", 211, 315), ("dropfall", 316, 390),
          ("freeze", 391, 435), ("conn1", 436, 510), ("conn2", 511, 585), ("conn3", 586, 645), ("pergola", 646, 735),
-         ("splash", 736, 810), ("rain_under", 811, 885), ("final", 886, 990)]
-NF = 990; LIGHTS_ON = 716
+         ("splash", 736, 810), ("rain_under", 811, 885), ("final", 886, 1050)]
+NF = 1050; LIGHTS_ON = 716
 FRAME = None; T = 0.5
 PERGOLA_SHOTS = ("macro", "s09", "conn1", "conn2", "conn3", "pergola", "rain_under", "final", "splash")
 # new shot cameras: loc, target, lens, fstop, focus
@@ -33,7 +33,7 @@ CAMS = {"wind":  ((1.55, -2.45, 1.16), (-0.05, -0.25, 0.86), 40, 4.0, 2.4),
         "conn2": ((1.12, -1.22, 3.48), (1.57, -0.96, 2.96), 50, 2.8, 0.74),
         # conn3: from the lawn - the frame lands on the post, the house behind
         "conn3": ((2.80, -4.10, 2.20), (1.70, -2.95, 2.52), 70, 4.0, 1.62)}
-WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "freeze", "macro": "freeze", "conn1": "freeze", "conn2": "freeze",
+WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "storm", "macro": "freeze", "conn1": "freeze", "conn2": "freeze",
            "conn3": "freeze", "pergola": "freeze", "splash": "freeze", "rain_under": "rain", "final": "clearing"}
 
 
@@ -51,15 +51,17 @@ def ease(t):
 def set_frame(f):
     global FRAME, T
     FRAME = f; shot, T = shot_of(f)
-    os.environ["WX_SEED"] = str(1000 + f); os.environ["SEA_TIME"] = str(f / 30.0)
+    os.environ["WX_SEED"] = str(1000 + f); # time stops with the drop (F_STOP) and starts again when it lands (745): the sea stands still in between
+    os.environ["SEA_TIME"] = str((min(f, F_STOP) if f < 745 else f - (745 - F_STOP)) / 30.0)
+    if WEATHER.get(shot) == "freeze":
+        os.environ["RAIN_N"] = "60000"
     if shot == "glass":
         os.environ["HDRI_STRENGTH"] = str(22.3 * (1.0 - 0.30 * ease((T - 0.5) / 0.5)))    # the first cloud edge
     if shot == "wind":
         os.environ["HDRI_STRENGTH"] = str(22.3 * (0.70 - 0.12 * ease(T)))
     if shot == "storm":
-        os.environ["CB_X"] = str(5700 - 900 * T)                    # the front creeps: 900 m in 3.5 s of screen time
-        os.environ["CB_DENS"] = str(0.030 + 0.005 * T)
-        os.environ["WEATHER_EV"] = str(1.25 - 0.4 * ease(T))        # daylight goes as the cloud takes the sky
+        os.environ["CB_GROW"] = str(ease(T))                        # the cloud does not arrive: it builds up over the sea
+        os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
     if shot == "rain_under":
         os.environ["RAIN_N"] = str(int(8000 + 132000 * ease(T / 0.6)))
     if shot == "final":
@@ -92,8 +94,6 @@ def move_camera(shot):
         cam.location = L0 + fwd * 0.10 * e                              # almost locked off: an imperceptible creep
     elif shot == "storm":                                               # tripod tilt-up
         look(cam, (40.0, 3.5, 2.5 + 12.5 * ease(T)))
-    elif shot == "freeze":
-        cam.location = L0 + right * 0.010 * k
     elif shot in ("conn1", "conn2", "conn3"):                           # slow arc around the connector
         tgt = Vector(CAMS[shot][1]); r = L0 - tgt
         if shot == "conn1":                                             # slow arc under the corner
@@ -118,33 +118,49 @@ def drop_state(shot, wine_top):
     if FRAME is None:
         return zf, shot != "splash"
     if shot == "dropfall":                      # enters the frame at real speed (a streak), then time itself slows down
-        t = _drop_t()
-        if t < 0:
-            return zf + 5.0, False
-        return zf + 0.035 + 0.50 * math.exp(-t / 0.07) + 0.12 * (1 - t / 1.65), True
-    if shot == "freeze":                        # last 3.5 cm: decelerates to a stop at t = 0.6
-        u = min(1.0, T / 0.6); return zf + 0.035 * (1 - u) ** 2.2, True
+        return zf + drop_height(), True
+    if shot == "freeze":
+        return zf + drop_height(), True
     if shot == "splash":                        # resumes: 4.5 mm in the first 12 % of the shot, then it is in the wine
         u = T / 0.12; return zf - 0.0045 * min(1.0, u) ** 2 - 0.0002, u < 1.0
     return zf, shot in ("conn1", "conn2", "conn3", "pergola")
 
 
-def _drop_t():
-    return (T - 0.34) * 2.5                     # seconds since the drop entered (the shot lasts 2.5 s)
+# The drop keeps its speed all the way down. Only in the last 24 cm, while the camera pushes in on it, time itself runs
+# down to a stop (speed V0 * (1-u)^P, so there is no jerk at the start of the push and it ends exactly at rest).
+F_C, F_STOP, V0, P_SLOW = 372, 420, 0.6, 3.0
+
+
+def push_u():
+    """0..1: the push-in / time running down"""
+    return 0.0 if FRAME is None else max(0.0, min(1.0, (FRAME - F_C) / float(F_STOP - F_C)))
+
+
+def drop_height():
+    """height of the hero drop above its frozen position, m"""
+    H = V0 * (F_STOP - F_C) / 30.0 / (P_SLOW + 1)
+    if FRAME <= F_C:
+        return H + V0 * (F_C - FRAME) / 30.0
+    return H * (1 - push_u()) ** (P_SLOW + 1)
+
+
+def drop_speed():
+    return V0 * (1 - push_u()) ** P_SLOW
 
 
 def drop_stretch(shot):
     """z scale of the 4.6 mm drop: motion blur of a 1/60 s shutter while it still moves at real speed"""
-    if FRAME is None or shot != "dropfall":
+    if FRAME is None or shot not in ("dropfall", "freeze"):
         return 0.86
-    v = 0.50 / 0.07 * math.exp(-max(0.0, _drop_t()) / 0.07) + 0.073
-    return max(0.86, v / 60.0 / 0.0046)
+    return max(0.86, drop_speed() / 60.0 / 0.0046)
 
 
 def exposure_add(shot):
     base = {"macro": 1.0, "conn1": 0.55, "conn2": 0.55, "conn3": 0.6, "freeze": 0.3, "dropfall": 0.5, "splash": 0.7}.get(shot, 0.0)
     if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
         base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
+    if shot in ("dropfall", "freeze") and FRAME is not None:
+        base = 0.5 + 0.4 * ease(push_u())
     return base
 
 

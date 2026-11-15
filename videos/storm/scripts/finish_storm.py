@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 HERE = Path(__file__).resolve().parent; POST = HERE.parent.parent / "rivon_film" / "post"
 fr_dir, cfg, out = Path(sys.argv[1]), json.load(open(sys.argv[2])), sys.argv[3]
-FPS, NF = 30, 990
+FPS, NF = 30, 1050
 have = sorted(int(p.stem[1:]) for p in fr_dir.glob("f[0-9][0-9][0-9][0-9].png"))
 assert have, "no frames"
 W, H = Image.open(fr_dir / f"f{have[0]:04d}.png").size
@@ -53,10 +53,10 @@ def end_card(im, a):
 for f in range(1, NF + 1):
     src = max([h for h in have if h <= f], default=have[0])
     im = Image.open(fr_dir / f"f{src:04d}.png").convert("RGB")
-    a = (f - 946) / 26.0
+    a = (f - 962) / 28.0
     im = end_card(im, min(1.0, a)) if a > 0 else im
-    if f > 980:                                             # last 0.3 s: gentle fade to black
-        im = Image.blend(im, Image.new("RGB", im.size, (0, 0, 0)), min(1.0, (f - 980) / 10.0) * 0.85)
+    if f > 1012:                                            # last 1.3 s: slow fade to black
+        k = min(1.0, (f - 1012) / 36.0); im = Image.blend(im, Image.new("RGB", im.size, (0, 0, 0)), k * k * (3 - 2 * k))
     im.save(f"{tmp}/o{f:04d}.png")
 
 # ---- sound: real recordings mixed to picture (sound_storm.py); silent film if the recordings are not there

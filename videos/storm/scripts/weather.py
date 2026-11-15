@@ -74,13 +74,15 @@ def storm_cloud():
                 L.new(v, x.inputs[i])
         return x.outputs[0]
     z = sep.outputs[2]; xg = sep.outputs[0]
+    g = float(os.environ.get("CB_GROW", 1.0))             # 0..1: the cloud builds up in place (towers rise, wisps fill in)
+    mp.inputs["Location"].default_value = (0.0, 0.0, -0.25 * (1 - g))
     base = mr(z, 0.0, 0.06)                                   # flat, sharp cloud base (condensation level)
     # the shelf leans towards the shore: the front edge (low x) is lower and denser, height grows offshore
-    top = mr(op("SUBTRACT", z, op("MULTIPLY", xg, 0.55)), 0.55, 0.1)
+    top = mr(op("SUBTRACT", z, op("MULTIPLY", xg, 0.55)), 0.28 + 0.27 * g, 0.1)
     front = mr(xg, 0.0, 0.08)
     shape = op("MULTIPLY", op("MULTIPLY", base, top), front)
-    dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78, 0.95), shape)
-    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.035))), pv.inputs["Density"])
+    dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78 + 0.09 * (1 - g), 0.95 + 0.03 * (1 - g)), shape)
+    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.021)) * (0.3 + 0.7 * g)), pv.inputs["Density"])
     pv.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1); pv.inputs["Anisotropy"].default_value = 0.05
     L.new(pv.outputs[0], out.inputs["Volume"]); o.data.materials.append(m)
     sc = bpy.context.scene; sc.cycles.volume_step_rate = 8.0; sc.cycles.volume_max_steps = 512; sc.cycles.volume_bounces = 2
@@ -152,11 +154,14 @@ def rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 140000))):
         variants.append(o)
     cl = Vector(cam_loc)
     tot = 0
+    Rr = np.random.default_rng(4242) if frozen else R      # frozen drops hang where they are: same places every frame
     for k, src in enumerate(variants):
         cnt = n // len(variants)
         # sample in a camera-centred cylinder 0.4..35 m, denser near the camera (we only see near drops individually)
         r = 1.6 + 35 * R.random(cnt) ** 1.6; a = R.uniform(0, 2 * math.pi, cnt)   # nothing closer than 1.6 m (lens-blurred away)
         x = cl.x + r * np.cos(a); y = cl.y + r * np.sin(a); z = R.uniform(-0.3, 9.0, cnt)
+        if frozen:                                              # fixed in the world, not around the (moving) camera
+            x = Rr.uniform(-7.0, 10.0, cnt); y = Rr.uniform(-10.0, 6.0, cnt); z = Rr.uniform(-0.3, 8.0, cnt)
         keep = np.ones(cnt, bool)
         if pb:                                                  # no rain under the roof
             x0, x1, y0, y1, z0, z1 = pb

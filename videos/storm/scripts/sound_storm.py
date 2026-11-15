@@ -5,7 +5,7 @@ import sys, json, subprocess, math
 from pathlib import Path
 import numpy as np
 
-SR = 48000; FPS = 30; NF = 990; N = int(SR * NF / FPS)
+SR = 48000; FPS = 30; NF = 1050; N = int(SR * NF / FPS)
 sfx, src, out = Path(sys.argv[1]), json.load(open(sys.argv[2])), sys.argv[3]
 rng = np.random.default_rng(11)
 mixL = np.zeros(N, np.float64); mixR = np.zeros(N, np.float64)
@@ -87,16 +87,16 @@ def hit(key, f, gain=1.0, pan=0.0, idx=0, dur=None, peak=0.8, pitch=1.0, fade=No
     place(norm(a, peak=peak), fr(f), gain, pan, 0.0, fade if fade else (0.08 if dur is None else min(0.08, dur / 3)), dur)
 
 
-SLOW = 341; FREEZE = 418; RESUME = 745                         # frames: the drop enters and time slows / stops / the drop lands
+SLOW = 372; FREEZE = 420; RESUME = 745                         # frames: the drop enters and time slows / stops / the drop lands
 # ---- world before the freeze: sea, wind in the trees, the gust, far thunder. As the drop slows, so does the world: the
 # ambience sinks with it and is gone when the drop stops.
-duck = [(0, 1.0), (fr(SLOW), 1.0), (fr(372), 0.42), (fr(FREEZE) - 0.1, 0.10), (fr(FREEZE) + 0.15, 0.0), (fr(RESUME) + 0.25, 0.0),
-        (fr(RESUME) + 1.6, 1.0), (33.0, 1.0)]
+duck = [(0, 1.0), (fr(SLOW), 1.0), (fr(386), 0.5), (fr(404), 0.18), (fr(FREEZE), 0.0), (fr(RESUME) + 0.25, 0.0),
+        (fr(RESUME) + 1.6, 1.0), (35.0, 1.0)]
 def env_mul(e):
     return [(t, v * float(np.interp(t, [d[0] for d in duck], [d[1] for d in duck]))) for t, v in e]
-grid = sorted(set([d[0] for d in duck] + list(np.arange(0, 33.01, 0.25))))
-bed("sea_waves", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 7, 10.5, 27, 29.5, 33], [0.8, 0.8, 0.5, 0.0, 0.35, 0.55]))) for t in grid]))
-bed("wind_gust", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.2, 4.9, 5.6, 6.2, 6.9, 10.5, 13.9, 27.0, 28.5, 33], [0.10, 0.12, 0.9, 0.55, 1.0, 0.7, 0.5, 0.55, 0.25, 0.3, 0.08]))) for t in grid]), rms=0.09)
+grid = sorted(set([d[0] for d in duck] + list(np.arange(0, 35.01, 0.25))))
+bed("sea_waves", 0.0, 35.0, 1.0, env_mul([(t, float(np.interp(t, [0, 7, 10.5, 27, 29.5, 35], [0.8, 0.8, 0.5, 0.0, 0.35, 0.55]))) for t in grid]))
+bed("wind_gust", 0.0, 35.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.2, 4.9, 5.6, 6.2, 6.9, 10.5, 13.9, 27.0, 28.5, 35], [0.10, 0.12, 0.9, 0.55, 1.0, 0.7, 0.5, 0.55, 0.25, 0.3, 0.08]))) for t in grid]), rms=0.09)
 bed("leaves_rustle", 0.0, 14.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.4, 5.0, 6.3, 7.0, 14], [0.25, 0.3, 1.0, 1.0, 0.5, 0.2]))) for t in grid if t <= 14.0]), rms=0.05)
 hit("cloth_flap", 150, 0.55, -0.2, idx=0, dur=1.5, peak=0.5); hit("cloth_flap", 172, 0.4, 0.1, idx=1, dur=0.5, peak=0.45)
 hit("cloth_flap", 186, 0.35, 0.3, idx=2, dur=1.2, peak=0.4)
@@ -129,12 +129,12 @@ hit("switch", 716, 0.5, 0.0, dur=0.3)                                           
 # ---- time resumes: the drop, then the sky opens
 hit("water_drop", RESUME, 0.8, 0.0, dur=1.2, peak=0.85)
 hit("thunder", 792, 1.0, -0.1, idx=1, dur=6.0, peak=0.95, fade=3.0)
-bed("rain_heavy", fr(806), 33.0, 1.0, [(fr(806), 0.0), (fr(830), 0.55), (fr(860), 0.9), (fr(900), 0.8), (fr(950), 0.3), (33.0, 0.12)], rms=0.085)
+bed("rain_heavy", fr(806), 35.0, 1.0, [(fr(806), 0.0), (fr(830), 0.55), (fr(860), 0.9), (fr(900), 0.8), (fr(950), 0.3), (35.0, 0.12)], rms=0.085)
 bed("rain_roof", fr(811), fr(960), 1.0, [(fr(811), 0.0), (fr(835), 0.8), (fr(886), 0.8), (fr(905), 0.25), (fr(960), 0.0)], rms=0.07)
-bed("birds", fr(925), 33.0, 1.0, [(fr(925), 0.0), (fr(950), 0.5), (33.0, 0.6)], rms=0.035)
+bed("birds", fr(925), 35.0, 1.0, [(fr(925), 0.0), (fr(950), 0.5), (35.0, 0.6)], rms=0.035)
 # ---- master
 st = np.stack([mixL, mixR], 1)
-st *= (np.clip(T / 0.4, 0, 1) * np.clip((NF / FPS - T) / 1.2, 0, 1))[:, None]
+st *= (np.clip(T / 0.4, 0, 1) * np.clip((NF / FPS - T) / 2.4, 0, 1))[:, None]
 st = np.tanh(st * 1.25); st = st / (np.abs(st).max() + 1e-9) * 0.92
 import wave
 with wave.open(out, "wb") as w:
