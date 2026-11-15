@@ -105,7 +105,7 @@ def move_camera(shot):
             cam.location = L0 + fwd * 0.22 * e + right * 0.05 * e; look(cam, tgt)   # level: frozen drops must not drift down
     elif shot == "pergola":                                             # level truck sideways while pulling back: with the
         # old crane-up the frozen drops near the lens slid DOWN the frame by parallax and read as slowly falling rain
-        cam.location = L0 + right * float(os.environ.get("PG_TRUCK", 1.0)) * e - fwd * 0.6 * e; look(cam, (0.0, 0.2, 1.75 + 0.15 * e))
+        cam.location = L0 + right * float(os.environ.get("PG_TRUCK", -1.0)) * e - fwd * 0.6 * e; look(cam, (0.0, 0.2, 1.75 + 0.15 * e))
     elif shot == "rain_under":
         cam.location = L0 - fwd * 0.30 * e
     elif shot == "final":
