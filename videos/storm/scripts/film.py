@@ -277,7 +277,7 @@ def hero_light(shot):
     import os
     cam = bpy.context.scene.camera; tgt = Vector(CAMS[shot][1])
     d = Vector(cam.location) - tgt; d.z = 0; d.normalize(); side = Vector((-d.y, d.x, 0))
-    k = float(os.environ.get("HERO_W", 1.0))
+    k = float(os.environ.get("HERO_W", 0.22))
     def area(name, loc, size, watts, col):
         L = bpy.data.lights.new(name, "AREA"); L.shape = "RECTANGLE"; L.size = size[0]; L.size_y = size[1]; L.energy = watts * k; L.color = col
         o = bpy.data.objects.new(name, L); bpy.context.scene.collection.objects.link(o); o.location = loc; look(o, tgt)
