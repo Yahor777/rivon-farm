@@ -16,34 +16,83 @@ R = np.random.default_rng(777)
 SKY = {"clearing": ("kloofendal_overcast_puresky", 1.0), "storm": ("kloofendal_overcast_puresky", 1.0), "freeze": ("kloofendal_overcast_puresky", 1.0), "rain": ("kloofendal_overcast_puresky", 1.0)}
 
 
+STORM_SKY = os.environ.get("SKY_STORM", "cedar_bridge")       # photographed storm cells (Poly Haven, CC0)
+
+
 def _sky(state):
+    """Photographed skies only. storm/freeze: a real storm sky, its darkest cell turned to the sea, the strip of land at
+    its horizon lifted out of view. In the storm shot the storm does not arrive: it condenses out of the sunny sky -
+    a ragged, noise-edged front grows outward from the cell over the sea (SKY_MIX 0..1) between the two photographs."""
     aid, k = SKY[state]
+    photo = state in ("storm", "freeze") and RF2._hdri_path(STORM_SKY) is not None
+    if photo:
+        aid = STORM_SKY
     p = RF2._hdri_path(aid)
     if p is None:
-        log(f"weather: HDRI {aid} missing"); return
+        log(f"weather: HDRI {aid} missing"); return False
     sc = bpy.context.scene; w = sc.world; N, L = w.node_tree.nodes, w.node_tree.links
-    N.clear()
+    mix = float(os.environ.get("SKY_MIX", 1.0)) if state == "storm" else 1.0
+    sunny = None
+    if photo and mix < 0.999:                                 # keep the sunny sky branch built by refine2
+        o0 = next((n for n in N if n.type == "OUTPUT_WORLD"), None)
+        if o0 and o0.inputs["Surface"].links:
+            sunny = o0.inputs["Surface"].links[0].from_socket
+    if sunny is None:
+        N.clear()
     img = bpy.data.images.load(str(p)); img.colorspace_settings.name = "Linear Rec.709"
     tc = N.new("ShaderNodeTexCoord"); mp = N.new("ShaderNodeMapping")
     # storm front over the sea: the darkest part of the image (its storm cell) is turned towards +x (the sea)
     px = RF2._pix(img)[..., :3].mean(-1); h, wd = px.shape
-    band = px[int(h * 0.5):int(h * 0.62)]                    # just above the horizon
+    band = px[int(h * 0.53):int(h * 0.66)]                    # just above the horizon
     col = band.mean(0); u_dark = (np.argmin(np.convolve(col, np.ones(wd // 12) / (wd // 12), "same")) + 0.5) / wd
+    u_dark += float(os.environ.get("SKY_TURN", 0.0)) / 360.0
     phi_img = -2 * math.pi * (u_dark - 0.5); phi_want = 0.0   # +x
     mp.inputs["Rotation"].default_value[2] = phi_img - phi_want
     env = N.new("ShaderNodeTexEnvironment"); env.image = img; env.interpolation = "Cubic"
     bg = N.new("ShaderNodeBackground"); out = N.new("ShaderNodeOutputWorld")
-    L.new(tc.outputs["Generated"], mp.inputs["Vector"]); L.new(mp.outputs[0], env.inputs["Vector"])
-    L.new(env.outputs[0], bg.inputs["Color"]); L.new(bg.outputs[0], out.inputs["Surface"])
+    vec = tc.outputs["Generated"]
+    if photo:                                                 # lift: the image row at SKY_LIFT deg sits on our horizon
+        lift = math.tan(math.radians(float(os.environ.get("SKY_LIFT", 4.0))))
+        sep = N.new("ShaderNodeSeparateXYZ"); cmb = N.new("ShaderNodeCombineXYZ")
+        mx = N.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = 0.0
+        hl = N.new("ShaderNodeVectorMath"); hl.operation = "LENGTH"; ml = N.new("ShaderNodeMath"); ml.operation = "MULTIPLY_ADD"
+        cxy = N.new("ShaderNodeCombineXYZ")
+        L.new(vec, sep.inputs[0]); L.new(sep.outputs[0], cxy.inputs[0]); L.new(sep.outputs[1], cxy.inputs[1]); L.new(cxy.outputs[0], hl.inputs[0])
+        L.new(sep.outputs[2], mx.inputs[0]); L.new(hl.outputs["Value"], ml.inputs[0]); ml.inputs[1].default_value = lift; L.new(mx.outputs[0], ml.inputs[2])
+        L.new(sep.outputs[0], cmb.inputs[0]); L.new(sep.outputs[1], cmb.inputs[1]); L.new(ml.outputs[0], cmb.inputs[2])
+        vec = cmb.outputs[0]
+    L.new(vec, mp.inputs["Vector"]); L.new(mp.outputs[0], env.inputs["Vector"])
+    L.new(env.outputs[0], bg.inputs["Color"])
     # exposure: keep the scene readable (owner: never murky). Target sky luminance near the horizon ~ that of the sunny
     # sky image at the same strength calibration -> then the camera exposure lifts it 1.3 EV less than the sun scene.
     ref = float(os.environ.get("WEATHER_STRENGTH", 0))
     if not ref:
-        lum_h = float(band.mean())
-        ref = 2.2 / max(lum_h, 1e-4)                         # horizon radiance -> ~2.2 scene units (sunny sky ~3.5)
+        lum_h = float(np.median(band)) if photo else float(band.mean())
+        ref = (float(os.environ.get("SKY_LUM", 3.0)) if photo else 2.2) / max(lum_h, 1e-4)
     bg.inputs["Strength"].default_value = ref
+    if sunny is not None:
+        nz = N.new("ShaderNodeTexNoise"); nz.noise_dimensions = "4D"; nz.inputs["Scale"].default_value = 2.6
+        nz.inputs["Detail"].default_value = 9.0; nz.inputs["Roughness"].default_value = 0.62; nz.inputs["W"].default_value = 0.5 * mix
+        L.new(tc.outputs["Generated"], nz.inputs["Vector"])
+        dt = N.new("ShaderNodeVectorMath"); dt.operation = "DOT_PRODUCT"; c = Vector((1.0, 0.05, 0.22)).normalized()
+        nv = N.new("ShaderNodeVectorMath"); nv.operation = "NORMALIZE"; L.new(tc.outputs["Generated"], nv.inputs[0])
+        L.new(nv.outputs[0], dt.inputs[0]); dt.inputs[1].default_value = c
+        # m = g*1.55 - 0.16 - (1-dot)/2 + 0.55*(noise-0.5)   -> smoothstep over 0.16
+        a1 = N.new("ShaderNodeMath"); a1.operation = "MULTIPLY_ADD"; L.new(dt.outputs["Value"], a1.inputs[0]); a1.inputs[1].default_value = 0.5
+        a1.inputs[2].default_value = mix * 1.55 - 0.16 - 0.5 - 0.275
+        a2 = N.new("ShaderNodeMath"); a2.operation = "MULTIPLY_ADD"; L.new(nz.outputs["Fac"], a2.inputs[0]); a2.inputs[1].default_value = 0.55
+        L.new(a1.outputs[0], a2.inputs[2])
+        mr = N.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"; mr.inputs["From Min"].default_value = 0.0
+        mr.inputs["From Max"].default_value = float(os.environ.get("SKY_EDGE", 0.16)); L.new(a2.outputs[0], mr.inputs["Value"])
+        ms = N.new("ShaderNodeMixShader"); L.new(mr.outputs["Result"], ms.inputs["Fac"]); L.new(sunny, ms.inputs[1]); L.new(bg.outputs[0], ms.inputs[2])
+        for n in [n for n in N if n.type == "OUTPUT_WORLD" and n != out]:
+            N.remove(n)
+        L.new(ms.outputs[0], out.inputs["Surface"])
+    else:
+        L.new(bg.outputs[0], out.inputs["Surface"])
     sc.world.cycles.sampling_method = "MANUAL"; sc.world.cycles.sample_map_resolution = 2048
-    log(f"weather {state}: sky {aid}, storm side turned to the sea, strength {ref:.3g}")
+    log(f"weather {state}: sky {aid}, storm side turned to the sea, strength {ref:.3g}" + (f", condensing out of the sunny sky {mix:.2f}" if sunny is not None else ""))
+    return photo
 
 
 def storm_cloud():
@@ -361,8 +410,8 @@ def sun_break(target=(0.0, 0.0, 1.6)):
 def apply(state, cam_loc):
     global R
     R = np.random.default_rng(int(os.environ.get("WX_SEED", 777)))
-    _sky(state); _sea(state); lawn_overcast(state)
-    if state in ("storm", "freeze") and os.environ.get("CB", "1") == "1":
+    photo = _sky(state); _sea(state); lawn_overcast(state)
+    if state in ("storm", "freeze") and os.environ.get("CB", "0" if photo else "1") == "1":   # built cloud only without a photographed storm sky
         storm_cloud()
     pb = _pergola_box()
     if state == "rain":

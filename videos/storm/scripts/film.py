@@ -62,6 +62,9 @@ def set_frame(f):
     if shot == "storm":
         os.environ["CB_GROW"] = str(0.06 + 0.94 * ease(T))                        # the cloud does not arrive: it builds up over the sea
         os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
+        if os.environ.get("SKY_PHOTO", "1") == "1":                 # photographed storm sky condensing out of the sunny one
+            os.environ["SKY_MIX"] = str(ease(min(1.0, T / 0.9)))
+            os.environ["WEATHER_EV"] = str(float(os.environ.get("EV0", 0.0)) + float(os.environ.get("EV1", 0.9)) * ease(min(1.0, T / 0.9)))
     if shot == "rain_under":
         os.environ["RAIN_N"] = str(int(8000 + 132000 * ease(T / 0.6)))
     if shot == "final":
