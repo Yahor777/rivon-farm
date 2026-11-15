@@ -46,7 +46,7 @@ jobs:
           tar xf b.tar.xz && mv blender-5.2.3-linux-x64 blender && test -x /tmp/blender/blender
           (gh release view lib-blender -R ${{ github.repository }} >/dev/null 2>&1 || gh release create lib-blender -R ${{ github.repository }} --title lib-blender --notes "Blender binary cache for the render runners") && (gh release view lib-blender -R ${{ github.repository }} --json assets -q '.assets[].name' | grep -q blender-5.2.3 || (cp b.tar.xz blender-5.2.3-linux-x64.tar.xz && gh release upload lib-blender blender-5.2.3-linux-x64.tar.xz -R ${{ github.repository }} --clobber)) || true
           L=$GITHUB_WORKSPACE/videos/storm/lib/polyhaven; mkdir -p $L
-          for TAG in lib-set1 lib-set2 lib-set3 lib-set4 lib-set5 lib-set6; do
+          for TAG in lib-set1 lib-set2 lib-set3 lib-set4 lib-set5 lib-set6 lib-set7; do
             gh release download $TAG -R ${{ github.repository }} -p 'polyhaven__*' -D /tmp/rel_$TAG
             for t in /tmp/rel_$TAG/*.tar; do tar -xf $t -C $L; done; rm -rf /tmp/rel_$TAG
           done

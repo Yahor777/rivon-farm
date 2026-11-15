@@ -65,7 +65,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         CZ.splash2(gx + 0.004, gy - 0.003, wine_top, FM.splash_time(shot))
     if dvis:
         bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.0023, location=(gx + 0.004, gy - 0.003, dzc))
-        d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, 0.86)          # falling drops are slightly oblate
+        d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, FM.drop_stretch(shot))   # oblate; a streak while still at real speed
         d.data.materials.append(S.mat_glass("rain_water", (1, 1, 1, 1))); S.principled(d.data.materials[0]).inputs["IOR"].default_value = 1.333
         d.data.shade_smooth()
     focus_far = len(sys.argv) > 6 and sys.argv[6] == "far"
@@ -75,10 +75,12 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         cz2 = drop_z + 0.016
         LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),
                   lens=85, fstop=11.0, focus=0.25)
-    elif shot == "dropfall":                             # high-speed camera travelling down with the drop, 38 cm away
-        LK.camera("CAM", (gx - 0.30, gy - 0.24, dzc + 0.012), (gx + 0.004, gy - 0.003, dzc - 0.004), lens=100, fstop=4.0, focus=0.385)
-    elif shot == "splash":                               # over the rim, 38 deg down into the glass
-        LK.camera("CAM", (gx - 0.185, gy - 0.085, wine_top + 0.150), (gx + 0.004, gy - 0.003, wine_top + 0.004), lens=90, fstop=9.0, focus=0.253)
+    elif shot == "dropfall":                             # locked-off beside the glass, looking up at the storm; tilts down with the drop
+        _tz = wine_top + 0.04 + 0.20 * (1 - FM.ease(min(1.0, FM.T / 0.9))) if FM.FRAME is not None else wine_top + 0.10
+        LK.camera("CAM", (gx - 0.42, gy - 0.035, wine_top + 0.005), (gx + 0.004, gy - 0.003, _tz), lens=50, fstop=4.0, focus=0.42)
+    elif shot == "splash":                               # side-on, just above the wine surface: the crown in profile
+        _e = FM.ease(FM.T) if FM.FRAME is not None else 0.3
+        LK.camera("CAM", (gx - 0.16, gy - 0.17, wine_top + 0.046 + 0.012 * _e), (gx + 0.004, gy - 0.003, wine_top + 0.012), lens=90, fstop=8.0, focus=0.238)
     elif len(sys.argv) > 6 and sys.argv[6] == "tight":     # end of the push-in: the frozen drop fills the frame
         dz = drop_z + 0.0022
         LK.camera("CAM", (gx - 0.13, gy - 0.003, dz), (gx + 1.0, gy + 0.008, dz - 1.13 * _m.tan(_m.radians(2.0))),
@@ -106,12 +108,18 @@ elif shot == "s09":
     LK.camera("CAM", (9.5, -6.5, 1.7), (-1.0, 0.3, 1.6), lens=32, fstop=8)
 elif shot == "macro":
     LK.camera("CAM", (2.62, -3.98, 2.12), (1.72, -3.02, 2.56), lens=70, fstop=5.6, focus=1.38)   # outer corner Trojak C2 from the lawn
-FM.move_camera(shot); FM.wind()
+FM.move_camera(shot); FM.wind(); FM.hero_light(shot)
 WEATHER = __import__("os").environ.get("WEATHER", FM.WEATHER.get(shot, ""))
 if WEATHER:
     import weather as WX
     print("\n".join("WX " + l for l in WX.apply(WEATHER, bpy.context.scene.camera.location)))
-    bpy.context.scene.view_settings.exposure += {"macro": 1.0, "conn1": 1.0, "conn2": 0.8, "conn3": 0.9, "freeze": 0.3, "dropfall": 0.4, "splash": 0.3}.get(shot, 0.0)
+    bpy.context.scene.view_settings.exposure += FM.exposure_add(shot)
+    if shot == "splash":                                 # the camera is balanced between the 2700 K lamps and the dusk: wine stays ruby
+        try:
+            vs = bpy.context.scene.view_settings; vs.use_white_balance = True
+            vs.white_balance_temperature = float(__import__("os").environ.get("SPLASH_WB", 4300)); vs.white_balance_tint = 10.0
+        except Exception as _ex:
+            print("WB not available", _ex)
     if WEATHER in ("rain", "clearing") and bpy.data.collections.get("PERGOLA"):
         CZ.roof_drops(); print("CZ " + CZ.LOG[-1])   # per-shot exposure, as a photographer would
 bpy.context.scene.render.filepath = out

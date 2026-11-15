@@ -77,52 +77,58 @@ def bed(key, t0, t1, gain, env=None, idx=0, rms=0.06):
     place(a, t0, gain, 0.0, 0.0, 0.0)
 
 
-def hit(key, f, gain=1.0, pan=0.0, idx=0, dur=None, peak=0.8, pitch=1.0):
+def hit(key, f, gain=1.0, pan=0.0, idx=0, dur=None, peak=0.8, pitch=1.0, fade=None):
     a = load(key, idx)
     if a is None:
         return
     a = onset(a)
     if pitch != 1.0:                                           # small resample = a different beam, not the same sample
         n2 = int(len(a) / pitch); a = np.stack([np.interp(np.linspace(0, len(a) - 1, n2), np.arange(len(a)), a[:, c]) for c in (0, 1)], 1)
-    place(norm(a, peak=peak), fr(f), gain, pan, 0.0, 0.08 if dur is None else min(0.08, dur / 3), dur)
+    place(norm(a, peak=peak), fr(f), gain, pan, 0.0, fade if fade else (0.08 if dur is None else min(0.08, dur / 3)), dur)
 
 
-FREEZE = 418; RESUME = 745                                      # frames: time stops / the drop lands
-# ---- world before the freeze: sea, light wind, the gust, thunder
-duck = [(0, 1.0), (fr(FREEZE) - 0.05, 1.0), (fr(FREEZE) + 0.22, 0.0), (fr(RESUME) + 0.3, 0.0), (fr(RESUME) + 1.6, 1.0), (33.0, 1.0)]
+SLOW = 341; FREEZE = 418; RESUME = 745                         # frames: the drop enters and time slows / stops / the drop lands
+# ---- world before the freeze: sea, wind in the trees, the gust, far thunder. As the drop slows, so does the world: the
+# ambience sinks with it and is gone when the drop stops.
+duck = [(0, 1.0), (fr(SLOW), 1.0), (fr(372), 0.42), (fr(FREEZE) - 0.1, 0.10), (fr(FREEZE) + 0.15, 0.0), (fr(RESUME) + 0.25, 0.0),
+        (fr(RESUME) + 1.6, 1.0), (33.0, 1.0)]
 def env_mul(e):
     return [(t, v * float(np.interp(t, [d[0] for d in duck], [d[1] for d in duck]))) for t, v in e]
 grid = sorted(set([d[0] for d in duck] + list(np.arange(0, 33.01, 0.25))))
-bed("sea_waves", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 7, 10.5, 27, 29.5, 33], [0.8, 0.8, 0.45, 0.0, 0.35, 0.55]))) for t in grid]))
-bed("wind_gust", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.2, 4.9, 5.6, 6.2, 6.9, 10.5, 13.9, 27.0, 28.5, 33], [0.10, 0.12, 0.9, 0.55, 1.0, 0.7, 0.45, 0.5, 0.25, 0.3, 0.08]))) for t in grid]), rms=0.09)
+bed("sea_waves", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 7, 10.5, 27, 29.5, 33], [0.8, 0.8, 0.5, 0.0, 0.35, 0.55]))) for t in grid]))
+bed("wind_gust", 0.0, 33.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.2, 4.9, 5.6, 6.2, 6.9, 10.5, 13.9, 27.0, 28.5, 33], [0.10, 0.12, 0.9, 0.55, 1.0, 0.7, 0.5, 0.55, 0.25, 0.3, 0.08]))) for t in grid]), rms=0.09)
 bed("leaves_rustle", 0.0, 14.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.4, 5.0, 6.3, 7.0, 14], [0.25, 0.3, 1.0, 1.0, 0.5, 0.2]))) for t in grid if t <= 14.0]), rms=0.05)
-hit("cloth_flap", 158, 0.5, -0.2, dur=1.6, peak=0.5); hit("glass_set", 170, 0.22, 0.3, dur=0.6, peak=0.4)
-hit("thunder", 236, 0.75, 0.2, dur=7.0, peak=0.85)             # far thunder as the cloud takes the sky
-# ---- the freeze: everything is pulled out, one low hit, near silence
-hit("whoosh_low", FREEZE - 2, 0.7, 0.0, dur=2.2, peak=0.8)
-# ---- assembly in the silence: concrete, close, dry
-hit("metal_clank", 474, 0.55, 0.25, idx=0, dur=0.9); hit("wood_on_metal", 475, 0.5, 0.25, idx=0, dur=0.8, pitch=1.15)   # Trojak seats on the post
-for k, f in enumerate((478, 487, 495)):
-    hit("screwdriver", f, 0.42, 0.2, idx=0, dur=0.55, pitch=1.0 + 0.04 * k)
-for k, (f, pan) in enumerate(((549, 0.3), (554, -0.3))):                                                          # long beams land on the plates
-    hit("wood_on_metal", f, 0.95, pan, idx=k, dur=1.2, pitch=0.82 + 0.05 * k); hit("metal_clank", f, 0.3, pan, idx=1, dur=0.6, pitch=0.9)
-for k, (f, pan) in enumerate(((570, 0.2), (574, -0.2))):
-    hit("wood_on_metal", f, 0.8, pan, idx=k + 1, dur=1.0, pitch=0.95 + 0.05 * k)
-for k, f in enumerate((558, 565, 573, 580)):
-    hit("screwdriver", f, 0.36, (-1) ** k * 0.3, idx=k, dur=0.5, pitch=0.97 + 0.03 * k)
-for k in range(11):                                                                                               # rafters into the Mocowanie
-    f = 592 + 26 * k / 10.0 + 28
-    hit("wood_on_metal", f, 0.6 if k != 4 else 0.9, -0.6 + 0.12 * k, idx=k, dur=0.7, pitch=1.05 + 0.03 * (k % 4))
-for k, f in enumerate((624, 631, 638, 644)):
-    hit("screwdriver", f, 0.3, (-1) ** k * 0.25, idx=k + 1, dur=0.45, pitch=1.02)
+hit("cloth_flap", 150, 0.55, -0.2, idx=0, dur=1.5, peak=0.5); hit("cloth_flap", 172, 0.4, 0.1, idx=1, dur=0.5, peak=0.45)
+hit("cloth_flap", 186, 0.35, 0.3, idx=2, dur=1.2, peak=0.4)
+hit("thunder", 236, 0.75, 0.2, idx=0, dur=7.0, peak=0.85, fade=3.0)       # far thunder as the cloud takes the sky
+# ---- assembly in the silence: concrete, close, dry. Frames = film.assemble() landings.
+W = "wood_on_metal"
+hit("metal_slide", 449, 0.35, 0.3, dur=0.38, peak=0.5, pitch=0.9)                 # corner Trojak pushed onto the end beam
+hit(W, 460, 0.75, 0.3, idx=3, dur=0.9, pitch=1.08); hit("metal_clank", 460, 0.28, 0.3, idx=2, dur=0.5)
+hit("metal_slide", 474, 0.4, -0.25, dur=0.4, peak=0.5, pitch=0.8)                 # long beams slide into the sockets
+hit(W, 486, 1.0, -0.2, idx=0, dur=1.2, pitch=0.86); hit("wood_thud", 486, 0.55, -0.2, idx=2, dur=0.7); hit("metal_clank", 486, 0.3, -0.2, idx=0, dur=0.6, pitch=0.9)
+for k, f in enumerate((490, 497, 504)):
+    hit("screwdriver", f, 0.36, 0.25 - 0.2 * k, idx=k, dur=0.45, peak=0.6)
+for k in range(11):                                                               # rafters laid into the Mocowanie saddles: wood on steel
+    f = (512 + 5 * (k - 2) if k >= 2 else 560 + 5 * (1 - k)) + 20
+    hit(W, f, 0.95 - 0.05 * min(abs(k - 2), 6), -0.15 + 0.07 * k, idx=k, dur=0.8, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
+    if k % 3 == 0:
+        hit("metal_clank", f, 0.16, -0.15 + 0.07 * k, idx=k // 3, dur=0.35, pitch=1.1)
+for k, f in enumerate((550, 561, 572, 581)):
+    hit("screwdriver", f, 0.26, (-1) ** k * 0.3, idx=k + 1, dur=0.4, peak=0.55)
+hit("wood_thud", 618, 1.0, 0.0, idx=0, dur=1.2, peak=0.9, pitch=0.8)              # the whole frame lands on the four posts
+hit(W, 618, 0.8, 0.15, idx=1, dur=1.0, pitch=0.8); hit("metal_clank", 618, 0.4, -0.15, idx=1, dur=0.7, pitch=0.82)
+hit("wood_thud", 619, 0.5, -0.4, idx=1, dur=0.9, pitch=0.9)
+for k, f in enumerate((623, 629, 635, 640)):
+    hit("screwdriver", f, 0.34, (-1) ** k * 0.25, idx=k, dur=0.45, peak=0.6)
 for k in range(7):
-    hit("metal_clank", 676 + 16 * k / 6.0, 0.22, -0.5 + k / 6.0, idx=k, dur=0.4, pitch=1.3)                        # glazing bars
+    hit("metal_clank", 676 + 16 * k / 6.0, 0.22, -0.5 + k / 6.0, idx=k, dur=0.4, pitch=1.25)                       # glazing bars
 for k in range(6):
-    hit("glass_set", 704 + 16 * k / 5.0, 0.3, -0.5 + k / 5.0, idx=k, dur=0.7, pitch=0.8)                            # glass panes settle
+    hit("glass_set", 704 + 16 * k / 5.0, 0.42, -0.5 + k / 5.0, idx=0, dur=0.8, peak=0.6, pitch=0.9 + 0.05 * k)      # glass panes settle
 hit("switch", 716, 0.5, 0.0, dur=0.3)                                                                             # the lights
 # ---- time resumes: the drop, then the sky opens
 hit("water_drop", RESUME, 0.8, 0.0, dur=1.2, peak=0.85)
-hit("thunder", 792, 1.0, -0.1, idx=1, dur=8.0, peak=0.95)
+hit("thunder", 792, 1.0, -0.1, idx=1, dur=6.0, peak=0.95, fade=3.0)
 bed("rain_heavy", fr(806), 33.0, 1.0, [(fr(806), 0.0), (fr(830), 0.55), (fr(860), 0.9), (fr(900), 0.8), (fr(950), 0.3), (33.0, 0.12)], rms=0.085)
 bed("rain_roof", fr(811), fr(960), 1.0, [(fr(811), 0.0), (fr(835), 0.8), (fr(886), 0.8), (fr(905), 0.25), (fr(960), 0.0)], rms=0.07)
 bed("birds", fr(925), 33.0, 1.0, [(fr(925), 0.0), (fr(950), 0.5), (33.0, 0.6)], rms=0.035)

@@ -27,9 +27,12 @@ FRAME = None; T = 0.5
 PERGOLA_SHOTS = ("macro", "s09", "conn1", "conn2", "conn3", "pergola", "rain_under", "final", "splash")
 # new shot cameras: loc, target, lens, fstop, focus
 CAMS = {"wind":  ((1.55, -2.45, 1.16), (-0.05, -0.25, 0.86), 40, 4.0, 2.4),
-        "conn1": ((2.62, -3.98, 2.12), (1.72, -3.02, 2.56), 70, 5.6, 1.38),
-        "conn2": ((0.70, -2.15, 3.02), (1.68, -2.97, 2.60), 50, 5.6, 1.33),
-        "conn3": ((0.95, -1.02, 2.47), (1.60, -0.43, 2.67), 60, 5.6, 0.9)}
+        # conn1: from inside and below the corner - both socket mouths visible, storm sky behind
+        "conn1": ((0.72, -1.97, 2.50), (1.68, -2.93, 2.82), 45, 3.2, 1.38),
+        # conn2: from inside, above the roof plane: rafter ends coming down into the Mocowanie saddles, one after another
+        "conn2": ((0.85, -1.68, 3.22), (1.57, -1.30, 2.95), 40, 2.8, 0.86),
+        # conn3: from the lawn - the frame lands on the post, the house behind
+        "conn3": ((2.80, -4.10, 2.20), (1.70, -2.95, 2.52), 70, 4.0, 1.62)}
 WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "freeze", "macro": "freeze", "conn1": "freeze", "conn2": "freeze",
            "conn3": "freeze", "pergola": "freeze", "splash": "freeze", "rain_under": "rain", "final": "clearing"}
 
@@ -93,8 +96,13 @@ def move_camera(shot):
         cam.location = L0 + right * 0.010 * k
     elif shot in ("conn1", "conn2", "conn3"):                           # slow arc around the connector
         tgt = Vector(CAMS[shot][1]); r = L0 - tgt
-        ang = {"conn1": 0.22, "conn2": -0.18, "conn3": 0.16}[shot] * k
-        cam.location = tgt + Matrix.Rotation(ang, 3, "Z") @ r + up * 0.05 * k; look(cam, tgt)
+        if shot == "conn1":                                             # slow arc under the corner
+            cam.location = tgt + Matrix.Rotation(0.16 * k, 3, "Z") @ r + up * 0.07 * k; look(cam, tgt)
+        elif shot == "conn2":                                           # truck sideways, focus follows the landing rafters
+            cam.location = L0 + fwd * 0.08 * e
+            cam.data.dof.focus_distance = 0.86 + 0.9 * ease((T - 0.45) / 0.5)
+        else:                                                           # push in on the landing, rising a little
+            cam.location = L0 + fwd * 0.22 * e + up * 0.05 * e; look(cam, tgt)
     elif shot == "pergola":                                             # crane up while pulling back
         cam.location = L0 + up * 0.7 * e - fwd * 0.8 * e; look(cam, (0.0, 0.2, 1.75 + 0.35 * e))
     elif shot == "rain_under":
@@ -109,13 +117,35 @@ def drop_state(shot, wine_top):
     zf = wine_top + 0.0045
     if FRAME is None:
         return zf, shot != "splash"
-    if shot == "dropfall":                      # 2.6 m of fall seen through a high-speed camera, constant slow-mo speed
-        return zf + 0.035 + 2.6 * (1 - T), True
+    if shot == "dropfall":                      # enters the frame at real speed (a streak), then time itself slows down
+        t = _drop_t()
+        if t < 0:
+            return zf + 5.0, False
+        return zf + 0.035 + 0.50 * math.exp(-t / 0.07) + 0.12 * (1 - t / 1.65), True
     if shot == "freeze":                        # last 3.5 cm: decelerates to a stop at t = 0.6
         u = min(1.0, T / 0.6); return zf + 0.035 * (1 - u) ** 2.2, True
     if shot == "splash":                        # resumes: 4.5 mm in the first 12 % of the shot, then it is in the wine
         u = T / 0.12; return zf - 0.0045 * min(1.0, u) ** 2 - 0.0002, u < 1.0
     return zf, shot in ("conn1", "conn2", "conn3", "pergola")
+
+
+def _drop_t():
+    return (T - 0.34) * 2.5                     # seconds since the drop entered (the shot lasts 2.5 s)
+
+
+def drop_stretch(shot):
+    """z scale of the 4.6 mm drop: motion blur of a 1/60 s shutter while it still moves at real speed"""
+    if FRAME is None or shot != "dropfall":
+        return 0.86
+    v = 0.50 / 0.07 * math.exp(-max(0.0, _drop_t()) / 0.07) + 0.073
+    return max(0.86, v / 60.0 / 0.0046)
+
+
+def exposure_add(shot):
+    base = {"macro": 1.0, "conn1": 0.55, "conn2": 0.55, "conn3": 0.6, "freeze": 0.3, "dropfall": 0.5, "splash": 0.7}.get(shot, 0.0)
+    if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
+        base = 0.55 if FRAME is None else 0.55 - 0.40 * ease((FRAME - LIGHTS_ON) / 16.0)
+    return base
 
 
 def splash_time(shot):
@@ -133,11 +163,35 @@ def _fasteners():
     return json.load(open(p))["fasteners"]
 
 
+FRAME_H = 0.40                                    # the roof frame is put together this high above the post tops
+
+
+def _crane(u):                                    # 1 -> 0, slow start, long deceleration
+    u = min(1.0, max(0.0, u)); return (1 - u) ** 2 * (1 + 2 * u)
+
+
+def _push(u):                                     # 1 -> 0, a part pushed home at steady speed, stopping on the seat
+    u = min(1.0, max(0.0, u)); return (1 - u) ** 1.35
+
+
+def _settle(f, t_land, amp=0.003):
+    tau = (f - t_land) / 30.0
+    return amp * math.exp(-tau * 9.0) * abs(math.cos(tau * 24.0)) if tau >= 0 else 0.0
+
+
+def rafter_t0(i):                                 # the row starts at the saddle in front of the conn2 camera
+    return 512 + 5 * (i - 2) if i >= 2 else 560 + 5 * (1 - i)
+
+
 def assemble():
-    """Frozen-time assembly without people: every part comes down vertically as if lowered by a crane, decelerates,
-    touches, and settles with a 4 mm damped bounce. Order is the real one: Stopa + posts stand, Trojak onto the post,
-    long beams (with their Mocowanie belek already screwed on) onto the Trojak plates, end beams, rafters into the
-    Mocowanie, glazing bars, glass. Screws spin in after their part has landed."""
+    """Frozen-time assembly without people, in the order that is physically possible with the real parts. The Trojak is
+    three closed square sockets, so timber can only enter it along its own axis:
+      conn1  436-510  corner Trojaks are pushed onto the ends of the end beam (along x); the far U (long beams with their
+                      Mocowanie, far end beam, far Trojaks) slides in along y; screws spin in
+      conn2  511-585  rafters are lowered from above into the open Mocowanie saddles, one after another; screws
+      conn3  586-645  the finished frame comes down as one piece: the Trojak post sockets swallow the post tops; screws
+      pergola 646+    glazing bars, glass, trims come down onto the frame
+    All of it happens FRAME_H above the posts until the frame lands."""
     if FRAME is None:
         return None
     f = FRAME
@@ -148,54 +202,89 @@ def assemble():
     root = bpy.data.objects.get("PERGOLA_ROOT")
     def st(x):                                           # stable 0..1 stagger from a number
         return (math.sin(x * 12.9898) * 43758.5453) % 1.0
-    def window(name, x, y, z):
-        if name.startswith(("INST_STOPA", "POST")):  return None
-        if name.startswith("INST_TROJAK"):           return 446 + 4 * st(x + y), 28, 1.3
-        if name.startswith(("BEAM_LONG", "INST_MOCOW")):  return 515 + (0 if x > 0 else 5), 34, 2.3
-        if name.startswith("BEAM_END"):              return 540 + (0 if y < 0 else 4), 30, 2.3
-        if name.startswith("RAFTER"):                return 592 + 26 * (y + 3.0) / 6.0, 28, 1.9
-        if name.startswith("GLAZING_BAR"):           return 650 + 16 * (y + 3.2) / 6.4, 26, 2.0
-        if name.startswith("SHEET_glass"):           return 676 + 16 * (y + 3.2) / 6.4, 28, 2.2
-        if name.startswith("GLAZING"):               return 702 + 5 * st(x), 12, 0.8
-        return None
+    T_LAND = 618
+    frame_dz = FRAME_H * _crane((f - 592) / 26.0) + _settle(f, T_LAND, 0.0035)
+    slide_y = 0.62 * _push((f - 462) / 24.0) + (_settle(f, 486, 0.0015) if f < 592 else 0.0)
+    def offset(name, x, y):
+        """(offset vector, hidden) of a frame part"""
+        if name.startswith(("INST_STOPA", "POST")):
+            return None
+        if name.startswith("INST_TROJAK"):
+            near = y < 0
+            dx = (1 if x > 0 else -1) * 0.46 * _push((f - 438) / 22.0) if near else 0.0
+            return Vector((dx, 0 if near else slide_y, frame_dz)), False
+        if name.startswith("BEAM_END"):
+            return Vector((0, 0 if y < 0 else slide_y, frame_dz)), False
+        if name.startswith(("BEAM_LONG", "INST_MOCOW")):
+            return Vector((0, slide_y, frame_dz)), False
+        if name.startswith("RAFTER"):
+            i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); u = (f - t0) / 20.0
+            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + 20, 0.003))), f < t0 - 12
+        w = None
+        if name.startswith("GLAZING_BAR"):   w = (650 + 16 * (y + 3.2) / 6.4, 26, 2.0)
+        elif name.startswith("SHEET_glass"): w = (676 + 16 * (y + 3.2) / 6.4, 28, 2.2)
+        elif name.startswith("GLAZING"):     w = (702 + 5 * st(x), 12, 0.8)
+        if w is None:
+            return Vector((0, 0, frame_dz)), False
+        t0, dur, h0 = w; u = (f - t0) / dur
+        return Vector((0, 0, h0 * _crane(u) + _settle(f, t0 + dur, 0.004))), u <= 0
     units = [o for o in c.all_objects if ((o.parent is None and o.name != "PERGOLA_ROOT") or o.parent == root) and not o.name.startswith("SCREW")]
-    hidden = 0
+    hidden = 0; troj = []
     for o in units:
         bb = [o.matrix_world @ Vector(v) for v in o.bound_box] if o.type == "MESH" else [o.matrix_world.translation]
-        cx, cy, cz = (sum(getattr(v, a) for v in bb) / len(bb) for a in "xyz")
-        w = window(o.name, cx, cy, cz)
-        if w is None:
+        cx, cy = (sum(getattr(v, a) for v in bb) / len(bb) for a in "xy")
+        if o.name.startswith("INST_TROJAK"):
+            troj.append(o.matrix_world.translation.copy())
+        r = offset(o.name, cx, cy)
+        if r is None:
             continue
-        t0, dur, h0 = w; u = (f - t0) / dur
-        if u <= 0:
+        if r[1]:
             for x in [o] + list(o.children_recursive):
                 x.hide_render = True
             hidden += 1
-        elif u < 1:
-            o.location = Vector(o.location) + Vector((0, 0, h0 * (1 - u) ** 1.8))
         else:
-            tau = (f - t0 - dur) / 30.0
-            o.location = Vector(o.location) + Vector((0, 0, 0.004 * math.exp(-tau * 9.0) * abs(math.cos(tau * 24.0))))
-    # screws
-    fast = _fasteners(); troj = [o.matrix_world.translation.copy() for o in units if o.name.startswith("INST_TROJAK")]
+            o.location = Vector(o.location) + r[0]
+    # screws: spin in along their own axis once the parts they join are seated; they ride with the frame until it lands
+    fast = _fasteners()
     for i, fz in enumerate(fast):
         ob = bpy.data.objects.get(f"SCREW_{i:03d}")
         if ob is None:
             continue
         p = Vector(fz["pos_mm"]) * 0.001; ax = Vector(fz["axis_to_timber"]).normalized()
-        dT = min(((p - t).length for t in troj), default=9.0)
+        dT = min(((p - t).length for t in troj), default=9.0); slide = 0.0
         if p.z < 0.6:
             continue                                              # Stopa screws: already in
-        if dT < 0.5 and p.z < 2.52:   t0 = 476 + 22 * st(i * 1.7)   # Trojak -> post
-        elif dT < 0.6:                t0 = 556 + 24 * st(i * 1.7)   # beams -> Trojak plates
-        else:                         t0 = 618 + 24 * st(i * 1.7)   # rafters -> Mocowanie
+        if dT < 0.5 and p.z < 2.52:   t0 = 622 + 16 * st(i * 1.7); ride = 0.0        # Trojak -> post, after the landing
+        elif dT < 0.6:                t0 = 489 + 16 * st(i * 1.7); ride = frame_dz   # beams -> Trojak
+        elif abs(ax.x) > 0.7:         t0 = -99; ride = frame_dz; slide = slide_y     # Mocowanie -> long beam: pre-fitted
+        else:                         t0 = 546 + 32 * st(i * 1.7); ride = frame_dz   # rafters in the saddles
         u = (f - t0) / 10.0
         if u <= 0:
             ob.hide_render = True; hidden += 1
-        elif u < 1:
+            continue
+        ob.location = Vector(ob.location) + Vector((0, slide, ride))
+        if u < 1:
             ob.location = Vector(ob.location) - ax * 0.045 * (1 - u)
             ob.rotation_euler.rotate(Matrix.Rotation(-14.0 * math.pi * (1 - u), 3, ax))
     return hidden
+
+
+def hero_light(shot):
+    """Product lighting for the connector close-ups: black powder coat only reads through its highlights, so a soft
+    cool kicker from behind and a broad soft key from the camera side (as a gap of bright sky would give)."""
+    if shot not in ("conn1", "conn2", "conn3"):
+        return
+    import os
+    cam = bpy.context.scene.camera; tgt = Vector(CAMS[shot][1])
+    d = Vector(cam.location) - tgt; d.z = 0; d.normalize(); side = Vector((-d.y, d.x, 0))
+    k = float(os.environ.get("HERO_W", 1.0))
+    def area(name, loc, size, watts, col):
+        L = bpy.data.lights.new(name, "AREA"); L.shape = "RECTANGLE"; L.size = size[0]; L.size_y = size[1]; L.energy = watts * k; L.color = col
+        o = bpy.data.objects.new(name, L); bpy.context.scene.collection.objects.link(o); o.location = loc; look(o, tgt)
+        o.visible_camera = False
+    area("hero_key",  tgt + d * 1.5 + side * 1.3 + Vector((0, 0, 0.9)), (1.6, 1.0), 260, (1.0, 0.97, 0.93))
+    area("hero_rim",  tgt - d * 1.3 - side * 0.9 + Vector((0, 0, 1.1)), (1.4, 0.35), 520, (0.86, 0.93, 1.0))
+    area("hero_edge", tgt - d * 0.4 + side * 1.6 + Vector((0, 0, -0.15)), (0.3, 1.2), 160, (0.90, 0.95, 1.0))
 
 
 # ----------------------------------------------------------------------------------------------- wind

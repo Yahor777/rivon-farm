@@ -1,1 +1,328 @@
-{}
+{
+ "sea_waves": [
+  {
+   "file": "sea_waves/792315.mp3",
+   "start": 0.0,
+   "title": "Heceta beach USA beach ambiance 8 by hz37",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/792315/"
+  },
+  {
+   "file": "sea_waves/867485.mp3",
+   "start": 0.0,
+   "title": "Sea waves. Merelained tuulises rannas. by Jyri-channel",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/867485/"
+  }
+ ],
+ "wind_gust": [
+  {
+   "file": "wind_gust/376443.mp3",
+   "start": 0.0,
+   "title": "Wind.wav by BeeProductive",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/376443/"
+  },
+  {
+   "file": "wind_gust/577334.mp3",
+   "start": 0.0,
+   "title": "Wind, outside, trees, leaves, gusts, winter, cold, 77mel, 11.mp3 by TRP",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/577334/"
+  }
+ ],
+ "leaves_rustle": [
+  {
+   "file": "leaves_rustle/403051.mp3",
+   "start": 0.0,
+   "title": "wind_forest_08_strong_l_01.wav by teadrinker",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/403051/"
+  }
+ ],
+ "thunder": [
+  {
+   "file": "thunder/653664.mp3",
+   "start": 0.2,
+   "title": "STE-050-quiet rumble thunder.wav by tams_kp",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/653664/"
+  },
+  {
+   "file": "thunder/375999.mp3",
+   "start": 7.1,
+   "title": "Some_Thunders.flac by Samot_Ekschotz",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/375999/"
+  }
+ ],
+ "rain_heavy": [
+  {
+   "file": "rain_heavy/768870.mp3",
+   "start": 0.0,
+   "title": "heavy_rain_outside by Gustavo_C",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/768870/"
+  }
+ ],
+ "rain_roof": [
+  {
+   "file": "rain_roof/616530.mp3",
+   "start": 0.0,
+   "title": "120503 Rain on skylight window, interior (2012).wav by TRP",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/616530/"
+  },
+  {
+   "file": "rain_roof/201035.mp3",
+   "start": 0.0,
+   "title": "130915 - Interior-Hard Rain with 2 Skylights.wav by aaronstar",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/201035/"
+  }
+ ],
+ "wood_on_metal": [
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 8.6,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  },
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 13.8,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  },
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 19.7,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  },
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 25.6,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  },
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 31.0,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  },
+  {
+   "file": "wood_on_metal/463662.mp3",
+   "start": 40.3,
+   "title": "wood board hit with metal.wav by alec_mackay",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/463662/"
+  }
+ ],
+ "wood_thud": [
+  {
+   "file": "wood_on_metal/179728.mp3",
+   "start": 0.0,
+   "title": "post_in_the_ground.flac by wjoojoo",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/179728/"
+  },
+  {
+   "file": "wood_on_metal/795634.mp3",
+   "start": 0.0,
+   "title": "Wood, Hit, Inside Piano, Very Low by VizAion",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/795634/"
+  },
+  {
+   "file": "wood_on_metal/372877.mp3",
+   "start": 0.0,
+   "title": "Iron-Wood Slam by Hakren",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/372877/"
+  }
+ ],
+ "metal_clank": [
+  {
+   "file": "metal_clank/238897.mp3",
+   "start": 9.7,
+   "title": "FX_ALUMINUM_PLATE_SMALL_HITS.wav by Olichite",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/238897/"
+  },
+  {
+   "file": "metal_clank/238897.mp3",
+   "start": 7.2,
+   "title": "FX_ALUMINUM_PLATE_SMALL_HITS.wav by Olichite",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/238897/"
+  },
+  {
+   "file": "metal_clank/238897.mp3",
+   "start": 3.6,
+   "title": "FX_ALUMINUM_PLATE_SMALL_HITS.wav by Olichite",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/238897/"
+  },
+  {
+   "file": "metal_clank/238897.mp3",
+   "start": 12.6,
+   "title": "FX_ALUMINUM_PLATE_SMALL_HITS.wav by Olichite",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/238897/"
+  },
+  {
+   "file": "wood_on_metal/612081.mp3",
+   "start": 0.0,
+   "title": "Metal hit 01 by xkeril",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/612081/"
+  }
+ ],
+ "metal_slide": [
+  {
+   "file": "metal_clank/816648.mp3",
+   "start": 0.15,
+   "title": "Closing the metal drawer 002 by AudioPapkin",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/816648/"
+  }
+ ],
+ "screwdriver": [
+  {
+   "file": "screwdriver/496528.mp3",
+   "start": 0.2,
+   "title": "Electric screwdriver.wav by tosha73",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/496528/"
+  },
+  {
+   "file": "screwdriver/496528.mp3",
+   "start": 1.85,
+   "title": "Electric screwdriver.wav by tosha73",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/496528/"
+  },
+  {
+   "file": "screwdriver/496528.mp3",
+   "start": 4.4,
+   "title": "Electric screwdriver.wav by tosha73",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/496528/"
+  },
+  {
+   "file": "screwdriver/496528.mp3",
+   "start": 7.05,
+   "title": "Electric screwdriver.wav by tosha73",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/496528/"
+  },
+  {
+   "file": "screwdriver/496528.mp3",
+   "start": 8.2,
+   "title": "Electric screwdriver.wav by tosha73",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/496528/"
+  }
+ ],
+ "water_drop": [
+  {
+   "file": "water_drop/538143.mp3",
+   "start": 1.35,
+   "title": "Quick Splash (dropping grapes into a glass of water) by asherkaye2",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/538143/"
+  },
+  {
+   "file": "water_drop/197886.mp3",
+   "start": 2.6,
+   "title": "drops1.WAV by Millavsb",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/197886/"
+  }
+ ],
+ "glass_set": [
+  {
+   "file": "glass_set/512484.mp3",
+   "start": 0.0,
+   "title": "Glass Balcony Window Thump.wav by J.A.Pinto",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/512484/"
+  },
+  {
+   "file": "glass_set/348958.mp3",
+   "start": 0.0,
+   "title": "Wooden stick and glass.wav by abstraktgeneriert",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/348958/"
+  },
+  {
+   "file": "glass_set/745014.mp3",
+   "start": 0.0,
+   "title": "Glass Ping by tix99",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/745014/"
+  }
+ ],
+ "switch": [
+  {
+   "file": "switch/613150.mp3",
+   "start": 5.2,
+   "title": "Modern light switch by xkeril",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/613150/"
+  },
+  {
+   "file": "switch/718692.mp3",
+   "start": 0.4,
+   "title": "small switch flick by ccovi",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/718692/"
+  }
+ ],
+ "birds": [
+  {
+   "file": "birds/638295.mp3",
+   "start": 0.0,
+   "title": "birds after short shower.m4a by CaptainYulef",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/638295/"
+  },
+  {
+   "file": "birds/515394.mp3",
+   "start": 0.0,
+   "title": "After The Storm.m4a by patsywatsy",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/515394/"
+  }
+ ],
+ "cloth_flap": [
+  {
+   "file": "cloth_flap/280205.mp3",
+   "start": 6.3,
+   "title": "flapping cloth.wav by memuse",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/280205/"
+  },
+  {
+   "file": "cloth_flap/844390.mp3",
+   "start": 1.3,
+   "title": "Cloth flaps by Maraboop",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/844390/"
+  },
+  {
+   "file": "cloth_flap/280205.mp3",
+   "start": 1.8,
+   "title": "flapping cloth.wav by memuse",
+   "licence": "CC0",
+   "url": "https://freesound.org/s/280205/"
+  }
+ ]
+}
