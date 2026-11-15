@@ -78,13 +78,18 @@ def storm_cloud():
     mp.inputs["Location"].default_value = (0.0, 0.0, -0.25 * (1 - g))
     base = mr(z, 0.0, 0.06)                                   # flat, sharp cloud base (condensation level)
     # the shelf leans towards the shore: the front edge (low x) is lower and denser, height grows offshore
-    top = mr(op("SUBTRACT", z, op("MULTIPLY", xg, 0.55)), 0.28 + 0.27 * g, 0.1)
+    top = mr(op("SUBTRACT", z, op("MULTIPLY", xg, 0.55)), 0.12 + 0.43 * g, 0.1)
     front = mr(xg, 0.0, 0.08)
     shape = op("MULTIPLY", op("MULTIPLY", base, top), front)
-    dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78 + 0.09 * (1 - g), 0.95 + 0.03 * (1 - g)), shape)
-    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.021)) * (0.3 + 0.7 * g)), pv.inputs["Density"])
+    dens = op("MULTIPLY", mr(op("ADD", nz.outputs["Fac"], op("MULTIPLY", shape, 0.55)), 0.78 + 0.40 * (1 - g), 0.95 + 0.40 * (1 - g)), shape)
+    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.021)) * (0.02 + 0.98 * g ** 1.5)), pv.inputs["Density"])
+    # light scattered many times inside a real cloud (only 2 volume bounces are traced): a soft grey glow per unit density
+    em = N.new("ShaderNodeEmission"); em.inputs["Color"].default_value = (0.80, 0.84, 0.92, 1)
+    L.new(op("MULTIPLY", dens, float(os.environ.get("CB_DENS", 0.021)) * (0.02 + 0.98 * g ** 1.5) * float(os.environ.get("CB_GLOW", 0.12))), em.inputs["Strength"])
+    add = N.new("ShaderNodeAddShader"); L.new(pv.outputs[0], add.inputs[0]); L.new(em.outputs[0], add.inputs[1])
+    L.new(add.outputs[0], out.inputs["Volume"])
     pv.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1); pv.inputs["Anisotropy"].default_value = 0.05
-    L.new(pv.outputs[0], out.inputs["Volume"]); o.data.materials.append(m)
+    o.data.materials.append(m)
     sc = bpy.context.scene; sc.cycles.volume_step_rate = 8.0; sc.cycles.volume_max_steps = 512; sc.cycles.volume_bounces = 2
     log("storm cloud: volumetric shelf cloud / cumulonimbus base over the sea (base ~550 m, tops ~2.5 km, front 0.7 km offshore, extinction 0.035/m -> dark base, light gap at the horizon)")
 

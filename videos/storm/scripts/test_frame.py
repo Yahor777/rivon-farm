@@ -79,10 +79,10 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         from mathutils import Vector as _V
         _e = FM.ease(FM.push_u()); _dp = _V((gx + 0.004, gy - 0.003, dzc))
         _up = wine_top + 0.10 + 0.35 * FM.ease((FM.FRAME - 316) / 30.0)
-        _t1 = _V((gx + 0.004, gy - 0.003, min(_up, dzc))); _t2 = _V((gx + 0.004, gy - 0.003, drop_z + 0.019))
-        _p1 = _V((gx - 0.42, gy - 0.035, wine_top + 0.005)); _p2 = _V((gx - 0.25, gy - 0.003, drop_z + 0.016))
+        _t1 = _V((gx + 0.004, gy - 0.003, min(_up, dzc))); _t2 = _V((gx + 0.004, gy - 0.003, drop_z + 0.006))
+        _p1 = _V((gx - 0.42, gy - 0.035, wine_top + 0.005)); _p2 = _V((gx - 0.19, gy - 0.003, drop_z + 0.024))
         _p = _p1.lerp(_p2, _e); _t = _t1.lerp(_t2, _e)
-        LK.camera("CAM", tuple(_p), tuple(_t), lens=50 + 35 * _e, fstop=4.0 + 7.0 * _e, focus=max(0.2, (_p - _dp).length) if FM.FRAME >= 356 else 0.42)
+        LK.camera("CAM", tuple(_p), tuple(_t), lens=50 + 45 * _e, fstop=4.0 + 7.0 * _e, focus=max(0.2, (_p - _dp).length) if FM.FRAME >= 356 else 0.42)
     elif shot == "freeze":                                 # time stops - the drop in the lower third, rim + bowl readable
         cz2 = drop_z + 0.016
         LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),

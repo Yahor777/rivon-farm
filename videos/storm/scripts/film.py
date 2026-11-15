@@ -60,7 +60,7 @@ def set_frame(f):
     if shot == "wind":
         os.environ["HDRI_STRENGTH"] = str(22.3 * (0.70 - 0.12 * ease(T)))
     if shot == "storm":
-        os.environ["CB_GROW"] = str(ease(T))                        # the cloud does not arrive: it builds up over the sea
+        os.environ["CB_GROW"] = str(0.06 + 0.94 * ease(T))                        # the cloud does not arrive: it builds up over the sea
         os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
     if shot == "rain_under":
         os.environ["RAIN_N"] = str(int(8000 + 132000 * ease(T / 0.6)))
@@ -160,7 +160,7 @@ def exposure_add(shot):
     if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
         base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
     if shot in ("dropfall", "freeze") and FRAME is not None:
-        base = 0.5 + 0.4 * ease(push_u())
+        base = 0.7 + 0.5 * ease(push_u())
     return base
 
 
