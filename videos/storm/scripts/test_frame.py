@@ -150,7 +150,7 @@ if WEATHER:
     if shot == "splash":                                 # the camera is balanced between the 2700 K lamps and the dusk: wine stays ruby
         try:
             vs = bpy.context.scene.view_settings; vs.use_white_balance = True
-            vs.white_balance_temperature = float(__import__("os").environ.get("SPLASH_WB", 3900)); vs.white_balance_tint = 0.0
+            vs.white_balance_temperature = float(__import__("os").environ.get("SPLASH_WB", 4800)); vs.white_balance_tint = 0.0
         except Exception as _ex:
             print("WB not available", _ex)
     if WEATHER in ("rain", "clearing") and bpy.data.collections.get("PERGOLA"):
