@@ -255,7 +255,7 @@ def assemble():
             return Vector((0, slide_y, frame_dz)), False
         if name.startswith("RAFTER"):
             i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); dur = 20.0 if t0 < 540 else 18.0; u = (f - t0) / dur
-            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + dur, 0.003))), f < t0 - 8
+            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + dur, 0.003))), (f < t0 - 12) if t0 < 540 else (f < 544)   # the row waits above its saddles from the cut on
         w = None
         if name.startswith("GLAZING_BAR"):   w = (650 + 16 * (y + 3.2) / 6.4, 26, 2.0)
         elif name.startswith("SHEET_glass"): w = (676 + 16 * (y + 3.2) / 6.4, 28, 2.2)
