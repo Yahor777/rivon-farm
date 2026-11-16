@@ -417,7 +417,7 @@ def build_pergola():
                     if glob.glob(str(S.ASSETS / "polyhaven" / w / "*.blend"))), "oak_veneer_01")
     beams = S.ph_material(wood_id, "pergola_timber_base")
     if not beams.get("pine"):                         # v6: natural planed pine (pale honey, knots and grain from the scan),
-        S.calm_albedo(beams, (0.70, 0.50, 0.29), keep=0.85); beams["pine"] = 1   # not the dark coated stain
+        _pine_albedo(beams, (0.82, 0.56, 0.27), contrast=1.15); beams["pine"] = 1   # not the dark coated stain
     bpy.context.view_layer.update()
     for o in bpy.data.collections["PERGOLA"].all_objects:
         if o.type != "MESH" or not o.data.materials:
@@ -433,6 +433,33 @@ def build_pergola():
                                                 uv_offset=(float(S.RNG.random() * 3), float(S.RNG.random() * 3)))
             uv_along_grain(o)
     return root
+
+
+def _pine_albedo(m, rgb, contrast=1.0):
+    """Recolour a stained-wood scan to natural pine: albedo = rgb * (1 + contrast * (lum / mean_lum - 1)), so the grain,
+    growth rings and knots keep their full pattern around the scan's OWN mean (the dark stain no longer pulls it to grey)."""
+    N, L = m.node_tree.nodes, m.node_tree.links; b = S.principled(m)
+    if not b.inputs["Base Color"].is_linked:
+        return
+    src_node = b.inputs["Base Color"].links[0].from_node; src = b.inputs["Base Color"].links[0].from_socket
+    img = next((n.image for n in N if n.type == "TEX_IMAGE" and n.image and "diff" in n.image.name.lower()), None)
+    mean = 0.2
+    if img is not None:
+        px = np.array(img.pixels[:], dtype=np.float32).reshape(-1, 4)[::97, :3]
+        if img.colorspace_settings.name.lower().startswith("srgb"):          # img.pixels are display values; the shader works linear
+            px = np.where(px <= 0.04045, px / 12.92, ((px + 0.055) / 1.055) ** 2.4)
+        mean = float((px @ np.array([0.2126, 0.7152, 0.0722])).mean())
+    bw = N.new("ShaderNodeRGBToBW"); L.new(src, bw.inputs[0])
+    k = N.new("ShaderNodeMath"); k.operation = "MULTIPLY_ADD"; L.new(bw.outputs[0], k.inputs[0])
+    k.inputs[1].default_value = contrast / max(mean, 1e-3); k.inputs[2].default_value = 1.0 - contrast
+    cl = N.new("ShaderNodeClamp"); cl.inputs["Min"].default_value = 0.15; cl.inputs["Max"].default_value = 1.6; L.new(k.outputs[0], cl.inputs[0])
+    cm = N.new("ShaderNodeMix"); cm.data_type = "RGBA"; cm.blend_type = "MULTIPLY"; cm.inputs["Factor"].default_value = 1.0
+    cm.inputs[6].default_value = (*rgb, 1)
+    comb = N.new("ShaderNodeCombineColor")
+    for i in range(3):
+        L.new(cl.outputs[0], comb.inputs[i])
+    L.new(comb.outputs[0], cm.inputs[7]); L.new(cm.outputs[2], b.inputs["Base Color"])
+    print("pine albedo: scan mean luminance", round(mean, 3))
 
 
 def uv_along_grain(ob, size=1.2):
