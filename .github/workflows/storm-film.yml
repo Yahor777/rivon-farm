@@ -42,7 +42,7 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; df -h / | tail -1
           sudo swapoff -a || true; sudo fallocate -l 40G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2; free -g
-      - name: Asset library cache (release downloads cost ~1 API call per asset: 20 parallel jobs blew the hourly token limit)
+      - name: Asset library cache
         uses: actions/cache@v4
         with:
           path: videos/storm/lib/polyhaven
