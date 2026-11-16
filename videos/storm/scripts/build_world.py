@@ -416,6 +416,8 @@ def build_pergola():
     wood_id = next((w for w in ("coated_pine", "stained_pine", "fine_grained_wood", "oak_veneer_01")
                     if glob.glob(str(S.ASSETS / "polyhaven" / w / "*.blend"))), "oak_veneer_01")
     beams = S.ph_material(wood_id, "pergola_timber_base")
+    if not beams.get("pine"):                         # v6: natural planed pine (pale honey, knots and grain from the scan),
+        S.calm_albedo(beams, (0.70, 0.50, 0.29), keep=0.85); beams["pine"] = 1   # not the dark coated stain
     bpy.context.view_layer.update()
     for o in bpy.data.collections["PERGOLA"].all_objects:
         if o.type != "MESH" or not o.data.materials:
@@ -434,7 +436,7 @@ def build_pergola():
 
 
 def uv_along_grain(ob, size=1.2):
-    """UVs with V along the member's long axis so wood grain runs lengthwise; end-grain faces get a small-scale patch."""
+    """UVs with U along the member's long axis (the scan's grain direction) so the grain runs the full length; end-grain faces get a small-scale patch."""
     me = ob.data
     if not me.uv_layers:
         me.uv_layers.new(name="UVMap")
@@ -449,7 +451,7 @@ def uv_along_grain(ob, size=1.2):
                 uv[li].uv = (v[others[0]] / size * 0.25 + 0.5, v[others[1]] / size * 0.25 + 0.5)
             else:
                 side = others[0] if int(np.argmax(n)) == others[1] else others[1]
-                uv[li].uv = (v[side] / size, v[ax] / size)
+                uv[li].uv = (v[ax] / size, v[side] / size)   # the scan's grain runs along U -> U = the member's length
 
 
 def build_all(with_pergola=True):
