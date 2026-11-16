@@ -52,7 +52,7 @@ def _sky(state):
     bg = N.new("ShaderNodeBackground"); out = N.new("ShaderNodeOutputWorld")
     vec = tc.outputs["Generated"]
     if photo:                                                 # lift: the image row at SKY_LIFT deg sits on our horizon
-        lift = math.tan(math.radians(float(os.environ.get("SKY_LIFT", 4.0))))
+        lift = math.tan(math.radians(float(os.environ.get("SKY_LIFT", 8.0))))
         sep = N.new("ShaderNodeSeparateXYZ"); cmb = N.new("ShaderNodeCombineXYZ")
         mx = N.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = 0.0
         hl = N.new("ShaderNodeVectorMath"); hl.operation = "LENGTH"; ml = N.new("ShaderNodeMath"); ml.operation = "MULTIPLY_ADD"
