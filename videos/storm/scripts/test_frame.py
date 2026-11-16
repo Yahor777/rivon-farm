@@ -83,8 +83,12 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             # PLAN A: a locked-off high-speed shot beside the glass. The drop enters at the top and falls at constant
             # (terminal) speed towards the wine: where it is, where it is going, how far it still has to go.
             _e = FM.ease(FM.T)
-            _p = _V((gx - 0.72 + 0.03 * _e, gy - 0.07, wine_top + 0.19)); _t = _V((gx + 0.004, gy - 0.003, wine_top + 0.19 - 0.01 * _e))
-            LK.camera("CAM", tuple(_p), tuple(_t), lens=50, fstop=4.0, focus=(_p - _V((gx, gy, wine_top + 0.1))).length)
+            # v6.1: close enough that the 6 mm drop reads (~20 px at 540 wide), against the dark cloud base; focus on its path
+            # the camera finds the drop high against the cloud base and tilts down with it (lagging, so the drop still
+            # visibly falls through the frame) until the glass comes up from below; focus rides the drop
+            _rz = dzc - wine_top; _az = wine_top + 0.10 + 0.72 * max(0.0, _rz - 0.10)
+            _p = _V((gx - 0.40 + 0.02 * _e, gy - 0.05, wine_top + 0.13)); _t = _V((gx + 0.004, gy - 0.003, _az))
+            LK.camera("CAM", tuple(_p), tuple(_t), lens=65, fstop=5.6, focus=(_p - _dp).length)
         else:
             # PLAN B: the camera itself flies in from 2.4 m and brakes. Remaining distance = D * (1-u)^2.6, so the speed is
             # v0 * (1-u)^1.6: 100 % at the cut, 85 % at u=.1, 60 % at .27, 35 % at .48, 15 % at .69, 5 % at .85, exactly 0 at
