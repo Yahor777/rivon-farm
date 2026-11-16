@@ -70,7 +70,57 @@ def _sky(state):
         lum_h = float(np.median(band)) if photo else float(band.mean())
         ref = (float(os.environ.get("SKY_LUM", 3.0)) if photo else 2.2) / max(lum_h, 1e-4)
     bg.inputs["Strength"].default_value = ref
-    if sunny is not None:
+    front_t = os.environ.get("FRONT_T")
+    if sunny is not None and front_t is not None:
+        # v6: the front is ALREADY there over the sea and comes closer. The photographed storm deck is treated as a cloud
+        # layer at height H: a view ray (x, y, z) meets it at P = (x/z, y/z) [in units of H]; the whole layer, with its
+        # ragged leading edge, is translated towards the camera by D = FRONT_SPEED * t. Overhead clouds therefore cross the
+        # sky faster than those near the horizon, shapes are stable (nothing is generated, nothing boils), and the edge
+        # is a fixed feature of the layer. Ahead of the front its high veil thins the sun: the sunny sky cross-fades
+        # into the photographed overcast one, so shadows soften before the dark base arrives.
+        ft = float(front_t); D = float(os.environ.get("FRONT_SPEED", 0.55)) * ft
+        xe0 = 1.0 / math.tan(math.radians(float(os.environ.get("FRONT_EL0", 32.0))))
+        veil = 0.85 * (lambda u: u * u * (3 - 2 * u))(max(0.0, min(1.0, (ft - 0.10) / 0.80)))
+        sepd = N.new("ShaderNodeSeparateXYZ"); L.new(tc.outputs["Generated"], sepd.inputs[0])
+        zc = N.new("ShaderNodeMath"); zc.operation = "MAXIMUM"; zc.inputs[1].default_value = 0.035; L.new(sepd.outputs[2], zc.inputs[0])
+        px_ = N.new("ShaderNodeMath"); px_.operation = "DIVIDE"; L.new(sepd.outputs[0], px_.inputs[0]); L.new(zc.outputs[0], px_.inputs[1])
+        py_ = N.new("ShaderNodeMath"); py_.operation = "DIVIDE"; L.new(sepd.outputs[1], py_.inputs[0]); L.new(zc.outputs[0], py_.inputs[1])
+        pxs = N.new("ShaderNodeMath"); pxs.operation = "ADD"; pxs.inputs[1].default_value = D; L.new(px_.outputs[0], pxs.inputs[0])   # layer coords
+        # storm photo looked up at the layer point (above the horizon only; below it the plain direction)
+        cl = N.new("ShaderNodeCombineXYZ"); L.new(pxs.outputs[0], cl.inputs[0]); L.new(py_.outputs[0], cl.inputs[1]); cl.inputs[2].default_value = 1.0
+        for l in list(mp.inputs["Vector"].links):
+            L.remove(l)
+        if photo:                                             # re-feed the horizon lift with the layer direction
+            nrm = N.new("ShaderNodeVectorMath"); nrm.operation = "NORMALIZE"; L.new(cl.outputs[0], nrm.inputs[0])
+            L.new(nrm.outputs[0], sep.inputs[0]); L.new(cmb.outputs[0], mp.inputs["Vector"])
+        else:
+            L.new(cl.outputs[0], mp.inputs["Vector"])
+        # ragged leading edge, fixed in the layer
+        nz = N.new("ShaderNodeTexNoise"); nz.noise_dimensions = "3D"; nz.inputs["Scale"].default_value = 1.15
+        nz.inputs["Detail"].default_value = 7.0; nz.inputs["Roughness"].default_value = 0.58
+        cn = N.new("ShaderNodeCombineXYZ"); L.new(pxs.outputs[0], cn.inputs[0]); L.new(py_.outputs[0], cn.inputs[1]); L.new(cn.outputs[0], nz.inputs["Vector"])
+        e1 = N.new("ShaderNodeMath"); e1.operation = "MULTIPLY_ADD"; L.new(nz.outputs["Fac"], e1.inputs[0]); e1.inputs[1].default_value = 1.1
+        L.new(pxs.outputs[0], e1.inputs[2])                    # layer x + 1.1 * noise
+        mr = N.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"; mr.inputs["From Min"].default_value = xe0 + 0.55 - 0.22
+        mr.inputs["From Max"].default_value = xe0 + 0.55 + 0.22; L.new(e1.outputs[0], mr.inputs["Value"])
+        base = sunny
+        p2 = RF2._hdri_path("kloofendal_overcast_puresky")
+        if p2 is not None and veil > 0.002:
+            im2 = bpy.data.images.load(str(p2)); im2.colorspace_settings.name = "Linear Rec.709"
+            e2 = N.new("ShaderNodeTexEnvironment"); e2.image = im2; L.new(tc.outputs["Generated"], e2.inputs["Vector"])
+            b2 = N.new("ShaderNodeBackground"); L.new(e2.outputs[0], b2.inputs["Color"])
+            hh, ww = im2.size[1], im2.size[0]; pz = RF2._pix(im2)[int(hh * 0.5):int(hh * 0.62), :, :3].mean()
+            b2.inputs["Strength"].default_value = float(os.environ.get("VEIL_LUM", 4.2)) / max(float(pz), 1e-4)
+            mv = N.new("ShaderNodeMixShader"); mv.inputs["Fac"].default_value = veil; L.new(sunny, mv.inputs[1]); L.new(b2.outputs[0], mv.inputs[2])
+            base = mv.outputs[0]
+        ms = N.new("ShaderNodeMixShader"); L.new(mr.outputs["Result"], ms.inputs["Fac"]); L.new(base, ms.inputs[1]); L.new(bg.outputs[0], ms.inputs[2])
+        for n in [n for n in N if n.type == "OUTPUT_WORLD" and n != out]:
+            N.remove(n)
+        L.new(ms.outputs[0], out.inputs["Surface"])
+        os.environ["WEATHER_EV"] = str(float(os.environ.get("EV0", -0.35)) + float(os.environ.get("EV1", 0.95)) * veil / 0.85)
+        log(f"weather {state}: front already over the sea, layer moved {D:.2f} H towards the camera, leading edge at "
+            f"{math.degrees(math.atan(1.0 / max(xe0 - D, 0.05))):.0f} deg elevation, sun veiled {veil:.2f}")
+    elif sunny is not None:
         nz = N.new("ShaderNodeTexNoise"); nz.noise_dimensions = "4D"; nz.inputs["Scale"].default_value = 2.6
         nz.inputs["Detail"].default_value = 9.0; nz.inputs["Roughness"].default_value = 0.62; nz.inputs["W"].default_value = 0.5 * mix
         L.new(tc.outputs["Generated"], nz.inputs["Vector"])
@@ -216,6 +266,9 @@ def rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 140000))):
         x = cl.x + r * np.cos(a); y = cl.y + r * np.sin(a); z = R.uniform(-0.3, 9.0, cnt)
         if frozen:                                              # fixed in the world, not around the (moving) camera
             x = Rr.uniform(-7.0, 10.0, cnt); y = Rr.uniform(-10.0, 6.0, cnt); z = Rr.uniform(-0.3, 8.0, cnt)
+            dz = float(os.environ.get("RAIN_DZ", 0.0))          # still falling (slow motion): this far above where they stop
+            if dz:
+                z = -0.3 + np.mod(z + dz + 0.3, 8.3)
         keep = np.ones(cnt, bool)
         if pb:                                                  # no rain under the roof
             x0, x1, y0, y1, z0, z1 = pb
@@ -421,7 +474,7 @@ def apply(state, cam_loc):
         wet(dry_box=(pb[0], pb[1], pb[2], pb[3]) if pb else None)
         rain(cam_loc, frozen=False, n=int(os.environ.get("RAIN_N", 30000)))
         sun_break()
-    elif state == "freeze":
+    elif state == "freeze" or os.environ.get("RAIN_DZ") is not None:
         rain(cam_loc, frozen=True, n=int(os.environ.get("RAIN_N", 30000)))
     sc = bpy.context.scene
     sc.view_settings.exposure += float(os.environ.get("WEATHER_EV", {"storm": 0.9, "freeze": 1.5, "rain": 1.5, "clearing": 1.1}[state]))

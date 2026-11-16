@@ -19,12 +19,12 @@ from pathlib import Path
 import bpy
 from mathutils import Vector, Matrix
 
-SHOTS = [("wide", 1, 75), ("glass", 76, 135), ("wind", 136, 210), ("storm", 211, 315), ("dropfall", 316, 390),
-         ("freeze", 391, 435), ("conn1", 436, 510), ("conn2", 511, 585), ("conn3", 586, 645), ("pergola", 646, 735),
+SHOTS = [("wide", 1, 75), ("glass", 76, 135), ("wind", 136, 210), ("storm", 211, 315), ("dropfall", 316, 360),
+         ("freeze", 361, 435), ("conn1", 436, 510), ("conn2", 511, 543), ("roof", 544, 603), ("conn3", 604, 648), ("pergola", 649, 735),
          ("splash", 736, 810), ("rain_under", 811, 885), ("final", 886, 1050)]
 NF = 1050; LIGHTS_ON = 716
 FRAME = None; T = 0.5
-PERGOLA_SHOTS = ("macro", "s09", "conn1", "conn2", "conn3", "pergola", "rain_under", "final", "splash")
+PERGOLA_SHOTS = ("macro", "s09", "conn1", "conn2", "roof", "conn3", "pergola", "rain_under", "final", "splash")
 # new shot cameras: loc, target, lens, fstop, focus
 CAMS = {"wind":  ((1.55, -2.45, 1.16), (-0.05, -0.25, 0.86), 40, 4.0, 2.4),
         # conn1: from inside and below the corner - both socket mouths visible, storm sky behind
@@ -32,8 +32,10 @@ CAMS = {"wind":  ((1.55, -2.45, 1.16), (-0.05, -0.25, 0.86), 40, 4.0, 2.4),
         # conn2: from inside, above the roof plane: rafter ends coming down into the Mocowanie saddles, one after another
         "conn2": ((1.12, -1.22, 3.48), (1.57, -0.96, 2.96), 50, 2.8, 0.74),
         # conn3: from the lawn - the frame lands on the post, the house behind
-        "conn3": ((2.80, -4.10, 2.20), (1.70, -2.95, 2.52), 70, 4.0, 1.62)}
-WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "storm", "macro": "freeze", "conn1": "freeze", "conn2": "freeze",
+        "conn3": ((2.80, -4.10, 2.20), (1.70, -2.95, 2.52), 70, 4.0, 1.62),
+        # roof: the same side as conn2, pulled back and up - the whole rafter row, one rafter after another into its saddles
+        "roof":  ((-1.05, -4.55, 4.75), (0.55, -0.35, 2.95), 28, 5.6, 4.6)}
+WEATHER = {"storm": "storm", "dropfall": "storm", "freeze": "storm", "macro": "freeze", "conn1": "freeze", "conn2": "freeze", "roof": "freeze",
            "conn3": "freeze", "pergola": "freeze", "splash": "freeze", "rain_under": "rain", "final": "clearing"}
 
 
@@ -55,6 +57,8 @@ def set_frame(f):
     os.environ["SEA_TIME"] = str((min(f, F_STOP) if f < 745 else f - (745 - F_STOP)) / 30.0)
     if WEATHER.get(shot) == "freeze":
         os.environ["RAIN_N"] = "60000"
+    if shot in ("dropfall", "freeze"):                      # the first drops of the front fall with the hero drop and stop with it
+        os.environ["RAIN_N"] = "60000"; os.environ["RAIN_DZ"] = str(drop_height())
     if shot == "glass":
         os.environ["HDRI_STRENGTH"] = str(22.3 * (1.0 - 0.30 * ease((T - 0.5) / 0.5)))    # the first cloud edge
     if shot == "wind":
@@ -62,7 +66,9 @@ def set_frame(f):
     if shot == "storm":
         os.environ["CB_GROW"] = str(0.06 + 0.94 * ease(T))                        # the cloud does not arrive: it builds up over the sea
         os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
-        if os.environ.get("SKY_PHOTO", "1") == "1":                 # photographed storm sky condensing out of the sunny one
+        if os.environ.get("FRONT", "1") == "1":                     # v6: an existing front comes closer at a steady wind speed
+            os.environ["SKY_MIX"] = "0.5"; os.environ["FRONT_T"] = str(T)
+        elif os.environ.get("SKY_PHOTO", "1") == "1":               # v5: photographed storm sky condensing out of the sunny one
             # the front takes the visible sky over the first 3/4 of the shot, the rest of the dome (and the sun) at the end
             _m = 0.27 * ease(min(1.0, T / 0.8)) + 0.73 * ease(max(0.0, min(1.0, (T - 0.72) / 0.28)))
             os.environ["SKY_MIX"] = str(_m)
@@ -103,6 +109,8 @@ def move_camera(shot):
         tgt = Vector(CAMS[shot][1]); r = L0 - tgt
         if shot == "conn1":                                             # slow arc under the corner
             cam.location = tgt + Matrix.Rotation(0.16 * k, 3, "Z") @ r + up * 0.07 * k; look(cam, tgt)
+        elif shot == "roof":                                            # slow dolly-out and rise: the row fills up
+            cam.location = L0 - fwd * 0.55 * e + up * 0.25 * e; look(cam, tgt)
         elif shot == "conn2":                                           # truck sideways, focus follows the landing rafters
             cam.location = L0 + fwd * 0.08 * e
             cam.data.dof.focus_distance = 0.74 - 0.06 * e
@@ -129,12 +137,12 @@ def drop_state(shot, wine_top):
         return zf + drop_height(), True
     if shot == "splash":                        # resumes: 4.5 mm in the first 12 % of the shot, then it is in the wine
         u = T / 0.12; return zf - 0.0045 * min(1.0, u) ** 2 - 0.0002, u < 1.0
-    return zf, shot in ("conn1", "conn2", "conn3", "pergola")
+    return zf, shot in ("conn1", "conn2", "roof", "conn3", "pergola")
 
 
 # The drop keeps its speed all the way down. Only in the last 24 cm, while the camera pushes in on it, time itself runs
 # down to a stop (speed V0 * (1-u)^P, so there is no jerk at the start of the push and it ends exactly at rest).
-F_C, F_STOP, V0, P_SLOW = 372, 420, 0.6, 3.0
+F_C, F_STOP, V0, P_SLOW = 361, 420, 0.35, 3.0     # v6: plan A = constant (terminal) speed in slow motion; plan B = time runs down
 
 
 def push_u():
@@ -162,11 +170,11 @@ def drop_stretch(shot):
 
 
 def exposure_add(shot):
-    base = {"macro": 1.0, "conn1": 0.55, "conn2": 0.55, "conn3": 0.6, "freeze": 0.3, "dropfall": 0.5, "splash": 0.25}.get(shot, 0.0)
+    base = {"macro": 1.0, "conn1": 0.55, "conn2": 0.55, "roof": 0.75, "conn3": 0.6, "freeze": 0.3, "dropfall": 0.5, "splash": 0.25}.get(shot, 0.0)
     if shot == "pergola":                       # dusk before the lights come on, then the lamps carry the frame
         base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
     if shot in ("dropfall", "freeze") and FRAME is not None:
-        base = 0.7 + 0.5 * ease(push_u()) - 1.5 * (1.0 - ease((FRAME - 358) / 24.0))   # stopped down while the lens looks into the bright sky
+        base = 0.7 + 0.5 * ease(push_u())
     return base
 
 
@@ -176,7 +184,7 @@ def splash_time(shot):
         return 0.012
     if shot != "splash" or T < 0.12:
         return None
-    return (T - 0.12) / 0.88 * 0.11                # 0..110 ms over the remaining 2.2 s of screen time
+    return (T - 0.12) / 0.88 * 0.26                # v6: 0..260 ms over the remaining 2.2 s of screen time (8.5x slow motion)
 
 
 # ----------------------------------------------------------------------------------------------- assembly
@@ -201,8 +209,14 @@ def _settle(f, t_land, amp=0.003):
     return amp * math.exp(-tau * 9.0) * abs(math.cos(tau * 24.0)) if tau >= 0 else 0.0
 
 
-def rafter_t0(i):                                 # the row starts at the saddle in front of the conn2 camera
-    return 516 + 5 * (i - 3) if i >= 3 else 558 + 5 * (2 - i)
+RAFTER_ORDER = [3, 4, 5, 6, 7, 8, 9, 10, 2, 1, 0]     # the one in front of the conn2 close-up first, then the row, then the near end
+
+
+def rafter_t0(i):
+    """v6: the close-up shows ONE rafter going into its saddle (516-536); the wide roof shot then shows every other rafter
+    of the row doing the same, one after another (3.4 frames apart, 18 frames each), until the roof frame is complete."""
+    k = RAFTER_ORDER.index(i) if i in RAFTER_ORDER else len(RAFTER_ORDER)
+    return 516 if k == 0 else 546 + 3.4 * (k - 1)
 
 
 def assemble():
@@ -224,8 +238,8 @@ def assemble():
     root = bpy.data.objects.get("PERGOLA_ROOT")
     def st(x):                                           # stable 0..1 stagger from a number
         return (math.sin(x * 12.9898) * 43758.5453) % 1.0
-    T_LAND = 618
-    frame_dz = FRAME_H * _crane((f - 592) / 26.0) + _settle(f, T_LAND, 0.0035)
+    T_LAND = 632
+    frame_dz = FRAME_H * _crane((f - 608) / 24.0) + _settle(f, T_LAND, 0.0035)
     slide_y = 0.62 * _push((f - 462) / 24.0) + (_settle(f, 486, 0.0015) if f < 592 else 0.0)
     def offset(name, x, y):
         """(offset vector, hidden) of a frame part"""
@@ -240,8 +254,8 @@ def assemble():
         if name.startswith(("BEAM_LONG", "INST_MOCOW")):
             return Vector((0, slide_y, frame_dz)), False
         if name.startswith("RAFTER"):
-            i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); u = (f - t0) / 20.0
-            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + 20, 0.003))), f < t0 - 12
+            i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); dur = 20.0 if t0 < 540 else 18.0; u = (f - t0) / dur
+            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + dur, 0.003))), f < t0 - 8
         w = None
         if name.startswith("GLAZING_BAR"):   w = (650 + 16 * (y + 3.2) / 6.4, 26, 2.0)
         elif name.startswith("SHEET_glass"): w = (676 + 16 * (y + 3.2) / 6.4, 28, 2.2)
@@ -276,10 +290,10 @@ def assemble():
         dT = min(((p - t).length for t in troj), default=9.0); slide = 0.0
         if p.z < 0.6:
             continue                                              # Stopa screws: already in
-        if dT < 0.5 and p.z < 2.52:   t0 = 622 + 16 * st(i * 1.7); ride = 0.0        # Trojak -> post, after the landing
+        if dT < 0.5 and p.z < 2.52:   t0 = 636 + 12 * st(i * 1.7); ride = 0.0        # Trojak -> post, after the landing
         elif dT < 0.6:                t0 = 489 + 16 * st(i * 1.7); ride = frame_dz   # beams -> Trojak
         elif abs(ax.x) > 0.7:         t0 = -99; ride = frame_dz; slide = slide_y     # Mocowanie -> long beam: pre-fitted
-        else:                         t0 = 546 + 32 * st(i * 1.7); ride = frame_dz   # rafters in the saddles
+        else:                         t0 = 566 + 34 * st(i * 1.7); ride = frame_dz   # rafters in the saddles
         u = (f - t0) / 10.0
         if u <= 0:
             ob.hide_render = True; hidden += 1

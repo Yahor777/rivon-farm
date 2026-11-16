@@ -64,7 +64,10 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
     if shot == "glass" and FM.FRAME is not None:
         dvis = False                               # film: no drop yet in the sunny glass shot
     if shot == "splash":
-        CZ.splash2(gx + 0.004, gy - 0.003, wine_top, FM.splash_time(shot))
+        if __import__("os").environ.get("SPLASH", "3") == "2":
+            CZ.splash2(gx + 0.004, gy - 0.003, wine_top, FM.splash_time(shot))      # v5: key-framed crown and jet
+        else:
+            CZ.splash3(FM.splash_time(shot)); print("CZ " + CZ.LOG[-1] if FM.splash_time(shot) is not None else "CZ splash3: before contact")
     if dvis:
         bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=float(__import__("os").environ.get("DROP_R", 0.0030)), location=(gx + 0.004, gy - 0.003, dzc))   # a big 6 mm raindrop
         d = bpy.context.object; d.name = "hero_drop"; d.scale = (1.0, 1.0, FM.drop_stretch(shot))   # oblate; a streak while still at real speed
@@ -74,15 +77,26 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
     dist = 0.30; cz = drop_z + 0.024                 # eye 2.4 cm above the drop: at 6 mm the underside of the wine surface
                                                      # (total internal reflection) mirrored the bowl as dark arcs
     if shot in ("dropfall", "freeze") and FM.FRAME is not None:
-        # one continuous move over both shots: the camera looks up at the sky, the drop comes down through the frame at
-        # full speed and is followed; in its last 24 cm the camera pushes in on it while time runs down to a stop
         from mathutils import Vector as _V
-        _e = FM.ease(FM.push_u()); _dp = _V((gx + 0.004, gy - 0.003, dzc))
-        _up = wine_top + 0.10 + 0.13 * FM.ease((FM.FRAME - 316) / 30.0)      # ~35 deg up: the dark cloud bases, not the blank zenith
-        _t1 = _V((gx + 0.004, gy - 0.003, min(_up, dzc))); _t2 = _V((gx + 0.004, gy - 0.003, drop_z + 0.006))
-        _p1 = _V((gx - float(__import__("os").environ.get("DROP_D", 0.30)), gy - 0.03, wine_top + 0.005)); _p2 = _V((gx - 0.19, gy - 0.003, drop_z + 0.024))
-        _p = _p1.lerp(_p2, _e); _t = _t1.lerp(_t2, _e)
-        LK.camera("CAM", tuple(_p), tuple(_t), lens=50 + 45 * _e, fstop=4.0 + 7.0 * _e, focus=max(0.15, (_p - _dp).length) if FM.FRAME >= 356 else (_p1 - _t2).length)
+        _dp = _V((gx + 0.004, gy - 0.003, dzc)); _F = FM.FRAME
+        if shot == "dropfall":
+            # PLAN A: a locked-off high-speed shot beside the glass. The drop enters at the top and falls at constant
+            # (terminal) speed towards the wine: where it is, where it is going, how far it still has to go.
+            _e = FM.ease(FM.T)
+            _p = _V((gx - 0.72 + 0.03 * _e, gy - 0.07, wine_top + 0.19)); _t = _V((gx + 0.004, gy - 0.003, wine_top + 0.19 - 0.01 * _e))
+            LK.camera("CAM", tuple(_p), tuple(_t), lens=50, fstop=4.0, focus=(_p - _V((gx, gy, wine_top + 0.1))).length)
+        else:
+            # PLAN B: the camera itself flies in from 2.4 m and brakes. Remaining distance = D * (1-u)^2.6, so the speed is
+            # v0 * (1-u)^1.6: 100 % at the cut, 85 % at u=.1, 60 % at .27, 35 % at .48, 15 % at .69, 5 % at .85, exactly 0 at
+            # the stop - continuous in speed and acceleration. Fixed 60 mm lens: no zoom, the perspective is the move.
+            _u = max(0.0, min(1.0, (_F - FM.F_C) / float(FM.F_STOP - FM.F_C))); _rem = (1.0 - _u) ** 2.6
+            _zf = wine_top + 0.0045
+            _E = _V((gx + 0.004 - 0.060, gy - 0.003 - 0.012, _zf + 0.013))           # 6 cm from the stopped drop
+            _S = _V((gx - float(__import__("os").environ.get("FLY_X", 2.25)), gy - float(__import__("os").environ.get("FLY_Y", 0.75)), wine_top + float(__import__("os").environ.get("FLY_Z", 0.50))))
+            _drift = 0.004 * FM.ease((_F - 404) / 31.0)                              # the camera still settles after time has stopped
+            _p = _E + (_S - _E) * _rem + _V((0.25, -1.0, 0.1)).normalized() * _drift
+            _aim = _dp + _V((0, 0, -0.004 * FM.ease(_u)))                            # ends framing the drop over its reflection
+            LK.camera("CAM", tuple(_p), tuple(_aim), lens=60, fstop=5.6 + 5.4 * FM.ease(_u), focus=max(0.05, (_p - _dp).length))
     elif shot == "freeze":                                 # time stops - the drop in the lower third, rim + bowl readable
         cz2 = drop_z + 0.016
         LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),
@@ -92,7 +106,10 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         LK.camera("CAM", (gx - 0.42, gy - 0.035, wine_top + 0.005), (gx + 0.004, gy - 0.003, _tz), lens=50, fstop=4.0, focus=0.42)
     elif shot == "splash":                               # side-on, just above the wine surface: the crown in profile
         _e = FM.ease(FM.T) if FM.FRAME is not None else 0.3
-        LK.camera("CAM", (gx - 0.16, gy - 0.17, wine_top + 0.013 + 0.006 * _e), (gx + 0.004, gy - 0.003, wine_top + 0.012), lens=90, fstop=8.0, focus=0.238)
+        _sh = float(__import__("os").environ.get("SPLASH_H", 0.085))                # v6: looking down onto the surface (the crater and the rings),
+        _sp = (gx - 0.15, gy - 0.16, wine_top + _sh + 0.006 * _e)                   # not edge-on at a crown that is no longer there
+        LK.camera("CAM", _sp, (gx + 0.004, gy - 0.003, wine_top - 0.002), lens=90, fstop=11.0,
+                  focus=((_sp[0] - gx) ** 2 + (_sp[1] - gy) ** 2 + (_sp[2] - wine_top) ** 2) ** 0.5)
     elif len(sys.argv) > 6 and sys.argv[6] == "tight":     # end of the push-in: the frozen drop fills the frame
         dz = drop_z + 0.0022
         LK.camera("CAM", (gx - 0.13, gy - 0.003, dz), (gx + 1.0, gy + 0.008, dz - 1.13 * _m.tan(_m.radians(2.0))),

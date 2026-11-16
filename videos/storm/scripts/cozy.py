@@ -359,3 +359,47 @@ def splash2(gx, gy, wine_top, t):
                 bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=0.0020, location=(gx, gy, z))
                 d = bpy.context.object; d.name = "splash_jet_drop"; S.link(d, c); d.data.materials.append(wine); d.data.shade_smooth()
     log(f"splash: t = {ms:.1f} ms after contact (crown < 27 ms, ripples 16-70 ms, jet > 38 ms)")
+
+
+def splash3(t, glass="wine_0", impact=(0.004, -0.003)):
+    """v6: the wine surface after the drop lands, t seconds after contact - a solved wave field (wine_waves.py), not shapes.
+    The flat top of the wine volume is replaced by a fine polar grid displaced by eta(x, y, t); it stays one closed body
+    with the rest of the wine, so refraction and the meniscus at the glass wall are untouched."""
+    if t is None:
+        return
+    import wine_waves as WW
+    ob = bpy.data.objects.get(glass)
+    if ob is None:
+        log("splash3: no wine object"); return
+    me = ob.data; bm = bmesh.new(); bm.from_mesh(me)
+    top = max((v for v in bm.verts if v.co.x ** 2 + v.co.y ** 2 < 1e-9), key=lambda v: v.co.z)   # axis vertex of the flat top
+    z_top = top.co.z; ring = sorted({e.other_vert(top) for e in top.link_edges}, key=lambda v: math.atan2(v.co.y, v.co.x))
+    mat_i = top.link_faces[0].material_index; rb = sum(math.hypot(v.co.x, v.co.y) for v in ring) / len(ring)
+    bmesh.ops.delete(bm, geom=[top], context="VERTS")
+    n0 = len(ring); mult = 4; nseg = n0 * mult; dr = 0.00022; nring = int((rb - 0.0004) / dr)
+    radii = [rb - 0.0004 - i * (rb - 0.0004) / nring for i in range(nring)]            # outside -> towards the axis
+    a0 = math.atan2(ring[0].co.y, ring[0].co.x)
+    ang = a0 + np.arange(nseg) * 2 * math.pi / nseg
+    X = np.concatenate([r * np.cos(ang) for r in radii] + [np.zeros(1)]); Y = np.concatenate([r * np.sin(ang) for r in radii] + [np.zeros(1)])
+    Rr = np.hypot(X, Y)
+    Z = WW.eta(X, Y, t, impact) * np.clip((rb - Rr) / 0.0030, 0.0, 1.0) ** 0.7     # pinned contact line: waves die into the meniscus
+    vs = [bm.verts.new((float(x), float(y), z_top + float(z))) for x, y, z in zip(X, Y, Z)]
+    faces = []
+    for i in range(n0):                                                              # stitch 1 coarse edge : 4 fine edges
+        a, b = ring[i], ring[(i + 1) % n0]; f = [vs[(i * mult + j) % nseg] for j in range(mult + 1)]
+        faces.append(bm.faces.new([a, f[0], f[1]])); faces.append(bm.faces.new([a, f[1], f[2]]))
+        faces.append(bm.faces.new([a, f[2], b])); faces.append(bm.faces.new([b, f[2], f[3]])); faces.append(bm.faces.new([b, f[3], f[4]]))
+    for k in range(nring - 1):
+        o0, o1 = k * nseg, (k + 1) * nseg
+        for i in range(nseg):
+            j = (i + 1) % nseg
+            faces.append(bm.faces.new([vs[o0 + i], vs[o1 + i], vs[o1 + j], vs[o0 + j]]))
+    o0 = (nring - 1) * nseg; c = vs[-1]
+    for i in range(nseg):
+        faces.append(bm.faces.new([vs[o0 + i], c, vs[o0 + (i + 1) % nseg]]))
+    for f in faces:
+        f.material_index = mat_i; f.smooth = True
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    bm.to_mesh(me); bm.free(); me.update()
+    log(f"splash3: wine surface solved at t = {t * 1000:.1f} ms after contact (crater deepest at {WW.t_crater(impact) * 1000:.0f} ms), "
+        f"{len(vs)} surface points, range {Z.min() * 1000:+.2f} .. {Z.max() * 1000:+.2f} mm")

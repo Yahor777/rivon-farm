@@ -87,17 +87,48 @@ def hit(key, f, gain=1.0, pan=0.0, idx=0, dur=None, peak=0.8, pitch=1.0, fade=No
     place(norm(a, peak=peak), fr(f), gain, pan, 0.0, fade if fade else (0.08 if dur is None else min(0.08, dur / 3)), dur)
 
 
-SLOW = 372; FREEZE = 420; RESUME = 745                         # frames: the drop enters and time slows / stops / the drop lands
+SLOW = 361; FREEZE = 420; RESUME = 745                         # frames: the drop enters and time slows / stops / the drop lands
 # ---- world before the freeze: sea, wind in the trees, the gust, far thunder. As the drop slows, so does the world: the
 # ambience sinks with it and is gone when the drop stops.
-duck = [(0, 1.0), (fr(SLOW), 1.0), (fr(386), 0.5), (fr(404), 0.18), (fr(FREEZE), 0.0), (fr(RESUME) + 0.25, 0.0),
-        (fr(RESUME) + 1.6, 1.0), (35.0, 1.0)]
+# v6: the ambience follows the camera's speed curve (1-u)^1.6 down to a bare low-frequency remainder (not digital zero),
+# stays there while time stands still, and comes back with the drop's contact - no jump, no click.
+FLOOR = 0.05
+duck = [(0, 1.0), (fr(SLOW), 1.0)] + [(fr(SLOW + (FREEZE - SLOW) * u), FLOOR + (1 - FLOOR) * (1 - u) ** 1.6) for u in (0.1, 0.27, 0.48, 0.69, 0.85, 1.0)] \
+       + [(fr(RESUME) + 0.10, FLOOR), (fr(RESUME) + 0.6, 0.45), (fr(RESUME) + 1.7, 1.0), (35.0, 1.0)]
 def env_mul(e):
     return [(t, v * float(np.interp(t, [d[0] for d in duck], [d[1] for d in duck]))) for t, v in e]
 grid = sorted(set([d[0] for d in duck] + list(np.arange(0, 35.01, 0.25))))
 bed("sea_waves", 0.0, 35.0, 1.0, env_mul([(t, float(np.interp(t, [0, 7, 10.5, 27, 29.5, 35], [0.8, 0.8, 0.5, 0.0, 0.35, 0.55]))) for t in grid]))
 bed("wind_gust", 0.0, 35.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.2, 4.9, 5.6, 6.2, 6.9, 10.5, 13.9, 27.0, 28.5, 35], [0.10, 0.12, 0.9, 0.55, 1.0, 0.7, 0.5, 0.55, 0.25, 0.3, 0.08]))) for t in grid]), rms=0.09)
 bed("leaves_rustle", 0.0, 14.0, 1.0, env_mul([(t, float(np.interp(t, [0, 4.4, 5.0, 6.3, 7.0, 14], [0.25, 0.3, 1.0, 1.0, 0.5, 0.2]))) for t in grid if t <= 14.0]), rms=0.05)
+
+
+def lp_sweep(i0, i1, f0, f1):
+    """one-pole low-pass on the ambience bus between samples i0..i1, cutoff gliding f0 -> f1 (exponentially)"""
+    n = i1 - i0
+    if n <= 0:
+        return
+    fc = f0 * (f1 / f0) ** (np.arange(n) / max(1, n - 1)); al = 1.0 - np.exp(-2 * np.pi * fc / SR)
+    for ch in (mixL, mixR):
+        y = float(ch[i0 - 1]) if i0 > 0 else 0.0; seg = ch[i0:i1]
+        for k in range(n):
+            y += al[k] * (seg[k] - y); seg[k] = y
+
+
+# the highs leave first as time runs down; in the stillness only a low remainder; they open again after the contact
+_a, _b, _c = int(fr(SLOW) * SR), int(fr(FREEZE) * SR), int(fr(RESUME) * SR)
+lp_sweep(_a, _b, 16000.0, 170.0); lp_sweep(_b, _c, 170.0, 170.0); lp_sweep(_c, _c + int(1.5 * SR), 170.0, 16000.0)
+
+# the fly-in: air rushing past the lens, played from a real wind recording at the camera's own speed - fast and bright
+# at the cut, slowing and sinking in pitch exactly as the camera brakes, gone when it stops (a tape that runs down)
+_w = load("wind_gust", 1 if len(src.get("wind_gust", [])) > 1 else 0)
+if _w is not None:
+    _w = norm(_w[int(0.5 * SR):], rms=0.11); _n = int((fr(FREEZE) - fr(SLOW)) * SR); _u = np.arange(_n) / _n
+    _rate = 1.9 * (1 - _u) ** 1.6 + 0.02; _ph = np.cumsum(_rate); _ph = _ph[_ph < len(_w) - 2]
+    _i = _ph.astype(int); _f = (_ph - _i)[:, None]; _g = _w[_i] * (1 - _f) + _w[_i + 1] * _f
+    _env = np.clip(np.arange(len(_g)) / (0.07 * SR), 0, 1) * ((1 - _u[:len(_g)]) ** 1.3)
+    place(_g * _env[:, None], fr(SLOW), 0.9, 0.0, 0.0, 0.02)
+
 hit("cloth_flap", 150, 0.55, -0.2, idx=0, dur=1.5, peak=0.5); hit("cloth_flap", 172, 0.4, 0.1, idx=1, dur=0.5, peak=0.45)
 hit("cloth_flap", 186, 0.35, 0.3, idx=2, dur=1.2, peak=0.4)
 hit("thunder", 236, 0.75, 0.2, idx=0, dur=7.0, peak=0.85, fade=3.0)       # far thunder as the cloud takes the sky
@@ -110,16 +141,17 @@ hit(W, 486, 1.0, -0.2, idx=0, dur=1.2, pitch=0.86); hit("wood_thud", 486, 0.55, 
 for k, f in enumerate((490, 497, 504)):
     hit("screwdriver", f, 0.36, 0.25 - 0.2 * k, idx=k, dur=0.45, peak=0.6)
 for k in range(11):                                                               # rafters laid into the Mocowanie saddles: wood on steel
-    f = (516 + 5 * (k - 3) if k >= 3 else 558 + 5 * (2 - k)) + 20
-    hit(W, f, 0.95 - 0.05 * min(abs(k - 3), 6), -0.15 + 0.07 * k, idx=k, dur=0.8, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
+    _ord = [3, 4, 5, 6, 7, 8, 9, 10, 2, 1, 0]; _j = _ord.index(k)          # v6 = film.rafter_t0: one in the close-up, then the row
+    f = 536 if _j == 0 else 546 + 3.4 * (_j - 1) + 18
+    hit(W, f, 0.95 if _j == 0 else 0.62 + 0.03 * (_j % 4), -0.15 + 0.07 * k, idx=k, dur=0.8 if _j == 0 else 0.5, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
     if k % 3 == 0:
         hit("metal_clank", f, 0.16, -0.15 + 0.07 * k, idx=k // 3, dur=0.35, pitch=1.1)
-for k, f in enumerate((550, 561, 572, 581)):
+for k, f in enumerate((566, 578, 590, 600)):
     hit("screwdriver", f, 0.26, (-1) ** k * 0.3, idx=k + 1, dur=0.4, peak=0.55)
-hit("wood_thud", 618, 1.0, 0.0, idx=0, dur=1.2, peak=0.9, pitch=0.8)              # the whole frame lands on the four posts
-hit(W, 618, 0.8, 0.15, idx=1, dur=1.0, pitch=0.8); hit("metal_clank", 618, 0.4, -0.15, idx=1, dur=0.7, pitch=0.82)
-hit("wood_thud", 619, 0.5, -0.4, idx=1, dur=0.9, pitch=0.9)
-for k, f in enumerate((623, 629, 635, 640)):
+hit("wood_thud", 632, 1.0, 0.0, idx=0, dur=1.2, peak=0.9, pitch=0.8)              # the whole frame lands on the four posts
+hit(W, 632, 0.8, 0.15, idx=1, dur=1.0, pitch=0.8); hit("metal_clank", 632, 0.4, -0.15, idx=1, dur=0.7, pitch=0.82)
+hit("wood_thud", 633, 0.5, -0.4, idx=1, dur=0.9, pitch=0.9)
+for k, f in enumerate((637, 641, 645, 648)):
     hit("screwdriver", f, 0.34, (-1) ** k * 0.25, idx=k, dur=0.45, peak=0.6)
 for k in range(7):
     hit("metal_clank", 676 + 16 * k / 6.0, 0.22, -0.5 + k / 6.0, idx=k, dur=0.4, pitch=1.25)                       # glazing bars
