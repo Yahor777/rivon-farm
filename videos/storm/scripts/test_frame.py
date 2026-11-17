@@ -86,9 +86,11 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             # v6.1: close enough that the 6 mm drop reads (~20 px at 540 wide), against the dark cloud base; focus on its path
             # the camera finds the drop high against the cloud base and tilts down with it (lagging, so the drop still
             # visibly falls through the frame) until the glass comes up from below; focus rides the drop
-            _rz = dzc - wine_top; _az = wine_top + 0.10 + 0.72 * max(0.0, _rz - 0.10)
-            # v6.2: 26 cm away on an 85 mm lens: the drop is ~50 px wide; still tilting down with it against the cloud base
-            _p = _V((gx - 0.26 + 0.015 * _e, gy - 0.035, wine_top + 0.11)); _t = _V((gx + 0.004, gy - 0.003, _az))
+            # v6.2b: 26 cm away on an 85 mm lens (~50 px drop). The camera rides down WITH the drop at its height, looking
+            # out to sea: the drop is seen against the dark base of the front on the horizon, not the bright overcast
+            # overhead; it lags 15 %, so the drop still visibly falls through the frame, and the glass rises in at the end
+            _rz = dzc - wine_top; _cz = wine_top + 0.11 + 0.85 * max(0.0, _rz - 0.11)
+            _p = _V((gx - 0.26 + 0.015 * _e, gy - 0.035, _cz)); _t = _V((gx + 0.004, gy - 0.003, _cz - 0.035))
             LK.camera("CAM", tuple(_p), tuple(_t), lens=85, fstop=5.6, focus=(_p - _dp).length)
         else:
             # PLAN B: the camera itself flies in from 2.4 m and brakes. Remaining distance = D * (1-u)^2.6, so the speed is
@@ -98,7 +100,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             _zf = wine_top + 0.0045
             # v6.2: ends 6 cm away and 3.4 cm ABOVE the drop, looking down ~30 deg: from there the dark wine reflects only a
             # few per cent (Fresnel), so the drop's mirror image no longer reads as a second drop
-            _E = _V((gx + 0.004 - 0.052, gy - 0.003 - 0.010, _zf + 0.034))
+            _E = _V((gx + 0.004 - 0.017, gy - 0.003 - 0.004, _zf + 0.062))   # v6.2b: ~75 deg down: the mirror image hides behind the drop
             _S = _V((gx - float(__import__("os").environ.get("FLY_X", 2.25)), gy - float(__import__("os").environ.get("FLY_Y", 0.75)), wine_top + float(__import__("os").environ.get("FLY_Z", 0.50))))
             _drift = 0.004 * FM.ease((_F - 404) / 31.0)                              # the camera still settles after time has stopped
             _p = _E + (_S - _E) * _rem + _V((0.25, -1.0, 0.1)).normalized() * _drift
