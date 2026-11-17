@@ -78,34 +78,77 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
                                                      # (total internal reflection) mirrored the bowl as dark arcs
     if shot in ("dropfall", "freeze") and FM.FRAME is not None:
         from mathutils import Vector as _V
-        _dp = _V((gx + 0.004, gy - 0.003, dzc)); _F = FM.FRAME
-        if shot == "dropfall":
-            # PLAN A: a locked-off high-speed shot beside the glass. The drop enters at the top and falls at constant
-            # (terminal) speed towards the wine: where it is, where it is going, how far it still has to go.
-            _e = FM.ease(FM.T)
-            # v6.1: close enough that the 6 mm drop reads (~20 px at 540 wide), against the dark cloud base; focus on its path
-            # the camera finds the drop high against the cloud base and tilts down with it (lagging, so the drop still
-            # visibly falls through the frame) until the glass comes up from below; focus rides the drop
-            # v6.2b: 26 cm away on an 85 mm lens (~50 px drop). The camera rides down WITH the drop at its height, looking
-            # out to sea: the drop is seen against the dark base of the front on the horizon, not the bright overcast
-            # overhead; it lags 15 %, so the drop still visibly falls through the frame, and the glass rises in at the end
-            _rz = dzc - wine_top; _cz = wine_top + 0.11 + 0.85 * max(0.0, _rz - 0.11)
-            _p = _V((gx - 0.26 + 0.015 * _e, gy - 0.035, _cz)); _t = _V((gx + 0.004, gy - 0.003, 0.4 * dzc + 0.6 * (_cz - 0.02)))   # the drop sits in the upper third, the world streams up past it
-            LK.camera("CAM", tuple(_p), tuple(_t), lens=85, fstop=5.6, focus=(_p - _dp).length)
-        else:
-            # PLAN B: the camera itself flies in from 2.4 m and brakes. Remaining distance = D * (1-u)^2.6, so the speed is
-            # v0 * (1-u)^1.6: 100 % at the cut, 85 % at u=.1, 60 % at .27, 35 % at .48, 15 % at .69, 5 % at .85, exactly 0 at
-            # the stop - continuous in speed and acceleration. Fixed 60 mm lens: no zoom, the perspective is the move.
-            _u = max(0.0, min(1.0, (_F - FM.F_C) / float(FM.F_STOP - FM.F_C))); _rem = (1.0 - _u) ** 2.6
-            _zf = wine_top + 0.0045
-            # v6.2: ends 6 cm away and 3.4 cm ABOVE the drop, looking down ~30 deg: from there the dark wine reflects only a
-            # few per cent (Fresnel), so the drop's mirror image no longer reads as a second drop
-            _E = _V((gx + 0.004 - 0.017, gy - 0.003 - 0.004, _zf + 0.062))   # v6.2b: ~75 deg down: the mirror image hides behind the drop
-            _S = _V((gx - float(__import__("os").environ.get("FLY_X", 2.25)), gy - float(__import__("os").environ.get("FLY_Y", 0.75)), wine_top + float(__import__("os").environ.get("FLY_Z", 0.50))))
-            _drift = 0.004 * FM.ease((_F - 404) / 31.0)                              # the camera still settles after time has stopped
-            _p = _E + (_S - _E) * _rem + _V((0.25, -1.0, 0.1)).normalized() * _drift
-            _aim = _dp + _V((0, 0, -0.004 * FM.ease(_u)))                            # ends framing the drop over its reflection
-            LK.camera("CAM", tuple(_p), tuple(_aim), lens=60, fstop=5.6 + 5.4 * FM.ease(_u), focus=max(0.05, (_p - _dp).length))
+        import os as _os
+        _zf = wine_top + 0.0045; _F0 = FM.FRAME
+        _H = FM.V0 * (FM.F_STOP - FM.F_C) / 30.0 / (FM.P_SLOW + 1)
+        # v6.3 PLAN B, side-on: the camera starts 80 cm out at table level, sees the glass and the drop high above it, and
+        # RUSHES in along a slight arc. Remaining distance = D (1-u)^2.6 -> speed v0 (1-u)^1.6: 100/85/60/35/15/5/0 % - the
+        # drop and every raindrop around the glass brake on the same clock. It ends 14 cm from the drop, a few mm above
+        # the wine, looking across the surface - the drop hanging over the dark mirror of the wine. Fixed 70 mm lens.
+        _S = _V((gx - 0.80, gy - 0.11, wine_top + 0.05)); _E = _V((gx + 0.004 - 0.14, gy - 0.003 - 0.012, _zf + 0.007))
+        _A0 = _V((gx + 0.004, gy - 0.003, wine_top + 0.16))
+
+        def _cam_at(F):
+            FM.FRAME = F
+            sh = "dropfall" if F <= 360 else "freeze"
+            dz = FM.drop_state(sh, wine_top)[0]; dp = _V((gx + 0.004, gy - 0.003, dz))
+            if sh == "dropfall":                     # PLAN A (unchanged): rides down with the drop against the front
+                T = (F - 316) / 44.0; e = FM.ease(max(0.0, min(1.0, T)))
+                rz = dz - wine_top; cz = wine_top + 0.11 + 0.85 * max(0.0, rz - 0.11)
+                p = _V((gx - 0.26 + 0.015 * e, gy - 0.035, cz)); t = _V((gx + 0.004, gy - 0.003, 0.4 * dz + 0.6 * (cz - 0.02)))
+                return p, t, 85.0, 5.6, (p - dp).length, dp
+            u = max(0.0, min(1.0, (F - FM.F_C) / float(FM.F_STOP - FM.F_C))); rem = (1.0 - u) ** 2.6
+            arc = _V((0.0, -0.07, 0.03)) * math.sin(math.pi * (1.0 - rem)) * rem
+            drift = _V((0.0012, -0.003, 0.0006)) * FM.ease((F - 404) / 31.0)      # the camera still settles after time stopped
+            p = _E + (_S - _E) * rem + arc + drift
+            w = FM.ease(min(1.0, u * 1.8)); t = _A0.lerp(dp + _V((0, 0, -0.0025)), w)
+            return p, t, 70.0, 4.0 + 4.0 * FM.ease(u), max(0.05, (p - dp).length), dp
+
+        import math
+        _p, _t, _lens, _fs, _foc, _dp = _cam_at(_F0)
+        cam = LK.camera("CAM", tuple(_p), tuple(_t), lens=_lens, fstop=_fs, focus=_foc)
+        # real 180-degree shutter motion blur for the camera and the drop(s): their state half a frame either side
+        _sc = bpy.context.scene; _fc = _sc.frame_current; _hd = bpy.data.objects.get("hero_drop")
+        _cl = None
+        if shot == "freeze" and _os.environ.get("DROP_CLUSTER", "1") == "1":
+            # the rain around the glass: ~300 drops in the space the camera flies through, falling on the drop's clock
+            import numpy as _np, bmesh as _bm
+            rng = _np.random.default_rng(77); pts = []
+            while len(pts) < 320:
+                x = rng.uniform(gx - 0.70, gx + 0.30); y = rng.uniform(gy - 0.40, gy + 0.35); z = rng.uniform(wine_top - 0.06, wine_top + 0.55)
+                if (x - gx) ** 2 + (y - gy) ** 2 < 0.075 ** 2:
+                    continue                                                    # not inside or on the glass
+                q = _V((x, y, z)); seg = _S - _E; k = max(0.0, min(1.0, (q - _E).dot(seg) / seg.length_squared))
+                if (q - (_E + seg * k)).length < 0.045 + 0.04 * k:
+                    continue                                                    # not on the lens path
+                pts.append((x, y, z))
+            bm = _bm.new()
+            for (x, y, z) in pts:
+                r = rng.uniform(0.0011, 0.0019)
+                _bm.ops.create_icosphere(bm, subdivisions=2, radius=r, matrix=__import__("mathutils").Matrix.Translation((x, y, z)))
+            me = bpy.data.meshes.new("rain_cluster"); bm.to_mesh(me); bm.free()
+            _cl = bpy.data.objects.new("rain_cluster", me); bpy.context.scene.collection.objects.link(_cl)
+            me.materials.append(_hd.data.materials[0] if _hd else S.mat_glass("rain_water", (1, 1, 1, 1)))
+            for pl in me.polygons:
+                pl.use_smooth = True
+        for df in (-0.5, 0.0, 0.5):
+            pp, tt, _l, _f, _fo, dpp = _cam_at(_F0 + df)
+            _sc.frame_set(_fc); fr_ = _fc + df
+            cam.location = pp; cam.rotation_euler = (tt - pp).to_track_quat("-Z", "Y").to_euler()
+            cam.keyframe_insert("location", frame=fr_); cam.keyframe_insert("rotation_euler", frame=fr_)
+            if _hd is not None:
+                _hd.location = dpp; _hd.keyframe_insert("location", frame=fr_)
+            if _cl is not None:
+                FM.FRAME = _F0 + df; _cl.location = (0, 0, FM.drop_height()); _cl.keyframe_insert("location", frame=fr_)
+        FM.FRAME = _F0
+        for ob in (cam, _hd, _cl):
+            if ob is not None and ob.animation_data and ob.animation_data.action:
+                for fcv in ob.animation_data.action.fcurves:
+                    for kp in fcv.keyframe_points:
+                        kp.interpolation = "LINEAR"
+        _sc.frame_set(_fc)
+        if _hd is not None:
+            _hd.scale = (1.0, 1.0, 0.88)                                         # true oblate drop: the streak is now real blur
     elif shot == "freeze":                                 # time stops - the drop in the lower third, rim + bowl readable
         cz2 = drop_z + 0.016
         LK.camera("CAM", (gx - 0.25, gy - 0.003, cz2), (gx + 1.0, gy + 0.03, cz2 + 1.25 * _m.tan(_m.radians(0.6))),
