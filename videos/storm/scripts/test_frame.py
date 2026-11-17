@@ -90,7 +90,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             # out to sea: the drop is seen against the dark base of the front on the horizon, not the bright overcast
             # overhead; it lags 15 %, so the drop still visibly falls through the frame, and the glass rises in at the end
             _rz = dzc - wine_top; _cz = wine_top + 0.11 + 0.85 * max(0.0, _rz - 0.11)
-            _p = _V((gx - 0.26 + 0.015 * _e, gy - 0.035, _cz)); _t = _V((gx + 0.004, gy - 0.003, _cz - 0.035))
+            _p = _V((gx - 0.26 + 0.015 * _e, gy - 0.035, _cz)); _t = _V((gx + 0.004, gy - 0.003, 0.4 * dzc + 0.6 * (_cz - 0.02)))   # the drop sits in the upper third, the world streams up past it
             LK.camera("CAM", tuple(_p), tuple(_t), lens=85, fstop=5.6, focus=(_p - _dp).length)
         else:
             # PLAN B: the camera itself flies in from 2.4 m and brakes. Remaining distance = D * (1-u)^2.6, so the speed is
