@@ -68,6 +68,9 @@ def set_frame(f):
         os.environ["WEATHER_EV"] = str(1.25 - 0.30 * ease(T))       # daylight softens as the cloud takes the sky
         if os.environ.get("FRONT", "1") == "1":                     # v6: an existing front comes closer at a steady wind speed
             os.environ["SKY_MIX"] = "0.5"; os.environ["FRONT_T"] = str(T)
+            # v6.2: the front is alive - a double stroke of lightning deep in the cell (flash, dark, brighter re-strike, decay)
+            _fl = {262: 0.55, 263: 0.15, 264: 1.0, 265: 0.6, 266: 0.25, 267: 0.08}.get(FRAME, 0.0)
+            os.environ["FLASH"] = str(_fl)
         elif os.environ.get("SKY_PHOTO", "1") == "1":               # v5: photographed storm sky condensing out of the sunny one
             # the front takes the visible sky over the first 3/4 of the shot, the rest of the dome (and the sun) at the end
             _m = 0.27 * ease(min(1.0, T / 0.8)) + 0.73 * ease(max(0.0, min(1.0, (T - 0.72) / 0.28)))
@@ -104,6 +107,7 @@ def move_camera(shot):
     elif shot == "wind":
         cam.location = L0 + fwd * 0.10 * e                              # almost locked off: an imperceptible creep
     elif shot == "storm":                                               # tripod tilt-up
+        cam.location = L0 + fwd * 0.55 * ease(T)                         # v6.2: a slow creep towards the sea under the tilt
         look(cam, (40.0, 3.5, 2.5 + 12.5 * ease(T)))
     elif shot in ("conn1", "conn2", "conn3"):                           # slow arc around the connector
         tgt = Vector(CAMS[shot][1]); r = L0 - tgt
@@ -175,8 +179,8 @@ def exposure_add(shot):
         base = 0.90 if FRAME is None else 0.90 - 0.75 * ease((FRAME - LIGHTS_ON) / 16.0)
     if shot in ("dropfall", "freeze") and FRAME is not None:
         base = 0.7 + 0.5 * ease(push_u())
-        if shot == "dropfall":                              # v6.1: looking up into the bright cloud base at the start of plan A
-            base -= 0.75 * (1.0 - ease(T))
+        if shot == "dropfall":                              # v6.2: looking up into the bright cloud base at the start of plan A
+            base -= 1.45 * (1.0 - ease(T)) + 0.35
     return base
 
 
@@ -256,8 +260,8 @@ def assemble():
         if name.startswith(("BEAM_LONG", "INST_MOCOW")):
             return Vector((0, slide_y, frame_dz)), False
         if name.startswith("RAFTER"):
-            i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); dur = 20.0 if t0 < 540 else 18.0; u = (f - t0) / dur
-            return Vector((0, 0, frame_dz + 0.45 * _crane(u) + _settle(f, t0 + dur, 0.003))), (f < t0 - 12) if t0 < 540 else (f < 544)   # the row waits above its saddles from the cut on
+            i = round((y + 2.4) / 0.48); t0 = rafter_t0(i); dur = 20.0 if t0 < 540 else 24.0; u = (f - t0) / dur
+            return Vector((0, 0, frame_dz + (0.45 if t0 < 540 else 1.05) * _crane(u) + _settle(f, t0 + dur, 0.003))), (f < t0 - 12) if t0 < 540 else (f < 544)   # v6.2: the row comes down a full metre   # the row waits above its saddles from the cut on
         w = None
         if name.startswith("GLAZING_BAR"):   w = (650 + 16 * (y + 3.2) / 6.4, 26, 2.0)
         elif name.startswith("SHEET_glass"): w = (676 + 16 * (y + 3.2) / 6.4, 28, 2.2)

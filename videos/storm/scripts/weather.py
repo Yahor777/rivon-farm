@@ -116,7 +116,24 @@ def _sky(state):
         ms = N.new("ShaderNodeMixShader"); L.new(mr.outputs["Result"], ms.inputs["Fac"]); L.new(base, ms.inputs[1]); L.new(bg.outputs[0], ms.inputs[2])
         for n in [n for n in N if n.type == "OUTPUT_WORLD" and n != out]:
             N.remove(n)
-        L.new(ms.outputs[0], out.inputs["Surface"])
+        fl = float(os.environ.get("FLASH", 0.0))
+        if fl > 0.001:
+            # lightning deep inside the storm cell: the cloud lights up from within around the stroke direction (the
+            # photographed cloud's own luminance is the mask, so the light lives in the cloud's structure, not on top of it)
+            fd = Vector((1.0, float(os.environ.get("FLASH_Y", -0.18)), float(os.environ.get("FLASH_Z", 0.16)))).normalized()
+            nv2 = N.new("ShaderNodeVectorMath"); nv2.operation = "NORMALIZE"; L.new(tc.outputs["Generated"], nv2.inputs[0])
+            dd = N.new("ShaderNodeVectorMath"); dd.operation = "DOT_PRODUCT"; L.new(nv2.outputs[0], dd.inputs[0]); dd.inputs[1].default_value = fd
+            pw = N.new("ShaderNodeMapRange"); pw.interpolation_type = "SMOOTHERSTEP"; pw.inputs["From Min"].default_value = 0.90
+            pw.inputs["From Max"].default_value = 0.995; L.new(dd.outputs["Value"], pw.inputs["Value"])
+            lm = N.new("ShaderNodeRGBToBW"); L.new(env.outputs[0], lm.inputs[0])
+            m1 = N.new("ShaderNodeMath"); m1.operation = "MULTIPLY"; L.new(pw.outputs["Result"], m1.inputs[0]); L.new(lm.outputs[0], m1.inputs[1])
+            m2 = N.new("ShaderNodeMath"); m2.operation = "MULTIPLY"; L.new(m1.outputs[0], m2.inputs[0]); m2.inputs[1].default_value = ref * fl * float(os.environ.get("FLASH_GAIN", 9.0))
+            em = N.new("ShaderNodeEmission"); em.inputs["Color"].default_value = (0.78, 0.84, 1.0, 1); L.new(m2.outputs[0], em.inputs["Strength"])
+            ad = N.new("ShaderNodeAddShader"); L.new(ms.outputs[0], ad.inputs[0]); L.new(em.outputs[0], ad.inputs[1])
+            L.new(ad.outputs[0], out.inputs["Surface"])
+            log(f"weather {state}: lightning inside the cell, {fl:.2f}")
+        else:
+            L.new(ms.outputs[0], out.inputs["Surface"])
         os.environ["WEATHER_EV"] = str(float(os.environ.get("EV0", -0.35)) + float(os.environ.get("EV1", 0.95)) * veil / 0.85)
         log(f"weather {state}: front already over the sea, layer moved {D:.2f} H towards the camera, leading edge at "
             f"{math.degrees(math.atan(1.0 / max(xe0 - D, 0.05))):.0f} deg elevation, sun veiled {veil:.2f}")

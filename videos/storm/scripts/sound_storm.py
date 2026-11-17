@@ -131,7 +131,22 @@ if _w is not None:
 
 hit("cloth_flap", 150, 0.55, -0.2, idx=0, dur=1.5, peak=0.5); hit("cloth_flap", 172, 0.4, 0.1, idx=1, dur=0.5, peak=0.45)
 hit("cloth_flap", 186, 0.35, 0.3, idx=2, dur=1.2, peak=0.4)
-hit("thunder", 236, 0.75, 0.2, idx=0, dur=7.0, peak=0.85, fade=3.0)       # far thunder as the cloud takes the sky
+hit("thunder", 228, 0.55, 0.2, idx=0, dur=4.0, peak=0.85, fade=2.0)       # far rumble as the front comes in
+hit("thunder", 272, 0.95, 0.35, idx=1, dur=6.0, peak=0.95, fade=3.0)      # v6.2: the stroke inside the cell (flash 262-267), ~0.25 s later
+
+# v6.2: a low swell under the storm shot, made from a real recording (thunder, reversed and an octave down, darkened):
+# pressure building towards the drop, folded into the fly-in whoosh at the cut - no synthesised music
+_t = load("thunder", 1)
+if _t is not None:
+    _t = norm(_t[::-1][: int(9.0 * SR)], rms=0.10); _n = int((fr(SLOW) - fr(211)) * SR)
+    _ph = np.arange(_n) * 0.5; _ph = _ph[_ph < len(_t) - 2]; _i = _ph.astype(int); _f = (_ph - _i)[:, None]
+    _s = _t[_i] * (1 - _f) + _t[_i + 1] * _f
+    for _c in range(_s.shape[1]):                              # one-pole low-pass ~260 Hz
+        _y = 0.0; _al = 1 - math.exp(-2 * math.pi * 260 / SR); _col = _s[:, _c]
+        for _k in range(len(_col)):
+            _y += _al * (_col[_k] - _y); _col[_k] = _y
+    _u = np.arange(len(_s)) / max(1, len(_s) - 1); _env = (_u ** 1.8) * np.clip((1 - _u) / 0.04, 0, 1)
+    place(norm(_s, rms=0.10) * _env[:, None], fr(211), 0.75, 0.0, 0.0, 0.05)       # far thunder as the cloud takes the sky
 # ---- assembly in the silence: concrete, close, dry. Frames = film.assemble() landings.
 W = "wood_on_metal"
 hit("metal_slide", 449, 0.35, 0.3, dur=0.38, peak=0.5, pitch=0.9)                 # corner Trojak pushed onto the end beam
@@ -142,7 +157,7 @@ for k, f in enumerate((490, 497, 504)):
     hit("screwdriver", f, 0.36, 0.25 - 0.2 * k, idx=k, dur=0.45, peak=0.6)
 for k in range(11):                                                               # rafters laid into the Mocowanie saddles: wood on steel
     _ord = [3, 4, 5, 6, 7, 8, 9, 10, 2, 1, 0]; _j = _ord.index(k)          # v6 = film.rafter_t0: one in the close-up, then the row
-    f = 536 if _j == 0 else 546 + 3.4 * (_j - 1) + 18
+    f = 536 if _j == 0 else 546 + 3.4 * (_j - 1) + 24
     hit(W, f, 0.95 if _j == 0 else 0.62 + 0.03 * (_j % 4), -0.15 + 0.07 * k, idx=k, dur=0.8 if _j == 0 else 0.5, pitch=(0.96, 1.05, 0.9, 1.12, 1.0, 0.94)[k % 6] + 0.01 * k)
     if k % 3 == 0:
         hit("metal_clank", f, 0.16, -0.15 + 0.07 * k, idx=k // 3, dur=0.35, pitch=1.1)
