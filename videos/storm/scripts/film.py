@@ -187,7 +187,7 @@ def exposure_add(shot):
     if shot in ("dropfall", "freeze") and FRAME is not None:
         base = 0.7 + 0.5 * ease(push_u())
         if shot == "dropfall":                              # v6.2: looking up into the bright cloud base at the start of plan A
-            base -= 0.9
+            base -= 0.35
     return base
 
 

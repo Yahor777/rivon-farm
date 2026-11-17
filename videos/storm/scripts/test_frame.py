@@ -97,9 +97,12 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
                 # past it in the shutter blur. From F_FAST the drop (and the camera with it) starts to brake; the camera
                 # falls a touch slower than the drop, so it sinks through the frame towards the glass that rises in.
                 T = (F - 316) / 44.0; e = FM.ease(max(0.0, min(1.0, T)))
-                cz = dz - 0.030 + 0.045 * FM.ease(max(0.0, min(1.0, (F - 340) / 20.0)))
-                p = _V((gx - 0.26 + 0.015 * e, gy - 0.035, cz)); t = _V((gx + 0.004, gy - 0.003, cz + 0.012))
-                return p, t, 85.0, 5.6, (p - dp).length, dp
+                # looking ~25 deg DOWN past the drop at the garden far below: the lawn, deck and table rush up at 6 m/s
+                # (the horizon would not move at all); levels out to the horizontal as the glass comes up
+                e2 = FM.ease(max(0.0, min(1.0, (F - 338) / 22.0)))
+                p = dp + _V((-0.26 + 0.015 * e, -0.032, 0.125 * (1 - e2) - 0.030 * e2 + 0.045 * e2))
+                t = dp + _V((0.0, 0.0, -0.004 + 0.012 * e2))
+                return p, t, 85.0, 11.0 - 5.4 * e2, (p - dp).length, dp
             u = max(0.0, min(1.0, (F - FM.F_C) / float(FM.F_STOP - FM.F_C))); rem = (1.0 - u) ** 2.6
             arc = _V((0.0, -0.07, 0.03)) * math.sin(math.pi * (1.0 - rem)) * rem
             drift = _V((0.0012, -0.003, 0.0006)) * FM.ease((F - 404) / 31.0)      # the camera still settles after time stopped
@@ -136,7 +139,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
                 pl.use_smooth = True
         bpy.context.preferences.edit.keyframe_new_interpolation_type = "LINEAR"   # (Blender 5: layered actions, set before insert)
         for df in (-0.5, 0.0, 0.5):
-            pp, tt, _l, _f, _fo, dpp = _cam_at(_F0 + df)
+            pp, tt, _l, _f, _fo, dpp = _cam_at(_F0 + df); print('CAMKEY', _F0 + df, [round(c, 3) for c in pp], 'drop', [round(c, 3) for c in dpp])
             _sc.frame_set(_fc); fr_ = _fc + df
             cam.location = pp; cam.rotation_euler = (tt - pp).to_track_quat("-Z", "Y").to_euler()
             cam.keyframe_insert("location", frame=fr_); cam.keyframe_insert("rotation_euler", frame=fr_)
