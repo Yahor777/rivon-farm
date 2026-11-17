@@ -131,6 +131,7 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             me.materials.append(_hd.data.materials[0] if _hd else S.mat_glass("rain_water", (1, 1, 1, 1)))
             for pl in me.polygons:
                 pl.use_smooth = True
+        bpy.context.preferences.edit.keyframe_new_interpolation_type = "LINEAR"   # (Blender 5: layered actions, set before insert)
         for df in (-0.5, 0.0, 0.5):
             pp, tt, _l, _f, _fo, dpp = _cam_at(_F0 + df)
             _sc.frame_set(_fc); fr_ = _fc + df
@@ -141,11 +142,6 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
             if _cl is not None:
                 FM.FRAME = _F0 + df; _cl.location = (0, 0, FM.drop_height()); _cl.keyframe_insert("location", frame=fr_)
         FM.FRAME = _F0
-        for ob in (cam, _hd, _cl):
-            if ob is not None and ob.animation_data and ob.animation_data.action:
-                for fcv in ob.animation_data.action.fcurves:
-                    for kp in fcv.keyframe_points:
-                        kp.interpolation = "LINEAR"
         _sc.frame_set(_fc)
         if _hd is not None:
             _hd.scale = (1.0, 1.0, 0.88)                                         # true oblate drop: the streak is now real blur
