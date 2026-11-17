@@ -146,7 +146,9 @@ def drop_state(shot, wine_top):
 
 # The drop keeps its speed all the way down. Only in the last 24 cm, while the camera pushes in on it, time itself runs
 # down to a stop (speed V0 * (1-u)^P, so there is no jerk at the start of the push and it ends exactly at rest).
-F_C, F_STOP, V0, P_SLOW = 361, 420, 0.35, 3.0     # v6: plan A = constant (terminal) speed in slow motion; plan B = time runs down
+F_C, F_STOP, V0, P_SLOW = 361, 420, 6.0, 5.0      # F_C = the cut / start of the camera rush; F_STOP = time stands still
+F_FAST = 346                                     # v6.3: until here the drop falls at REAL speed (6 m/s, a 6 mm raindrop);
+                                                 # from here time runs down: v = V0 (1-u)^5, u over F_FAST..F_STOP (2.5 s)
 
 
 def push_u():
@@ -154,16 +156,21 @@ def push_u():
     return 0.0 if FRAME is None else max(0.0, min(1.0, (FRAME - F_C) / float(F_STOP - F_C)))
 
 
+def _slow_u():
+    return max(0.0, min(1.0, (FRAME - F_FAST) / float(F_STOP - F_FAST)))
+
+
 def drop_height():
-    """height of the hero drop above its frozen position, m"""
-    H = V0 * (F_STOP - F_C) / 30.0 / (P_SLOW + 1)
-    if FRAME <= F_C:
-        return H + V0 * (F_C - FRAME) / 30.0
-    return H * (1 - push_u()) ** (P_SLOW + 1)
+    """height of the hero drop above its frozen position, m: 6 m/s until F_FAST, then braking smoothly to rest at F_STOP
+    (speed and position continuous; 2.5 m of braking, ~0.65 m still to go at the cut)"""
+    H = V0 * (F_STOP - F_FAST) / 30.0 / (P_SLOW + 1)
+    if FRAME <= F_FAST:
+        return H + V0 * (F_FAST - FRAME) / 30.0
+    return H * (1 - _slow_u()) ** (P_SLOW + 1)
 
 
 def drop_speed():
-    return V0 * (1 - push_u()) ** P_SLOW
+    return V0 * (1 - _slow_u()) ** P_SLOW
 
 
 def drop_stretch(shot):
@@ -180,7 +187,7 @@ def exposure_add(shot):
     if shot in ("dropfall", "freeze") and FRAME is not None:
         base = 0.7 + 0.5 * ease(push_u())
         if shot == "dropfall":                              # v6.2: looking up into the bright cloud base at the start of plan A
-            base -= 1.45 * (1.0 - ease(T)) + 0.35
+            base -= 0.9
     return base
 
 

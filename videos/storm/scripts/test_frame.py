@@ -80,28 +80,31 @@ elif shot in ("glass", "freeze", "splash", "dropfall"):
         from mathutils import Vector as _V
         import os as _os
         _zf = wine_top + 0.0045; _F0 = FM.FRAME
-        _H = FM.V0 * (FM.F_STOP - FM.F_C) / 30.0 / (FM.P_SLOW + 1)
         # v6.3 PLAN B, side-on: the camera starts 80 cm out at table level, sees the glass and the drop high above it, and
         # RUSHES in along a slight arc. Remaining distance = D (1-u)^2.6 -> speed v0 (1-u)^1.6: 100/85/60/35/15/5/0 % - the
         # drop and every raindrop around the glass brake on the same clock. It ends 14 cm from the drop, a few mm above
         # the wine, looking across the surface - the drop hanging over the dark mirror of the wine. Fixed 70 mm lens.
         _S = _V((gx - 0.80, gy - 0.11, wine_top + 0.05)); _E = _V((gx + 0.004 - 0.14, gy - 0.003 - 0.012, _zf + 0.007))
-        _A0 = _V((gx + 0.004, gy - 0.003, wine_top + 0.16))
+        _A0 = _V((gx + 0.004, gy - 0.003, wine_top + 0.24))          # the drop is still ~65 cm up at the cut, falling in at 2 m/s
 
         def _cam_at(F):
             FM.FRAME = F
             sh = "dropfall" if F <= 360 else "freeze"
             dz = FM.drop_state(sh, wine_top)[0]; dp = _V((gx + 0.004, gy - 0.003, dz))
             if sh == "dropfall":                     # PLAN A (unchanged): rides down with the drop against the front
+                # v6.3: the drop falls from 9 m at its REAL speed (6 m/s) and the camera falls with it, 26 cm beside it,
+                # looking out to sea: the drop stays big and sharp, the world - sky, horizon, house, trees - tears upwards
+                # past it in the shutter blur. From F_FAST the drop (and the camera with it) starts to brake; the camera
+                # falls a touch slower than the drop, so it sinks through the frame towards the glass that rises in.
                 T = (F - 316) / 44.0; e = FM.ease(max(0.0, min(1.0, T)))
-                rz = dz - wine_top; cz = wine_top + 0.11 + 0.85 * max(0.0, rz - 0.11)
-                p = _V((gx - 0.26 + 0.015 * e, gy - 0.035, cz)); t = _V((gx + 0.004, gy - 0.003, 0.4 * dz + 0.6 * (cz - 0.02)))
+                cz = dz - 0.030 + 0.045 * FM.ease(max(0.0, min(1.0, (F - 340) / 20.0)))
+                p = _V((gx - 0.26 + 0.015 * e, gy - 0.035, cz)); t = _V((gx + 0.004, gy - 0.003, cz + 0.012))
                 return p, t, 85.0, 5.6, (p - dp).length, dp
             u = max(0.0, min(1.0, (F - FM.F_C) / float(FM.F_STOP - FM.F_C))); rem = (1.0 - u) ** 2.6
             arc = _V((0.0, -0.07, 0.03)) * math.sin(math.pi * (1.0 - rem)) * rem
             drift = _V((0.0012, -0.003, 0.0006)) * FM.ease((F - 404) / 31.0)      # the camera still settles after time stopped
             p = _E + (_S - _E) * rem + arc + drift
-            w = FM.ease(min(1.0, u * 1.8)); t = _A0.lerp(dp + _V((0, 0, -0.0025)), w)
+            w = FM.ease(min(1.0, u * 2.2)); t = _A0.lerp(dp + _V((0, 0, -0.0025)), w)
             return p, t, 70.0, 4.0 + 4.0 * FM.ease(u), max(0.05, (p - dp).length), dp
 
         import math

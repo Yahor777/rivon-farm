@@ -129,6 +129,7 @@ if _w is not None:
     _env = np.clip(np.arange(len(_g)) / (0.07 * SR), 0, 1) * ((1 - _u[:len(_g)]) ** 1.3)
     place(_g * _env[:, None], fr(SLOW), 0.9, 0.0, 0.0, 0.02)
 
+hit("wind_gust", 316, 0.55, 0.0, idx=1, dur=1.05, peak=0.7, pitch=1.7, fade=0.25)   # v6.3: air tearing past the falling drop (real speed)
 hit("cloth_flap", 150, 0.55, -0.2, idx=0, dur=1.5, peak=0.5); hit("cloth_flap", 172, 0.4, 0.1, idx=1, dur=0.5, peak=0.45)
 hit("cloth_flap", 186, 0.35, 0.3, idx=2, dur=1.2, peak=0.4)
 hit("thunder", 228, 0.55, 0.2, idx=0, dur=4.0, peak=0.85, fade=2.0)       # far rumble as the front comes in
