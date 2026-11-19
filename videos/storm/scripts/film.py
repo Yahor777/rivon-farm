@@ -361,6 +361,16 @@ def wind():
         cs.tension_damping = 1; cs.compression_damping = 1
         cs.shear_stiffness = 6; cs.bending_stiffness = 0.08; cm.collision_settings.use_self_collision = True
         cm.collision_settings.self_distance_min = 0.002; cm.collision_settings.distance_min = 0.002
+        # v6.4: a real napkin does not take off as a whole - its far end lies under the plate and the cutlery, so it is held
+        # there and the gust gets under the free, windward end: it lifts, billows, flaps and folds back over itself
+        _dw = Vector((-0.55, 0.78)).normalized(); _c, _s = math.cos(rz), math.sin(rz)
+        vg = nk.vertex_groups.new(name="held")
+        for v in nk.data.vertices:
+            wx, wy = _c * v.co.x - _s * v.co.y, _s * v.co.x + _c * v.co.y
+            if wx * _dw.x + wy * _dw.y > 0.045:                 # the downwind third, under the plate rim
+                vg.add([v.index], 1.0, "REPLACE")
+        cs.vertex_group_mass = "held"; cs.pin_stiffness = 1.0
+        cs.air_damping = 1.0
         sol = nk.modifiers.new("thick", "SOLIDIFY"); sol.thickness = 0.0012
         ss = nk.modifiers.new("ss", "SUBSURF"); ss.levels = ss.render_levels = 1
         for o in bpy.data.objects:                           # the table top and the plates stop the cloth
@@ -376,7 +386,7 @@ def wind():
             w.field.strength = sv; w.keyframe_insert("field.strength", frame=fr)
         # Blender's cloth wind only presses along the face normals (a flat cloth would just hover), so the drag that
         # carries the napkin downwind is given as a horizontal component of gravity following the same gust curve
-        for fr, sv, lift in ((1, 0.0, 0.0), (12, 0.0, 0.0), (20, 1.5, 2.0), (28, 7.0, 11.5), (40, 3.0, 5.0), (52, 9.0, 11.0), (80, 7.0, 6.0)):
+        for fr, sv, lift in ((1, 0.0, 0.0), (12, 0.0, 0.0), (20, 1.2, 1.5), (28, 4.5, 6.5), (40, 2.0, 2.5), (52, 6.0, 7.5), (80, 4.5, 4.0)):
             sc.gravity = (d.x * sv, d.y * sv, -9.81 + lift); sc.keyframe_insert("gravity", frame=fr)   # drag + lift of the gust
         for fr in range(1, n + 2):
             sc.frame_set(fr)
