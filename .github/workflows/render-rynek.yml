@@ -17,7 +17,8 @@ jobs:
       - id: p
         run: |
           N=$(jq -r '.parts' run.json)
-          echo "parts=$(python3 -c "import json;print(json.dumps(list(range($N))))")" >> $GITHUB_OUTPUT
+          ONLY=$(jq -c '.only // empty' run.json)
+          if [ -n "$ONLY" ]; then echo "parts=$ONLY" >> $GITHUB_OUTPUT; else echo "parts=$(python3 -c "import json;print(json.dumps(list(range($N))))")" >> $GITHUB_OUTPUT; fi
   render:
     needs: plan
     runs-on: ubuntu-latest
